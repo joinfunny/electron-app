@@ -1,0 +1,27 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "启动测试",
+			"program": "${workspaceRoot}/test.js"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "启动应用",
+			"program": "${workspaceRoot}/index.js"
+		},
+		{
+			"name": "Launch",
+			"type": "phantomjs",
+			"request": "launch",
+			"file": "${workspaceRoot}/webpage.js",
+			"webRoot": "${workspaceRoot}",
+			"runtimeExecutable": "/usr/local/bin/phantomjs",
+			"runtimeArgs": [],
+			"sourceMaps": true
+		}
+	]
+}

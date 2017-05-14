@@ -1,3 +1,4 @@
+var path = require('path')
 module.exports = {
   nightmare: null,
   run: function(nightmare) {
@@ -44,7 +45,12 @@ module.exports = {
 
         if (existsVcodeIFrame) {
           console.log('需要输入验证码')
-          return that.nightmare.enterIFrame('#newVcodeIframe>iframe')
+          return that.nightmare
+            .enterIFrame('#newVcodeIframe>iframe')
+             .wait('#capImg')
+             .screenshot(path.resolve('./snapshot/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png'))
+             .wait(2000)
+
         } else {
           console.log('不需要输入验证码')
           return that.nightmare.resetFrame()

@@ -2,6 +2,7 @@
  * 处理订单
  */
 var path = require('path')
+var detail = require('./order-detail')
 module.exports = {
   nightmare: null,
   run: function(nightmare) {
@@ -27,9 +28,19 @@ module.exports = {
         return links
       })
       .then(function(links) {
-
         console.log(JSON.stringify(links, null, 2))
+        // for (let i = 0; i < links.length; i++) {
+        //   console.log(links[i])
+        //   detail(links[i])
+        // }
+
+
         return that.nightmare
+          .cookies
+          .get()
+          .then(function(cookies) {
+            return links && links.length > 0 && detail(cookies, links[0])
+          })
       })
   }
 }

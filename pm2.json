@@ -1,0 +1,22 @@
+{
+    "apps": [
+        {
+            "name": "qqordermonitor",
+            "script": "index.js",
+            "log_date_format": "YYYY-MM-DD HH:mm:SS",
+            "error_file": "logs/rxStream-err.log",
+            "pid_file": "logs/rxStream.pid",
+            "exec_mode": "fork",
+            "instances": 1,
+            "env": {
+                "ENV": "develpment"
+            },
+            "env_test": {
+                "ENV": "test"
+            },
+            "env_release": {
+                "ENV": "production"
+            }
+        }
+    ]
+}

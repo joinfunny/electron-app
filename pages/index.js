@@ -1,7 +1,8 @@
 var path = require('path')
 var Moment = require('moment');
 var Utils = require('../utils')
-var order = require('./order')
+var complaints = require('./complaints')
+var exceptionOrderMonitor = require('./exception-order')
 module.exports = {
   nightmare: null,
   run: function(nightmare) {
@@ -26,8 +27,11 @@ module.exports = {
           .screenshot(path.resolve('./snapshot/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png'))
           .wait(2000)
       })
-      .then(function(){
-        return order.run(that.nightmare)
+      .then(function() {
+        //投诉
+        complaints.run(that.nightmare)
+        //异常订单
+        exceptionOrderMonitor.run(that.nightmare)
       })
   }
 

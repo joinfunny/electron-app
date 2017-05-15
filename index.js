@@ -24,9 +24,8 @@ var nightmare = Nightmare({
 		nightmare.url()
 			.then(function(url) {
 				if (url.indexOf('&g_ty=lk') > -1) {
-					console.log('--------------------当前URL----------------')
+					console.log('--------------------正在进入主页面----------------')
 					console.log(url)
-					console.log('--------------------当前URL----------------')
 					return indexPage.run(nightmare)
 				}
 			})

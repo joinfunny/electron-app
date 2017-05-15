@@ -15,33 +15,14 @@ var nightmare = Nightmare({
 		webSecurity: false 
 	}
 })
-// .on('did-stop-loading', function() {
-// 	nightmare
-// 		.evaluate(function() {
-// 			var item = document.querySelector('#userLogin>a')
-// 			if (item) {
-// 				item.click();
-// 			} else {
-// 				console.log('can not find selector ' + selector + ',will find next time ')
-// 			}
-// 		})
-// })
 
 nightmare
 	.goto('http://stream-sass.cssrv.dataengine.com/introduce/')
-	.evaluate(function() {
-		var timer = setInterval(function() {
-			var item = document.querySelector('#userLogin>a')
-			if (item) {
-				console.log('get the selector ' + item.innerText)
-				item.click();
-				clearInterval(timer);
-			} else {
-				console.log('can not find selector ' + selector + ',will find next time')
-			}
-		}, 100)
-	})
-	.screenshot(path.resolve('./snapshot/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png'))
+  .click('#userLogin>a')
+  .evaluate(function(){
+    var input  =  document.querySelector('body > div.login-warp.rotate.login-w > div.login-inner > form > ul.input-area > li:nth-child(1) > input[type="tel"]')
+    input.focus()
+  })
 	.then(function() {
 		console.log('ok')
 	})

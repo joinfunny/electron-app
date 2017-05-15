@@ -1,4 +1,6 @@
 var path = require('path')
+var Moment = require('moment')
+
 module.exports = {
   nightmare: null,
   run: function(nightmare) {
@@ -21,24 +23,9 @@ module.exports = {
           .type('#p', '\u000d') //回车
           .wait(1000)
           .exists('#newVcodeIframe>iframe')
-
-
-        // .wait('#newVcodeIframe > iframe')
-        // .enterIFrame('#newVcodeIframe > iframe')
         // .wait('#capImg')
         // .wait('#capAns')
         // .wait('#submit')
-        // .evaluate(function() {
-        // 	console.log(document.title)
-        // })
-        // .evaluate(function() {
-        // 	var dom = document.querySelector('#switcher_plogin')
-        // 	dom.click()
-        // 	setTimeout(function(){
-        // 	document.querySelector('#u').value = "2919415063"
-        // 	document.querySelector('#p').value = "shili8269"
-        // 	},500)
-        // })
       })
       .then(function(existsVcodeIFrame) {
         console.log(existsVcodeIFrame)
@@ -47,16 +34,14 @@ module.exports = {
           console.log('需要输入验证码')
           return that.nightmare
             .enterIFrame('#newVcodeIframe>iframe')
-             .wait('#capImg')
-             .screenshot(path.resolve('./snapshot/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png'))
-             .wait(2000)
-
+            .wait('#capImg')
+            .screenshot(path.resolve('./snapshot/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png'))
+            .wait(2000)
         } else {
           console.log('不需要输入验证码')
           return that.nightmare.resetFrame()
         }
       })
-
       .then(function() {
         console.log('ok')
       })

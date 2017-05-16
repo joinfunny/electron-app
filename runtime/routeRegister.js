@@ -37,14 +37,7 @@ function getFiles (path) {
 function serviceRegister (app, appConfig) {
   // release环境不走mock模式
   let serviceDirectory = appConfig.app.serviceDirectory
-  // 先前开发未进行mock模块的编写，故需要 兼容之前未mock的services列表，
-  let mockServiceList = appConfig.mock.detective ? appConfig.mock.services : []
-
   var services = getFiles(serviceDirectory)
-  // 兼容加载
-  mockServiceList.map(function (item) {
-    services.push(serviceDirectory + '/' + item)
-  })
   var serviceObject = {}
   services.forEach(function (item) {
     let service = require('.' + item)

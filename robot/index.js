@@ -1,43 +1,35 @@
-var path = require('path');
-var Moment = require('moment');
-var Nightmare = require('nightmare');
-require('nightmare-iframe-manager')(Nightmare);
+var Nightmare = require('nightmare')
+var config = require('../runtime').App.AppConfig.robot.login
 
-//登录模拟
+require('nightmare-iframe-manager')(Nightmare)
+
+// 登录模拟
 var loginPage = require('./pages/login')
-//投诉订单
+// 投诉订单
 var complaints = require('./pages/complaints')
-//异常订单
+// 异常订单
 var exceptionOrder = require('./pages/exception-order')
 
-var nightmare = Nightmare({
-    width: 1024,
-    height: 768,
-    // openDevTools: {
-    //   mode: 'detach'
-    // },
-    show: true,
-    webPreferences: {
-      webSecurity: false 
-    }
-  })
-  .on('did-finish-load', function() {
+var nightmare = Nightmare(config.nightmare)
+  .on('did-finish-load', function () {
     console.log('did-finish-load')
     nightmare.url()
-      .then(function(url) {
+      .then(function (url) {
         if (url.indexOf('&g_ty=lk') > -1) {
           console.log('--------------------正在进入主页面----------------')
           console.log(url)
-          complaints.run(nightmare);
-          exceptionOrder.run(nightmare);
+          complaints.run(nightmare)
+          exceptionOrder.run(nightmare)
         }
       })
   })
-  .on('console', function(type, msg) {
+  .on('console', function (type, msg) {
     console[type](msg)
   })
 
-nightmare
-  .then(function() {
-    return loginPage.run(nightmare);
-  })
+module.exports.run = function () {
+  nightmare
+    .then(function () {
+      return loginPage.run(nightmare)
+    })
+}

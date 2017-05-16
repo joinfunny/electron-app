@@ -2,21 +2,20 @@
  * Index主页面
  */
 var path = require('path')
-var Moment = require('moment');
-var Utils = require('../utils')
+var Moment = require('moment')
 var complaints = require('./complaints')
 var exceptionOrderMonitor = require('./exception-order')
 module.exports = {
   nightmare: null,
-  run: function(nightmare) {
-    this.nightmare = nightmare;
+  run: function (nightmare) {
+    this.nightmare = nightmare
     return this.goto()
   },
-  goto: function() {
-    var that = this;
+  goto: function () {
+    var that = this
     return that.nightmare
       .url()
-      .then(function(url) {
+      .then(function (url) {
         console.log('--------------------进入主页面----------------')
         console.log(url)
         return that.nightmare
@@ -24,16 +23,16 @@ module.exports = {
           .wait(600)
           .click('#nav>li.actived>ul>li>a')
       })
-      .then(function() {
+      .then(function () {
         return that.nightmare
           .wait(5000)
           .screenshot(path.resolve('./snapshot/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png'))
           .wait(2000)
       })
-      .then(function() {
-        //投诉
+      .then(function () {
+        // 投诉
         complaints.run(that.nightmare)
-        //异常订单
+        // 异常订单
         exceptionOrderMonitor.run(that.nightmare)
       })
   }

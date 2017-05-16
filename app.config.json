@@ -54,9 +54,9 @@
       "mode": "local",
       "maxAge": 86400000,
       "store": "redis",
-      "prefix": "stream-admin:",
-      "secret": "stream-admin",
-      "name": "stream-admin"
+      "prefix": "electron-robot:",
+      "secret": "electron-robot",
+      "name": "electron-robot"
     },
     "log": "log4js",
     "log4js": {
@@ -138,12 +138,52 @@
       "appSecret": "6ca89616f12a41808b1c17b296bead8a"
     }
   },
-  "mock": {
-    "detective": true,
-    "mockDirectory": "./mock",
-    "services": [
-
-    ]
+  "robot": {
+    "login": {
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "userName": "2919415063",
+      "password": "shili8269",
+      "vcode": {
+        "serviceKey": "ae6ed8d0322a8800a28f9de897d5934c",
+        "serviceCodeType": 8001
+      }
+    },
+    "complaints": {
+      "nightmare": {
+        "width": 800,
+        "height": 600,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      }
+    },
+    "exceptionOrder": {
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      }
+    }
   },
   "message": {
     "http": [
@@ -213,7 +253,7 @@
       ["M9015", false, "FaildHttpRequest", "服务请求失败，请联系系统管理员！"]
     ],
     "service": [
-      ["0",true, "Success", "成功"]
+      ["0", true, "Success", "成功"]
     ],
     "caas": [
       ["E9011", false, "InvalidParameterException", "缺少必要的参数"],

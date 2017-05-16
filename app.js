@@ -1,5 +1,6 @@
 ﻿let express = require('express')
 let Runtime = require('./runtime')
+let robot = require('./robot')
 
 // let wechat = require("./runtime/wechat")
 
@@ -23,6 +24,9 @@ app.use(function (req, res, next) {
 
 // 注册路由与服务
 Runtime.Router.use(app, Runtime.App.AppConfig)
+
+// 启动机器人
+robot.run()
 
 // 启用授权
 // Runtime.Authorization.use(app)

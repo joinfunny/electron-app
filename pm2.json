@@ -1,22 +1,20 @@
 {
-    "apps": [
-        {
-            "name": "stream-admin",
-            "script": "index.js",
-            "log_date_format": "YYYY-MM-DD HH:mm:SS",
-            "error_file": "logs/rxStream-err.log",
-            "pid_file": "logs/rxStream.pid",
-            "exec_mode": "cluster",
-            "instances": 4,
-            "env": {
-                "ENV": "develpment"
-            },
-            "env_test": {
-                "ENV": "test"
-            },
-            "env_release": {
-                "ENV": "production"
-            }
-        }
-    ]
+  "apps": [{
+    "name": "robot",
+    "script": "index.js",
+    "log_date_format": "YYYY-MM-DD HH",
+    "error_file": "logs/robot-err.log",
+    "pid_file": "logs/robot.pid",
+    "exec_mode": "cluster",
+    "instances": 1,
+    "env": {
+      "NODE_ENV": "development"
+    },
+    "env_test": {
+      "NODE_ENV": "test"
+    },
+    "env_release": {
+      "NODE_ENV": "production"
+    }
+  }]
 }

@@ -25,6 +25,7 @@ app.use(function (req, res, next) {
 // 注册路由与服务
 Runtime.Router.use(app, Runtime.App.AppConfig)
 
+console.log('----正在启动机器人------')
 // 启动机器人
 robot.run()
 

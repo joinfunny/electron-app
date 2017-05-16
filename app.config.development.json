@@ -1,0 +1,25 @@
+{
+  "app": {
+    "remoteHost": "http://10.200.32.25:8088",
+    "staticSrc": "./dist/src",
+    "renderView": "./dist/view",
+    "serviceDirectory": "./services",
+    "routeDirectory": "./routes"
+  },
+  "runtime": {
+    "listenPort": "9092",
+    "session": {
+      "mode": "local",
+      "maxAge": 86400000,
+      "store": "redis"
+    },
+    "log": "log4js",
+    "caas": {
+      "host": "caas-test.in.dataengine.com",
+      "port": 80,
+      "prefix": "/api/v1",
+      "appKey": "14dd555807e549bbb4b4f3889708ec77",
+      "appSecret": "6ca89616f12a41808b1c17b296bead8a"
+    }
+  }
+}

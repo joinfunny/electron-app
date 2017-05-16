@@ -1,55 +1,103 @@
-var path = require('path');
-var preloadUrl = path.resolve("custom-script.js")
-var Moment = require('moment');
+#!/usr/bin/env node
 
-var Nightmare = require('nightmare');
-require('nightmare-iframe-manager')(Nightmare);
+/**
+ * Module dependencies.
+ */
+process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+var config = require('./runtime/App/AppConfig')
+// process.env.UV_THREADPOOL_SIZE= 128;
+var app = require('./app')
+var debug = require('debug')('bas:server')
+var http = require('http')
 
-var indexPage = require('./pages/index')
-var loginPage = require('./pages/login')
+/**
+ * Get port from environment and store in Express.
+ */
 
-var nightmare = Nightmare({
-		width: 1024,
-		height: 768,
-		openDevTools: {
-			mode: 'detach'
-		},
-		show: true,
-		webPreferences: {
-			webSecurity: false 
-		}
-	})
-	.on('did-finish-load', function() {
-		console.log('did-finish-load')
-		nightmare.url()
-			.then(function(url) {
-				if (url.indexOf('&g_ty=lk') > -1) {
-					console.log('--------------------正在进入主页面----------------')
-					console.log(url)
-					return indexPage.run(nightmare)
-				}
-			})
-	})
-	.on('did-frame-finish-load', function() {
-		console.log('-----------did-frame-finish-load------------')
-		// nightmare.url()
-		// 	.then(function(url) {
-		// 		console.log(url)
-		// 	})
-	})
-	.on('‘did-get-redirect-request’', function() {
-		console.log('‘did-get-redirect-request’')
-	})
-	.on('dom-ready', function() {
-		console.log('dom-ready')
-	}).on('did-navigate-in-page', function() {
-		console.log('did-navigate-in-page')
-	})
-	.on('console',function(type,msg){
-		console[type](msg)
-	})
+var port = normalizePort(config.runtime.listenPort || '3000')
+app.set('port', port)
 
-nightmare
-	.then(function() {
-		return loginPage.run(nightmare);
-	})
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app)
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port)
+server.on('error', onError)
+server.on('listening', onListening)
+console.log(process.env.NODE_ENV + ' is running , port : ' + port)
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort (val) {
+  var port = parseInt(val, 10)
+
+  if (isNaN(port)) {
+    // named pipe
+    return val
+  }
+
+  if (port >= 0) {
+    // port number
+    return port
+  }
+
+  return false
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError (error) {
+  if (error.syscall !== 'listen') {
+    throw error
+  }
+
+  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges')
+      process.exit(1)
+      break
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use')
+      process.exit(1)
+      break
+    default:
+      throw error
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening () {
+  var addr = server.address()
+  var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port
+  debug('Listening on ' + bind)
+}
+
+process.on('uncaughtException', function (err) {
+  console.error('uncaughtException: %s', err.message)
+  var worker = require('cluster').worker
+  if (worker) {
+    process.send({
+      cmd: 'suicide',
+      crash: err.stack,
+      message: err.message
+    })
+    server.close(function () {
+      process.exit(1)
+    })
+  }
+})

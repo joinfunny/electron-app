@@ -1,0 +1,24 @@
+<div class="stream-login-container" @keydown.stop="keydown">
+  <div class="login-section">
+    <h2>登录</h2>
+    <div class="field-group">
+      <admin-input label="用户名：" iconClass="ion-person" placeholder="请输入用户名" :validators="usernameValidators" v-model="username">
+      </admin-input>
+    </div>
+    <div class="field-group">
+      <admin-input type="password" label="密码：" iconClass="ion-ios-locked" placeholder="请输入用户密码" :validators="passwordValidators"
+        v-model="password">
+      </admin-input>
+    </div>
+    <!--<div v-if="times>=3">
+      <div class="field-group code-container">
+        <admin-input label="验证码：" placeholder="请输入验证码" v-model="code" :validators="codeValidators" >
+        </admin-input>
+        <img class="code-img" @click="getCode" :src="imgVcode" />
+      </div>
+    </div>-->
+    <div class="field-group form-buttons">
+      <button @click="login" @keydown.stop="">登 录</button>
+    </div>
+  </div>
+</div>

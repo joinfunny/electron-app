@@ -9,4 +9,5 @@ selenium-debug.log
 logs/**/*.log
 .vscode/
 .project
-snapshot/**/*.png
+*.log**
+dist/

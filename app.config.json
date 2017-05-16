@@ -97,7 +97,8 @@
     "redis": {
       "local": {
         "port": 6379,
-        "host": "127.0.0.1"
+        "host": "127.0.0.1",
+        "pass":"Aaa12345"
       },
       "cluster": [{
         "port": 7000,

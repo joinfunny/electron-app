@@ -9,7 +9,7 @@ var loginPage = require('./pages/login')
 var complaints = require('./pages/complaints')
 // 异常订单
 var exceptionOrder = require('./pages/exception-order')
-
+console.log(nightmare)
 var nightmare = Nightmare(config.nightmare)
   .on('did-finish-load', function () {
     console.log('did-finish-load')

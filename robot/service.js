@@ -16,6 +16,10 @@ module.exports = {
       .then(function (result) {
         log.info('//======向实立发送投诉订单请求已返回消息======//')
         log.info(JSON.stringify(result, null, 2))
+        // 如果实立保存失败，则退出，不在执行记录Redis
+        if (!result.success) {
+          return
+        }
         return store.complaints.adds([complaints]).then(function (result) {
           if (result) {
             log.info('//======发送的投诉订单已经记录到Redis中======//')
@@ -49,12 +53,16 @@ module.exports = {
    * 1.更新投诉状态为completed
    * 2.删除投诉处理记录
    */
-  handledComplaints: (handles) => {
+  handledComplaints: (handle, result) => {
+    if (!result) {
+      store.handle.push(handle)
+      return
+    }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
     return request.post({
       url: 'http://localhost:9092/api/test',
       json: true,
-      body: handles
+      body: handle
     })
       .then(function (result) {
         log.info('//======向实立发送【投诉订单已处理】请求已返回消息======//')
@@ -64,25 +72,23 @@ module.exports = {
             docmentNo: handle.docmentsNo
           }
         }) */
-        store.complaints.updates(handles, store.status.completed).then(function (success) {
+        // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
+        if (!result.success) {
+          store.handle.push(handle)
+          return
+        }
+
+        store.complaints.updates([handle], store.status.completed).then(function (success) {
           if (success) {
             log.info('//======Redis中【投诉订单状态】已更新为「completed」======//')
-            // 缓存投诉订单状态
-            store.handle.delete(handles).then(function (success) {
-              if (success) {
-                log.info('//======发送的投诉订单状态已经初始化到Redis中======//')
-              } else {
-                log.warn('//======发送的投诉订单状态Redis初始化失败======//')
-              }
-            })
           } else {
             log.warn('//======发送的投诉订单记录Redis失败======//')
           }
         })
       })
       .catch(function (err) {
-        log.warn('//======向实立发送数据发生错误======//')
-        log.warn(err)
+        log.error('//======向实立发送数据发生错误======//')
+        log.error(err)
       })
   }
 }

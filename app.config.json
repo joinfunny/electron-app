@@ -144,9 +144,6 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "openDevTools": {
-          "mode": "detach"
-        },
         "show": true,
         "webPreferences": {
           "webSecurity": false
@@ -171,8 +168,11 @@
           "webSecurity": false
         }
       },
+      "worker":{
+        "tickTime":10000
+      },
       "listener":{
-        "tickTime":5000
+        "tickTime":10000
       }
     },
     "exceptionOrder": {

@@ -81,7 +81,7 @@ module.exports = {
         clearInterval(timer)
         that.next()
       }
-    }, 2000)
+    }, config.worker.tickTime)
   },
   /**
    * 轮询整个类别区域下的所有LI，获取是否有数据

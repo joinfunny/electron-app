@@ -6,6 +6,8 @@ var fs = require('fs')
 
 require('nightmare-iframe-manager')(Nightmare)
 
+var capturePlugin = require('nightmare-screenshot')
+
 var nightmare = Nightmare({
   width: 1024,
   height: 768,
@@ -17,6 +19,50 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
+
+var dom = 'body > div > ul > li'
+nightmare.goto('http://stream.ruixuesoft.com/login')
+  .wait(2000)
+  .type('input[type="tel"]', '15810929612')
+  .type('input[type="password"]', 'admin')
+  .click('#j_btn_login')
+  .wait(3000)
+  .enterIFrame('#mainFrame')
+  .evaluate(function () {
+    var rect = document.querySelector('body > div > ul > li').getBoundingClientRect()
+    return {
+      x: Math.round(rect.left),
+      y: Math.round(rect.top),
+      width: Math.round(rect.width),
+      height: Math.round(rect.height)
+    }
+  })
+  .then(function (rect) {
+    nightmare
+      .exitIFrame()
+      .evaluate(function () {
+        var rect = document.querySelector('#mainFrame').getBoundingClientRect()
+        return {
+          x: Math.round(rect.left),
+          y: Math.round(rect.top),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height)
+        }
+      })
+      .then(function (iframeRect) {
+        nightmare
+          .screenshot(path.resolve(__dirname, './snapshot/testa1.png'), {
+            x: iframeRect.x + rect.x,
+            y: iframeRect.y + rect.y,
+            width: rect.width,
+            height: rect.height
+          })
+          .run()
+      })
+  })
+// .use(capturePlugin.screenshotSelector(path.resolve(__dirname, './snapshot/test.png'), dom, function () {
+//   console.log(arguments)
+// }))
 
 /* nightmare.goto('http://www.baidu.com')
   .type('#kw', '电视剧')
@@ -57,11 +103,11 @@ var promise2 = redis.hexists('person', 'sex')
   console.log(result)
 }) */
 
-redis.pipeline()
-.lpush('list', JSON.stringify({a: 1, b: 2}))
-.lpop('list')
-.exec(function (err, result) {
-  console.log(err)
-  console.log(result)
-  process.exit()
-})
+// redis.pipeline()
+// .lpush('list', JSON.stringify({a: 1, b: 2}))
+// .lpop('list')
+// .exec(function (err, result) {
+//   console.log(err)
+//   console.log(result)
+//   process.exit()
+// })

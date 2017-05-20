@@ -41,9 +41,10 @@ module.exports = {
       .then(function (existsVcodeIFrame) {
         log.info(existsVcodeIFrame)
         if (existsVcodeIFrame) {
-          log.info('需要输入验证码')
+          log.warn('//=======需要输入验证码========//')
           return that.nightmare
             .enterIFrame('#newVcodeIframe>iframe')
+            .wait(1000)
             .wait('#capImg')
             .then(function () {
               that.validateVcode()
@@ -70,30 +71,81 @@ module.exports = {
       return
     }
     that.nightmare
-      .use(capturePlugin.screenshotSelector(that.generateNewVcodePath(), '#capImg', function () {
-        request.post({
-          key: config.vcode.serviceKey,
-          codeType: config.vcode.serviceCodeType,
-          image: fs.createReadStream(that.getVcodePath())
-        }, function (err, response, body) {
-          log.info('//=======请求验证码服务返回=======//')
-          log.info(JSON.stringify(body, null, 2))
-          that.vcodeRequestCount += 1
-          if (!err) {
-            if (body.error_code === 0) {
-              log.info('获取到的验证码：' + body.result)
-              // 获取到验证码模拟输入提交
-              that.inputVcode(body.result)
-            } else {
-              // 获取验证码失败，重新发起请求获取验证码
-              log.warn('获取验证码失败：' + body.error_code + ',' + body.reason)
-              that.validateVcode()
+      .evaluate(function () {
+        var rect = document.querySelector('#capImg').getBoundingClientRect()
+        return {
+          x: Math.round(rect.left),
+          y: Math.round(rect.top),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height)
+        }
+      })
+      .then(function (rect) {
+        that.nightmare
+          .exitIFrame()
+          .evaluate(function () {
+            var rect = document.querySelector('#newVcodeIframe>iframe').getBoundingClientRect()
+            return {
+              x: Math.round(rect.left),
+              y: Math.round(rect.top)
             }
-          } else {
-            log.warn(err)
-          }
-        })
-      }))
+          })
+          .then(function (newVcodeIframeRect) {
+            return that.nightmare
+              .exitIFrame()
+              .evaluate(function () {
+                var rect = document.querySelector('#login_frame').getBoundingClientRect()
+                return {
+                  x: Math.round(rect.left),
+                  y: Math.round(rect.top)
+                }
+              })
+              .then(function (loginFrameRect) {
+                var rectResult = {
+                  x: loginFrameRect.x + newVcodeIframeRect.x + rect.x,
+                  y: loginFrameRect.y + newVcodeIframeRect.y + rect.y,
+                  width: rect.width,
+                  height: rect.height
+                }
+                console.log('//======获取到的验证码的最终坐标======//')
+                return that.nightmare
+                  .screenshot(that.generateNewVcodePath(), rectResult)
+              })
+          })
+      })
+      .then(function () {
+        console.log('//=====已经生成了验证码图片=======//')
+        var result = false
+        if (result === false) {
+          that.nightmare
+            .enterIFrame('#login_frame')
+            .enterIFrame('#newVcodeIframe>iframe')
+            .then(function () {
+              request.post({
+                key: config.vcode.serviceKey,
+                codeType: config.vcode.serviceCodeType,
+                image: fs.createReadStream(that.getVcodePath())
+              }, function (err, response, body) {
+                log.info('//=======请求验证码服务返回=======//')
+                log.info(JSON.stringify(body, null, 2))
+                that.vcodeRequestCount += 1
+                if (!err) {
+                  if (body.error_code === 0) {
+                    log.info('获取到的验证码：' + body.result)
+                    // 获取到验证码模拟输入提交
+                    that.inputVcode(body.result)
+                  } else {
+                    // 获取验证码失败，重新发起请求获取验证码
+                    log.warn('获取验证码失败：' + body.error_code + ',' + body.reason)
+                    that.validateVcode()
+                  }
+                } else {
+                  log.warn(err)
+                }
+              })
+            })
+        }
+      })
   },
   inputVcode: function (vcode) {
     var that = this

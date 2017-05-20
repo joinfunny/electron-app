@@ -26,11 +26,11 @@ var complaints = {
       promise.hset(keys.complaints, complaint.docmentsNo, state)
     })
     return promise.exec(function (err, result) {
-      if (err) {
-        log.warn('//======投诉数据存储到队列【失败】======//')
-        log.warn(err)
+      if (!err) {
+        log.info('//======投诉订单已记录======//')
       } else {
-        log.info('//======投诉数据存储到队列【成功】======//')
+        log.error('//======投诉订单记录【失败】======//')
+        log.error(err)
       }
     })
   },
@@ -73,10 +73,13 @@ var complaints = {
       var notExists = []
       log.info(JSON.stringify(results))
       results.forEach(function (result, index) {
-        if (result !== 1) {
+        if (result[1] !== 1) {
           notExists.push(complaints[index])
         }
       })
+      if (notExists && notExists.length > 0) {
+        log.warn('抓取到【' + notExists.length + '】条新的投诉订单')
+      }
       return notExists
     })
   }

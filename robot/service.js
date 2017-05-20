@@ -20,13 +20,7 @@ module.exports = {
         if (!result.success) {
           return
         }
-        return store.complaints.adds([complaints]).then(function (result) {
-          if (result) {
-            log.info('//======发送的投诉订单已经记录到Redis中======//')
-          } else {
-            log.warn('//======发送的投诉订单记录Redis失败======//')
-          }
-        })
+        return store.complaints.adds(complaints)
       })
       .catch(function (err) {
         if (err) {

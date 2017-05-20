@@ -64,7 +64,7 @@ class ComplaintDetail {
     that.nightmare.evaluate(function () {
       var docmentsNo = document.querySelector('#task_id').innerText
       var content = document.querySelector('#intro_id>div').innerHTML.split('<br>')
-      var items = {
+      var entry = {
         'docmentsNo': docmentsNo
       }
       var mapping = {
@@ -77,22 +77,17 @@ class ComplaintDetail {
         var pairs = content[i].split(':')
         var prop = mapping[pairs[0]]
         if (prop) {
-          items[prop] = pairs[1]
+          entry[prop] = pairs[1]
         }
       }
-      return items
-    }).then(function (items) {
+      return entry
+    }).then(function (entry) {
       log.info('//======解析到新的投诉订单======//')
-      log.info(items)
+      log.info(entry)
 
-      service.pushComplaints(items).then(function (err, result) {
-        if (err) {
-          log.info('//======解析到的投诉订单发送过程发生错误：======//')
-          log.info(err)
-          return
-        }
+      service.pushComplaints([entry]).then(function (result) {
         that.nightmare.end().then(function () {
-          log.info('//======解析到的投诉订单已经发送======//')
+          log.info('//======解析到的投诉订单已经发送，窗口已关闭======//')
           that.dispose()
         })
       })

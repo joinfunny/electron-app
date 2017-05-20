@@ -46,6 +46,7 @@ function parse (logConfig) {
   var logInfo = log4js.getLogger('logInfo')
   var logWarn = log4js.getLogger('logWarn')
   var logErr = log4js.getLogger('logErr')
+  var logData = log4js.getLogger('logData')
 
   helper.debug = function (msg) {
     if (msg == null) { msg = '' }
@@ -66,6 +67,9 @@ function parse (logConfig) {
     if (msg == null) { msg = '' }
     if (exp != null) { msg += '\r\n' + exp }
     logErr.error(msg)
+  }
+  helper.data = function (category, data) {
+    logData.info(category + ' : ' + data)
   }
 
   return logInfo

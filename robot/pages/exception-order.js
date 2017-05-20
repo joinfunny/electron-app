@@ -1,6 +1,8 @@
 var Nightmare = require('nightmare')
 require('nightmare-iframe-manager')(Nightmare)
-var config = require('../../runtime').App.AppConfig.robot.exceptionOrder
+var Runtime = require('../../runtime')
+var log = Runtime.App.Log.helper
+var config = Runtime.App.AppConfig.robot.exceptionOrder
 
 function _queryString (query, url, undecode, isHash) {
   var search, index
@@ -21,7 +23,7 @@ module.exports = {
       .cookies
       .get()
       .then(function (cookies) {
-        console.log('正在打开异常订单窗口...')
+        log.info('正在打开异常订单窗口...')
         setInterval(function () {
           let nightmare = new Nightmare(config.nightmare)
           nightmare
@@ -38,13 +40,12 @@ module.exports = {
               }
             })
             .then(function (url) {
-              var countTatol = +_queryString('page', url)
-              setTimeout(function () {
-                nightmare.end().then(function () {
-                  console.log('获取到异常订单数据量：' + countTatol * 20)
-                  console.log('nightmare ended')
-                })
-              }, 1000)
+              var countTotal = +_queryString('page', url)
+
+              nightmare.end().then(function () {
+                log.info('获取到异常订单数据量：' + countTotal * 20)
+                log.data('异常订单数据量', countTotal * 20)
+              })
               // request.post('http://localhost:9092/api/orders', {
               //   json: true,
               //   body: items
@@ -57,7 +58,7 @@ module.exports = {
               //   }
               // })
             })
-        }, 10000)
+        }, config.worker.tickTime)
       })
   }
 }

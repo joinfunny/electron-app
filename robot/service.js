@@ -45,6 +45,7 @@ module.exports = {
    */
   handledComplaints: (handle, result) => {
     if (!result) {
+      log.data('处理投诉订单失败', 1)
       store.handle.push([handle])
       return
     }
@@ -65,9 +66,10 @@ module.exports = {
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
         if (!result.success) {
           store.handle.push([handle])
+          log.data('处理投诉订单失败', 1)
           return
         }
-
+        log.data('处理投诉订单成功', 1)
         store.complaints.updates([handle], store.status.completed).then(function (success) {
           if (success) {
             log.info('//======Redis中【投诉订单状态】已更新为「completed」======//')
@@ -81,6 +83,7 @@ module.exports = {
         log.error(err)
         log.warn('//======重新将投诉处理加入队列======//')
         store.handle.push([handle])
+        log.data('处理投诉订单失败', 1)
       })
   }
 }

@@ -12,6 +12,7 @@ class ComplaintDetail {
     this.handle = handle
     this.nightmare = new Nightmare(config.nightmare)
   }
+
   run () {
     let that = this
     let url = that.link.url
@@ -29,6 +30,7 @@ class ComplaintDetail {
         }
       })
   }
+
   doHandle () {
     let that = this
     log.info('//======处理投诉订单【开始】======//')
@@ -52,7 +54,6 @@ class ComplaintDetail {
       })
       .then(function (result) {
         log.info('//======处理投诉订单【' + (result ? '成功' : '失败') + '】======//')
-
         // 处理成功，通知实立，并更新投诉订单状态
         // 处理失败，则将handle再次放入队列中
         service.handledComplaints(that.handle, result)

@@ -18,7 +18,9 @@ let status = {
 
 var complaints = {
   adds: (items) => {
-    return complaints.updates(items, status.init)
+    return complaints.updates(items, status.init).then(function () {
+      log.data('抓取到投诉订单', items.length)
+    })
   },
   updates: (items, state) => {
     let promise = redis.multi()

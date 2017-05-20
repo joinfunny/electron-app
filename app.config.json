@@ -71,20 +71,24 @@
           "type": "console"
         },
         {
-          "pattern": ".debug.yyyy-MM-dd-hh.log",
+          "pattern": "yyyy-MM-dd/debug.log",
           "category": "logDebug"
         },
         {
-          "pattern": ".info.yyyy-MM-dd-hh.log",
+          "pattern": "yyyy-MM-dd/info.log",
           "category": "logInfo"
         },
         {
-          "pattern": ".warn.yyyy-MM-dd-hh.log",
+          "pattern": "yyyy-MM-dd/warn.log",
           "category": "logWarn"
         },
         {
-          "pattern": ".err.yyyy-MM-dd-hh.log",
+          "pattern": "yyyy-MM-dd/err.log",
           "category": "logErr"
+        },
+        {
+          "pattern": "yyyy-MM-dd/data.log",
+          "category": "logData"
         }
       ],
       "replaceConsole": true,
@@ -92,7 +96,8 @@
         "logDebug": "ALL",
         "logInfo": "ALL",
         "logWarn": "ALL",
-        "logErr": "ALL"
+        "logErr": "ALL",
+        "logData":"ALL"
       }
     },
     "redis": {
@@ -178,6 +183,9 @@
       }
     },
     "exceptionOrder": {
+      "worker":{
+        "tickTime":10000
+      },
       "nightmare": {
         "width": 1024,
         "height": 768,

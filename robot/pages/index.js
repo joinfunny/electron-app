@@ -1,11 +1,12 @@
 /**
- * Index主页面
+ * Index主页面----已废弃的页面
  */
 var path = require('path')
 var Moment = require('moment')
-var complaints = require('./complaints')
 var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
+
+var complaints = require('./complaints')
 var exceptionOrderMonitor = require('./exception-order')
 var complaintsListener = require('./complaints-listener')
 module.exports = {

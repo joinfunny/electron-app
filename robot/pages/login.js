@@ -12,12 +12,16 @@ module.exports = {
   vcodeRequestCount: 0,
   getVcodePath: function () {
     if (!this._vcodePath) {
-      this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png')
+      this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('yyyy-MM-dd HH:mm:ss') + '.png')
+      log.info('//======初始化验证码图片路径=======//')
+      log.info(this._vcodePath)
     }
     return this._vcodePath
   },
   generateNewVcodePath: function () {
-    this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('YYYY-MM-dd-HH:mm:ss') + '.png')
+    log.info('//======生成新的验证码图片路径=======//')
+    this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('yyyy-MM-dd HH:mm:ss') + '.png')
+    log.info(this._vcodePath)
     return this._vcodePath
   },
   run: function (nightmare) {
@@ -66,8 +70,8 @@ module.exports = {
    */
   validateVcode: function () {
     var that = this
-    if (that.vcodeRequestCount >= 5) {
-      log.info('登录次数超过5次，已终止登录')
+    if (that.vcodeRequestCount >= config.maxLoginCount) {
+      log.info('登录次数超过' + config.maxLoginCount + '次，已终止登录')
       return
     }
     that.nightmare
@@ -81,7 +85,7 @@ module.exports = {
         }
       })
       .then(function (rect) {
-        that.nightmare
+        return that.nightmare
           .exitIFrame()
           .evaluate(function () {
             var rect = document.querySelector('#newVcodeIframe>iframe').getBoundingClientRect()
@@ -110,6 +114,7 @@ module.exports = {
                 console.log('//======获取到的验证码的最终坐标======//')
                 return that.nightmare
                   .screenshot(that.generateNewVcodePath(), rectResult)
+                  .wait(5000)
               })
           })
       })

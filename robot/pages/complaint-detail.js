@@ -23,13 +23,13 @@ class ComplaintDetail {
       .wait('#intro_id>div')
       .then(function () {
         if (that.handle) {
-          that.handle()
+          that.doHandle()
         } else {
-          that.detail()
+          that.doDetail()
         }
       })
   }
-  handle () {
+  doHandle () {
     let that = this
     log.info('//======处理投诉订单【开始】======//')
     that.nightmare.evaluate(function () {
@@ -59,7 +59,7 @@ class ComplaintDetail {
       })
   }
 
-  detail () {
+  doDetail () {
     let that = this
     that.nightmare.evaluate(function () {
       var docmentsNo = document.querySelector('#task_id').innerText

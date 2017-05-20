@@ -16,7 +16,8 @@ module.exports = {
     setInterval(function () {
       log.info('//======投诉订单监听执行======//')
       store.handle.pop().then(function (handle) {
-        handle = JSON.parse(handle[1])
+        log.info('.................')
+        if (!handle) return
         nm.cookies.get().then(function (cookies) {
           let link = {
             docmentsNo: handle.docmentsNo,

@@ -18,7 +18,6 @@ let status = {
 
 var complaints = {
   adds: (items) => {
-    console.log(this)
     return complaints.updates(items, status.init)
   },
   updates: (items, state) => {
@@ -27,17 +26,12 @@ var complaints = {
       promise.hset(keys.complaints, complaint.docmentsNo, state)
     })
     return promise.exec(function (err, result) {
-      let actionResult = true
       if (err) {
-        log.error(err)
+        log.warn('//======投诉数据存储到队列【失败】======//')
+        log.warn(err)
       } else {
-        result.forEach(function (rs, index) {
-          if (actionResult && rs[1] !== 1) {
-            actionResult = false
-          }
-        })
+        log.info('//======投诉数据存储到队列【成功】======//')
       }
-      return actionResult
     })
   },
   delete: (complaints) => {
@@ -60,9 +54,9 @@ var complaints = {
       return actionResult
     })
   },
-    /**
-     * 返回不存在的投诉数组
-     */
+  /**
+   * 返回不存在的投诉数组
+   */
   exists: (complaints) => {
     let promise = redis.multi()
     complaints.forEach((complaint) => {
@@ -89,6 +83,11 @@ var complaints = {
 }
 
 let handle = {
+  /**
+   * 添加一个或多个投诉处理信息
+   * @param {Array} handles 需要Push到Redis列表中的数据
+   * @return {Promise(Boolean)} 返回Promise对象，对象中的对象为操作Redis的状态
+   */
   push: (handles) => {
     var list = handles.map(function (handle) {
       return JSON.stringify(handle)
@@ -96,29 +95,37 @@ let handle = {
     let promise = redis.pipeline().lpush(keys.handles, list)
 
     return promise.exec(function (err, result) {
-      let actionResult = true
       if (err) {
         log.warn('//======投诉数据存储到队列【失败】======//')
         log.warn(err)
-        actionResult = false
       } else {
         log.info('//======投诉数据存储到队列【成功】======//')
       }
-      return actionResult
     })
+      .then(function (result) {
+        if (!result[0][0] && result[0][1] > 0) {
+          return true
+        }
+        log.info('//======存储处理数据到队列失败======//')
+        return false
+      })
   },
+  /**
+   * 取出当前队列中的第一条投诉处理记录
+   * @return 返回投诉处理队列的第一条记录
+   */
   pop: () => {
-    return redis.pipeline().lpop(keys.handles).exec(function (err, result) {
-      let actionResult = true
-      if (err) {
-        log.warn('//======投诉数据移除队列【失败】======//')
-        log.warn(err)
-        actionResult = false
-      } else {
-        log.info('//======投诉数据移除队列【成功】======//')
-      }
-      return actionResult
-    })
+    return redis
+      .pipeline()
+      .lpop(keys.handles)
+      .exec()
+      .then(function (result) {
+        var returnValue = null
+        log.info('//======投诉数据移除检索【成功】======//')
+        log.info(result[0][1])
+        returnValue = JSON.parse(result[0][1])
+        return returnValue
+      })
   }
 }
 

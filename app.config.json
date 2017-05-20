@@ -16,7 +16,8 @@
       "/vcode"
     ],
     "outAuthServices": [
-      "/api/vcode"
+      "/api/vcode",
+      "/api/complaint/handling"
     ]
   },
   "weixin": {
@@ -141,10 +142,11 @@
   },
   "robot": {
     "login": {
+      "maxLoginCount":5,
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": true,
+        "show": false,
         "webPreferences": {
           "webSecurity": false
         }

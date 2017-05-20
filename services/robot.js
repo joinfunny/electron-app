@@ -12,10 +12,13 @@ module.exports = {
     callback: function (req, res, callback) {
       let handles = req.body
       log.info('//======接受到实立传输的已处理投诉订单=======//')
+      if (typeof handles === 'object') {
+        handles = [handles]
+      }
       service.handleComplaints(handles)
-        .then(function (result) {
+        .then(function () {
           callback({
-            success: result
+            success: true
           })
         })
     }

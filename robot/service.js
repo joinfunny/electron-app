@@ -41,11 +41,7 @@ module.exports = {
    * 2.更新status
    */
   handleComplaints: (handles) => {
-    return Promise.all([store.handle.add(handles), store.complaints.updates(handles, store.status.handled)])
-      .then(function (result) {
-        log.info(result)
-        return true
-      })
+    return Promise.all([store.handle.push(handles), store.complaints.updates(handles, store.status.handled)])
   },
   /**
    * 向实立发送已经处理的通知
@@ -55,7 +51,7 @@ module.exports = {
    */
   handledComplaints: (handle, result) => {
     if (!result) {
-      store.handle.push(handle)
+      store.handle.push([handle])
       return
     }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
@@ -74,7 +70,7 @@ module.exports = {
         }) */
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
         if (!result.success) {
-          store.handle.push(handle)
+          store.handle.push([handle])
           return
         }
 
@@ -89,6 +85,8 @@ module.exports = {
       .catch(function (err) {
         log.error('//======向实立发送数据发生错误======//')
         log.error(err)
+        log.warn('//======重新将投诉处理加入队列======//')
+        store.handle.push([handle])
       })
   }
 }

@@ -22,8 +22,9 @@ var nightmare = Nightmare(config.nightmare)
         if (url.indexOf('&g_ty=lk') > -1) {
           log.info('--------------------正在进入主页面----------------')
           log.info(url)
-          complaints.run(nightmare)
-          exceptionOrder.run(nightmare)
+          // complaints.run(nightmare)
+          // exceptionOrder.run(nightmare)
+          listener.run(nightmare)
         }
       })
   })
@@ -38,5 +39,3 @@ module.exports.run = function () {
       return loginPage.run(nightmare)
     })
 }
-
-module.exports.listener = listener

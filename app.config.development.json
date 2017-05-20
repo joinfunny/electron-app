@@ -7,7 +7,7 @@
     "routeDirectory": "./routes"
   },
   "runtime": {
-    "listenPort": "9092",
+    "listenPort": "9091",
     "session": {
       "mode": "local",
       "maxAge": 86400000,

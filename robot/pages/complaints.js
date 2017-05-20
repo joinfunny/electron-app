@@ -2,10 +2,14 @@
  * 处理订单
  */
 var Nightmare = require('nightmare')
-var config = require('../../runtime').App.AppConfig.robot.complaints
+var Runtime = require('../../runtime')
+var async = require('async')
+var store = require('../store')
+var log = Runtime.App.Log.helper
+var config = Runtime.App.AppConfig.robot.complaints
 
 /* eslint-disable no-unused-vars */
-var complaintDetail = require('./complaint-detail')
+var ComplaintDetail = require('./complaint-detail')
 module.exports = {
   nightmare: null,
   run: function (nm) {
@@ -20,7 +24,7 @@ module.exports = {
           .cookies.set(cookies)
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
           .then(function () {
-            console.log('------进入投诉处理主页面------')
+            log.info('//=========进入投诉处理主页面=========//')
             that.exec()
           })
       })
@@ -37,33 +41,47 @@ module.exports = {
           trs.forEach(function (tr) {
             var a = tr.querySelector('td:nth-child(1)>a')
             if (a) {
-              links.push('http://chong.qq.com/php/' + a.getAttribute('href'))
+              links.push({
+                docmentsNo: a.innerText,
+                url: 'http://chong.qq.com/php/' + a.getAttribute('href')
+              })
             }
           })
         }
         return links
       })
       .then(function (links) {
-        // console.log(JSON.stringify(links, null, 2))
-        console.log('-------本次共获取到' + links.length + '条投诉处理--------')
-        // 定时器模拟打开新的投诉详情页面
-        var timer = setInterval(function () {
-          if (links && links.length > 0) {
-            let link = links.splice(0, 1)[0]
-            // that.nightmare
-            //   .cookies
-            //   .get()
-            //   .then(function(cookies) {
-            //     console.log('-------获取到的投诉处理地址：--------')
-            //     console.log(link)
-            //     complaintDetail(cookies, link)
-            //   })
-          } else {
-            clearInterval(timer)
-            that.next()
-          }
-        }, 2000)
+        log.info(JSON.stringify(links, null, 2))
+        log.info('//========本次共获取到' + links.length + '条投诉处理========//')
+        store.complaints.exists(links).then(function (notExistsLinks) {
+          that.loopComplaintDetail(notExistsLinks)
+        })
       })
+  },
+  /**
+   * 轮询新的投诉订单，查询其明细信息
+   * @param {Array} links 经过数据过滤后的新的投诉订单
+   */
+  loopComplaintDetail: function (links) {
+    var that = this
+    // 定时器模拟打开新的投诉详情页面
+    var timer = setInterval(function () {
+      if (links && links.length > 0) {
+        let link = links.splice(0, 1)[0]
+        that.nightmare
+          .cookies
+          .get()
+          .then(function (cookies) {
+            log.info('//======获取到的投诉处理地址：======//')
+            log.info(link)
+            let complaintDetail = new ComplaintDetail(cookies, link)
+            complaintDetail.run()
+          })
+      } else {
+        clearInterval(timer)
+        that.next()
+      }
+    }, 2000)
   },
   /**
    * 轮询整个类别区域下的所有LI，获取是否有数据
@@ -91,6 +109,7 @@ module.exports = {
             current = next
             next = null
           } else {
+            console.log('//======捕获到新的投诉订单=====//')
             console.log(text)
           }
         }

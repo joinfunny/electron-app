@@ -27,15 +27,15 @@ Runtime.Router.use(app, Runtime.App.AppConfig)
 
 console.log('----正在启动机器人------')
 // 启动机器人
-// robot.run()
+robot.run()
 
 // 启用授权
 // Runtime.Authorization.use(app)
 
 // wechat(function(app,weixinRouter) {
-// 	weixinRouter.onOauthSuccess(function(req, res, data){
-// 		res.render("oauth-success",data)
-// 	})
+// weixinRouter.onOauthSuccess(function(req, res, data){
+//  res.render("oauth-success",data)
+// })
 // }, app, global.AppConfig)
 
 // 404错误处理

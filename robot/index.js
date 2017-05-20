@@ -1,5 +1,7 @@
-var Nightmare = require('nightmare')
-var config = require('../runtime').App.AppConfig.robot.login
+let Nightmare = require('nightmare')
+let Runtime = require('../runtime')
+let config = Runtime.App.AppConfig.robot.login
+let log = Runtime.App.Log.helper
 
 require('nightmare-iframe-manager')(Nightmare)
 
@@ -9,15 +11,17 @@ var loginPage = require('./pages/login')
 var complaints = require('./pages/complaints')
 // 异常订单
 var exceptionOrder = require('./pages/exception-order')
-console.log(nightmare)
+
+var listener = require('./pages/complaints-listener')
+
 var nightmare = Nightmare(config.nightmare)
   .on('did-finish-load', function () {
-    console.log('did-finish-load')
+    log.info('did-finish-load')
     nightmare.url()
       .then(function (url) {
         if (url.indexOf('&g_ty=lk') > -1) {
-          console.log('--------------------正在进入主页面----------------')
-          console.log(url)
+          log.info('--------------------正在进入主页面----------------')
+          log.info(url)
           complaints.run(nightmare)
           exceptionOrder.run(nightmare)
         }
@@ -28,8 +32,11 @@ var nightmare = Nightmare(config.nightmare)
   })
 
 module.exports.run = function () {
+  global.robot = this.nightmare
   nightmare
     .then(function () {
       return loginPage.run(nightmare)
     })
 }
+
+module.exports.listener = listener

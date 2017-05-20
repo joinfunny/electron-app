@@ -70,19 +70,19 @@
           "type": "console"
         },
         {
-          "pattern": "debug/yyyy-MM-dd-hh.log",
+          "pattern": ".debug.yyyy-MM-dd-hh.log",
           "category": "logDebug"
         },
         {
-          "pattern": "info/yyyy-MM-dd-hh.log",
+          "pattern": ".info.yyyy-MM-dd-hh.log",
           "category": "logInfo"
         },
         {
-          "pattern": "warn/yyyy-MM-dd-hh.log",
+          "pattern": ".warn.yyyy-MM-dd-hh.log",
           "category": "logWarn"
         },
         {
-          "pattern": "err/yyyy-MM-dd-hh.log",
+          "pattern": ".err.yyyy-MM-dd-hh.log",
           "category": "logErr"
         }
       ],
@@ -147,7 +147,7 @@
         "openDevTools": {
           "mode": "detach"
         },
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -170,6 +170,9 @@
         "webPreferences": {
           "webSecurity": false
         }
+      },
+      "listener":{
+        "tickTime":5000
       }
     },
     "exceptionOrder": {

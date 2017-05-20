@@ -4,6 +4,8 @@
 var path = require('path')
 var Moment = require('moment')
 var complaints = require('./complaints')
+var Runtime = require('../../runtime')
+var log = Runtime.App.Log.helper
 var exceptionOrderMonitor = require('./exception-order')
 module.exports = {
   nightmare: null,
@@ -16,8 +18,8 @@ module.exports = {
     return that.nightmare
       .url()
       .then(function (url) {
-        console.log('--------------------进入主页面----------------')
-        console.log(url)
+        log.info('//========进入主页面,URL地址为：=========//')
+        log.info(url)
         return that.nightmare
           .click('#nav>li:nth-child(6)>a')
           .wait(600)

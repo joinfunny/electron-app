@@ -3,7 +3,9 @@ var path = require('path')
 var Moment = require('moment')
 var request = require('request')
 var capturePlugin = require('nightmare-screenshot')
-var config = require('../../runtime').App.AppConfig.robot.login
+var Runtime = require('../../runtime')
+var log = Runtime.App.Log.helper
+var config = Runtime.App.AppConfig.robot.login
 
 module.exports = {
   nightmare: null,
@@ -37,9 +39,9 @@ module.exports = {
           .exists('#newVcodeIframe>iframe')
       })
       .then(function (existsVcodeIFrame) {
-        console.log(existsVcodeIFrame)
+        log.info(existsVcodeIFrame)
         if (existsVcodeIFrame) {
-          console.log('需要输入验证码')
+          log.info('需要输入验证码')
           return that.nightmare
             .enterIFrame('#newVcodeIframe>iframe')
             .wait('#capImg')
@@ -47,12 +49,12 @@ module.exports = {
               that.validateVcode()
             })
         } else {
-          console.log('不需要输入验证码')
+          log.info('不需要输入验证码')
           return that.nightmare.resetFrame()
         }
       })
       .then(function () {
-        console.log('ok')
+        log.info('//===========login ok==============//')
       })
   },
   /**
@@ -63,7 +65,10 @@ module.exports = {
    */
   validateVcode: function () {
     var that = this
-    if (that.vcodeRequestCount >= 5) return
+    if (that.vcodeRequestCount >= 5) {
+      log.info('登录次数超过5次，已终止登录')
+      return
+    }
     that.nightmare
       .use(capturePlugin.screenshotSelector(that.generateNewVcodePath(), '#capImg', function () {
         request.post({
@@ -71,19 +76,21 @@ module.exports = {
           codeType: config.vcode.serviceCodeType,
           image: fs.createReadStream(that.getVcodePath())
         }, function (err, response, body) {
+          log.info('//=======请求验证码服务返回=======//')
+          log.info(JSON.stringify(body, null, 2))
           that.vcodeRequestCount += 1
           if (!err) {
             if (body.error_code === 0) {
-              console.log('获取到的验证码：' + body.result)
+              log.info('获取到的验证码：' + body.result)
               // 获取到验证码模拟输入提交
               that.inputVcode(body.result)
             } else {
               // 获取验证码失败，重新发起请求获取验证码
-              console.log('获取验证码失败：' + body.error_code + ',' + body.reason)
+              log.warn('获取验证码失败：' + body.error_code + ',' + body.reason)
               that.validateVcode()
             }
           } else {
-            console.log(err)
+            log.warn(err)
           }
         })
       }))
@@ -97,6 +104,7 @@ module.exports = {
       .wait(2000)
       .exists('#capAns')
       .then(function (notValid) {
+        log.info(notValid ? '尝试输入验证码，但没有验证通过，将会再次重新请求验证服务' : '尝试输入验证码，并通过了验证，即将登录...')
         if (notValid) {
           that.validateVcode()
         }

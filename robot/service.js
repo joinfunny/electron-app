@@ -16,7 +16,7 @@ module.exports = {
       .then(function (result) {
         log.info('//======向实立发送投诉订单请求已返回消息======//')
         log.info(JSON.stringify(result, null, 2))
-        store.complaints.adds(complaints).then(function (result) {
+        return store.complaints.adds([complaints]).then(function (result) {
           if (result) {
             log.info('//======发送的投诉订单已经记录到Redis中======//')
           } else {

@@ -7,6 +7,7 @@ var complaints = require('./complaints')
 var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var exceptionOrderMonitor = require('./exception-order')
+var complaintsListener = require('./complaints-listener')
 module.exports = {
   nightmare: null,
   run: function (nightmare) {
@@ -36,6 +37,8 @@ module.exports = {
         complaints.run(that.nightmare)
         // 异常订单
         exceptionOrderMonitor.run(that.nightmare)
+        // 监控投诉订单处理
+        complaintsListener.run(that.nightmare)
       })
   }
 

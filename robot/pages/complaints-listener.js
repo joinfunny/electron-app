@@ -9,8 +9,11 @@ var service = require('../service')
  * 投诉订单处理后的监听
  * 1.将投诉订单
  */
-module.exports = (nm) => {
-  setInterval(function () {
-    log.info('//======投诉订单监听执行======//')
-  }, config.listener.tickTime)
+module.exports = {
+  run: (nm) => {
+    setInterval(function () {
+      log.info('//======投诉订单监听执行======//')
+    }, config.listener.tickTime)
+  }
+
 }

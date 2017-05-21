@@ -1,6 +1,5 @@
 let Runtime = require('../runtime/index')
 let log = Runtime.App.Log.helper
-let nightmare = global.robot
 let service = require('../robot/service')
 
 module.exports = {
@@ -21,6 +20,16 @@ module.exports = {
             success: true
           })
         })
+    }
+  },
+  '/api/test': {
+    method: 'post',
+    mock: false,
+    callback: function (req, res, callback) {
+      callback({
+        success: true,
+        data: req.body
+      })
     }
   }
 }

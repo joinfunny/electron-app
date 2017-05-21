@@ -9,7 +9,7 @@ promise.promisifyAll(request)
 module.exports = {
   pushComplaints: (complaints) => {
     return request.post({
-      url: 'http://localhost:9092/api/test',
+      url: 'http://localhost:9091/api/test',
       json: true,
       body: complaints
     })
@@ -51,7 +51,7 @@ module.exports = {
     }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
     return request.post({
-      url: 'http://localhost:9092/api/test',
+      url: 'http://localhost:9091/api/test',
       json: true,
       body: handle
     })
@@ -87,7 +87,7 @@ module.exports = {
       })
   },
   pushExceptionOrders: (count) => {
-    request.post('http://localhost:9092/api/test', {
+    request.post('http://localhost:9091/api/test', {
       json: true,
       body: {count: count}
     }).then(function (result) {

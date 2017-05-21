@@ -16,7 +16,9 @@ class Complaints {
     var that = this
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
-    that.nightmare = new Nightmare(config.nightmare)
+    var curConfig = Object.assign({}, config.nightmare)
+    // curConfig.parent = that.rootNightmare
+    that.nightmare = new Nightmare(curConfig)
     this.eventEmitter = eventEmitter
     return this
   }
@@ -27,22 +29,25 @@ class Complaints {
       .get()
       .then(function (cookies) {
         that.nightmare
+          .on('did-finish-load', function () {
+            that.nightmare
+              .url()
+              .then(function (url) {
+                if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseList') > -1) {
+                  that.exec()
+                } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+                  log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
+                  that.dispose(function () {
+                    that.eventEmitter.emit('login-expired', that)
+                  })
+                }
+              })
+          })
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
-          .wait(2000)
-          .url()
-          .then(function (url) {
-            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-              log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
-              that.dispose(function () {
-                that.eventEmitter.emit('login-expired', that)
-              })
-            }
-          })
-          .then(function () {
-            log.info('//=========进入投诉处理主页面=========//')
-            that.exec()
+          .run(function () {
+            console.log('进入投诉订单查询页面')
           })
       })
   }
@@ -71,9 +76,11 @@ class Complaints {
       .then(function (links) {
         // log.info(JSON.stringify(links, null, 2))
         log.info('//========本次共获取到' + links.length + '条投诉处理========//')
-        store.complaints.exists(links).then(function (notExistsLinks) {
-          that.loopComplaintDetail(notExistsLinks)
-        })
+        if (links && links.length > 0) {
+          store.complaints.exists(links).then(function (notExistsLinks) {
+            that.loopComplaintDetail(notExistsLinks)
+          })
+        }
       })
   }
   /**
@@ -131,12 +138,12 @@ class Complaints {
             console.log(text)
           }
         }
-        next.firstChild.click()
+        return next.firstChild.getAttribute('data-filter')
       })
-      .wait(2000)
-      .wait('#frm>div:nth-child(7)>ul>li>a.on')
-      .then(function () {
-        that.exec()
+      .then(function (filterType) {
+        console.log(filterType)
+        return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterType + '&status=20&searchCnt=&searchBy=mobile')
+        .run(function () {})
       })
   }
   dispose (cb) {

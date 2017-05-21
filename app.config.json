@@ -164,7 +164,7 @@
       }
     },
     "complaints": {
-      "run":false,
+      "run":true,
       "nightmare": {
         "width": 800,
         "height": 600,
@@ -201,7 +201,7 @@
       }
     },
     "complaintListener": {
-      "run":false
+      "run":true
     }
   },
   "message": {

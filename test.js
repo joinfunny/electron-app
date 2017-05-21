@@ -19,8 +19,12 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
+nightmare.goto('http://stream.ruixuesoft.com/index')
+.then(function (result) {
+  console.log(result)
+})
 
-var dom = 'body > div > ul > li'
+/* var dom = 'body > div > ul > li'
 nightmare.goto('http://stream.ruixuesoft.com/login')
   .wait(2000)
   .type('input[type="tel"]', '15810929612')
@@ -59,7 +63,7 @@ nightmare.goto('http://stream.ruixuesoft.com/login')
           })
           .run()
       })
-  })
+  }) */
 // .use(capturePlugin.screenshotSelector(path.resolve(__dirname, './snapshot/test.png'), dom, function () {
 //   console.log(arguments)
 // }))

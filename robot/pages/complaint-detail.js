@@ -6,28 +6,49 @@ var config = Runtime.App.AppConfig.robot.complaints
 var service = require('../service')
 
 class ComplaintDetail {
-  constructor (cookies, link, handle) {
-    this.cookies = cookies
-    this.link = link
-    this.handle = handle
-    this.nightmare = new Nightmare(config.nightmare)
+  constructor (nm, link, eventEmitter, handle) {
+    var that = this
+    that.rootNightmare = nm
+    that.link = link
+    that.handle = handle
+    that.eventEmitter = eventEmitter
+    that.nightmare = new Nightmare(config.nightmare)
+    .on('did-finish-load', function () {
+      log.info('did-finish-load')
+      that.nightmare
+          .url()
+          .then(function (url) {
+            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+              log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
+              that.nightmare.end().then(function () {
+                that.nightmare = null
+                that.eventEmitter.emit('detail-login-expired', that)
+              })
+            }
+          })
+    })
   }
 
   run () {
     let that = this
     let url = that.link.url
     log.info('//======正在打开投诉订单 ' + that.link.docmentsNo + '的处理窗口...======//')
-    that.nightmare
-      .goto('http://chong.qq.com/')
-      .cookies.set(that.cookies)
-      .goto(url)
-      .wait('#intro_id>div')
-      .then(function () {
-        if (that.handle) {
-          that.doHandle()
-        } else {
-          that.doDetail()
-        }
+    that.rootNightmare
+      .cookies
+      .get()
+      .then(function (cookies) {
+        that.nightmare
+          .goto('http://chong.qq.com/')
+          .cookies.set(cookies)
+          .goto(url)
+          .wait('#intro_id>div')
+          .then(function () {
+            if (that.handle) {
+              that.doHandle()
+            } else {
+              that.doDetail()
+            }
+          })
       })
   }
 
@@ -35,11 +56,11 @@ class ComplaintDetail {
     let that = this
     log.info('//======处理投诉订单【开始】======//')
     that.nightmare.evaluate(function () {
-      // 首先判断当前的投诉订单状态是什么
-      // 如果处于没有处理状态，则根据handle进行处理
-      // 如果处理过了，则直接返回
-      // 没有修改过就修改
-      // TODO...
+        // 首先判断当前的投诉订单状态是什么
+        // 如果处于没有处理状态，则根据handle进行处理
+        // 如果处理过了，则直接返回
+        // 没有修改过就修改
+        // TODO...
       return true
     })
       // 再次刷新浏览器，再次确认是否处理完成

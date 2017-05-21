@@ -10,12 +10,34 @@ var config = Runtime.App.AppConfig.robot.complaints
 
 /* eslint-disable no-unused-vars */
 var ComplaintDetail = require('./complaint-detail')
-module.exports = {
-  nightmare: null,
-  run: function (nm) {
+
+class Complaints {
+  constructor (nm, eventEmitter) {
     var that = this
-    this.nightmare = new Nightmare(config.nightmare)
-    nm
+    that.rootNightmare = nm
+    that.eventEmitter = eventEmitter
+    that.nightmare = new Nightmare(config.nightmare)
+      .on('did-finish-load', function () {
+        log.info('did-finish-load')
+        that.nightmare
+          .url()
+          .then(function (url) {
+            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+              log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
+              that.dispose(function () {
+                that.eventEmitter.emit('login-expired', that)
+              })
+            } else if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList') > -1) {
+              that.exec()
+            }
+          })
+      })
+    this.eventEmitter = eventEmitter
+    return this
+  }
+  run () {
+    var that = this
+    that.rootNightmare
       .cookies
       .get()
       .then(function (cookies) {
@@ -25,11 +47,10 @@ module.exports = {
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
           .then(function () {
             log.info('//=========进入投诉处理主页面=========//')
-            that.exec()
           })
       })
-  },
-  exec: function () {
+  }
+  exec () {
     var that = this
     return that.nightmare
       .evaluate(function () {
@@ -57,12 +78,12 @@ module.exports = {
           that.loopComplaintDetail(notExistsLinks)
         })
       })
-  },
+  }
   /**
    * 轮询新的投诉订单，查询其明细信息
    * @param {Array} links 经过数据过滤后的新的投诉订单
    */
-  loopComplaintDetail: function (links) {
+  loopComplaintDetail (links) {
     var that = this
     // 定时器模拟打开新的投诉详情页面
     var timer = setInterval(function () {
@@ -74,7 +95,7 @@ module.exports = {
           .then(function (cookies) {
             log.info('//======获取到的投诉处理地址：======//')
             log.info(link)
-            let complaintDetail = new ComplaintDetail(cookies, link)
+            let complaintDetail = new ComplaintDetail(that.rootNightmare, link, that.eventEmitter)
             complaintDetail.run()
           })
       } else {
@@ -82,13 +103,13 @@ module.exports = {
         that.next()
       }
     }, config.worker.tickTime)
-  },
+  }
   /**
    * 轮询整个类别区域下的所有LI，获取是否有数据
    * 如果有数据。则点击跳转到对应的类别下
    * 没有的话，会定位到第一个类别，然后点击
    */
-  next: function () {
+  next () {
     var that = this
     that.nightmare
       .evaluate(function () {
@@ -121,4 +142,15 @@ module.exports = {
         that.exec()
       })
   }
+  dispose (cb) {
+    var that = this
+    that.nightmare
+      .end()
+      .then(function () {
+        log.info('//======投诉订单窗口已销毁======//')
+        that.nightmare = null
+        cb && cb()
+      })
+  }
 }
+module.exports = Complaints

@@ -3,6 +3,8 @@ require('nightmare-iframe-manager')(Nightmare)
 var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.exceptionOrder
+var service = require('../service')
+var path = require('path')
 
 function _queryString (query, url, undecode, isHash) {
   var search, index
@@ -16,49 +18,83 @@ function _queryString (query, url, undecode, isHash) {
     ? undecode ? RegExp.$1 : unescape(RegExp.$1)
     : null
 }
-
-module.exports = {
-  run: (nm) => {
-    nm
+class ExceptionOrder {
+  constructor (nm, eventEmitter) {
+    this.rootNightmare = nm
+    this.eventEmitter = eventEmitter
+  }
+  run () {
+    var that = this
+    that.rootNightmare
       .cookies
       .get()
       .then(function (cookies) {
-        log.info('正在打开异常订单窗口...')
-        setInterval(function () {
-          let nightmare = new Nightmare(config.nightmare)
-          nightmare
-            .goto('http://chong.qq.com/')
-            .cookies
-            .set(cookies)
-            .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=3&time_begin=&time_end=&dealType=0')
-            .wait('.ui-page-cont')
-            .evaluate(function () {
-              var pager = document.querySelector('.ui-page-cont')
-              var lastPage = pager.lastElementChild
-              if (lastPage.innerText === '尾页') {
-                return 'http://chong.qq.com' + lastPage.getAttribute('href')
-              }
-            })
-            .then(function (url) {
-              var countTotal = +_queryString('page', url)
-
-              nightmare.end().then(function () {
-                log.info('获取到异常订单数据量：' + countTotal * 20)
-                log.data('异常订单数据量', countTotal * 20)
-              })
-              // request.post('http://localhost:9092/api/orders', {
-              //   json: true,
-              //   body: items
-              // }, function(err, response, body) {
-              //   if (!err) {
-              //     console.log(response.body)
-              //     return nightmare.end().then(function() {
-              //       console.log('nightmare ended')
-              //     })
-              //   }
-              // })
-            })
-        }, config.worker.tickTime)
+        that.init(cookies)
+          .then(function () {
+            that.monitor()
+          })
       })
   }
+  init (cookies) {
+    var that = this
+    if (!that.nightmare) {
+      that.nightmare = new Nightmare(config.nightmare)
+        .on('did-finish-load', function () {
+          log.info('did-finish-load')
+          return that.nightmare
+            .url()
+            .then(function (currentUrl) {
+              if (currentUrl.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+                log.warn('//--------------------【异常订单统计数量监控】用户过期，需要重新登录----------------//')
+                return that.nightmare.end().then(function () {
+                  that.nightmare = null
+                  that.eventEmitter.emit('login-expired', that)
+                })
+              }
+              return true
+            })
+        })
+        .on('console', function (type, msg) {
+          console[type]('evaluate :' + msg)
+        })
+      that.nightmare
+        .goto('http://chong.qq.com/')
+        .cookies
+        .set(cookies)
+        .then(function () {
+          log.info('初始化异常订单监听窗口')
+        })
+    }
+    return that.nightmare
+  }
+  monitor () {
+    var that = this
+    setInterval(function () {
+      that.nightmare
+        .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=3&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
+        .wait('.ui-page-cont')
+        .run(function () {
+        })
+        .then(function () {
+          that.nightmare.evaluate(function () {
+            var pager = document.querySelector('.ui-page-cont')
+            var lastPage = pager.lastElementChild
+            console.log(lastPage.innerText)
+            if (lastPage.innerText === '尾页') {
+              return 'http://chong.qq.com' + lastPage.getAttribute('href')
+            } else {
+              return ''
+            }
+          })
+          .then(function (url) {
+            log.info(url)
+            if (!url) return
+            var countTotal = +_queryString('page', url)
+            service.pushExceptionOrders(countTotal * 20)
+          })
+        })
+    }, config.worker.tickTime)
+  }
 }
+
+module.exports = ExceptionOrder

@@ -147,7 +147,7 @@
   },
   "robot": {
     "login": {
-      "maxLoginCount":5,
+      "maxLoginCount":3,
       "nightmare": {
         "width": 1024,
         "height": 768,

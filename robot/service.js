@@ -85,5 +85,24 @@ module.exports = {
         store.handle.push([handle])
         log.data('处理投诉订单失败', 1)
       })
+  },
+  pushExceptionOrders: (count) => {
+    request.post('http://localhost:9092/api/test', {
+      json: true,
+      body: {count: count}
+    }).then(function (result) {
+      if (result.success) {
+        log.info('成功推送异常订单统计数')
+        log.data('推送异常订单统计数', count)
+      } else {
+        log.warn('推送异常订单统计数失败')
+      }
+    })
+    .catch(function (err) {
+      if (err) {
+        log.error('//======向实立推送异常订单统计数失败======//')
+        log.error(err)
+      }
+    })
   }
 }

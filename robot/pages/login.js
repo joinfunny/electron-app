@@ -2,12 +2,12 @@ var fs = require('fs')
 var path = require('path')
 var Moment = require('moment')
 var request = require('request')
-var capturePlugin = require('nightmare-screenshot')
 var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.login
 
 module.exports = {
+  eventEmitter: null,
   nightmare: null,
   vcodeRequestCount: 0,
   getVcodePath: function () {
@@ -24,9 +24,10 @@ module.exports = {
     log.info(this._vcodePath)
     return this._vcodePath
   },
-  run: function (nightmare) {
+  run: function (nightmare, eventEmitter) {
     var that = this
     this.nightmare = nightmare
+    this.eventEmitter = eventEmitter
     return that.nightmare
       .goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
       .then(function () {
@@ -71,7 +72,11 @@ module.exports = {
   validateVcode: function () {
     var that = this
     if (that.vcodeRequestCount >= config.maxLoginCount) {
-      log.info('登录次数超过' + config.maxLoginCount + '次，已终止登录')
+      log.warn('登录次数超过' + config.maxLoginCount + '次，页面将会重新刷新尝试登录')
+      that.nightmare.resetFrame()
+      .then(function () {
+        that.run(that.nightmare)
+      })
       return
     }
     that.nightmare

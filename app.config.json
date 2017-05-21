@@ -177,7 +177,7 @@
         }
       },
       "worker":{
-        "tickTime":10000
+        "tickTime":5000
       },
       "listener":{
         "tickTime":10000
@@ -201,7 +201,7 @@
       }
     },
     "complaintListener": {
-      "run":true
+      "run":false
     }
   },
   "message": {

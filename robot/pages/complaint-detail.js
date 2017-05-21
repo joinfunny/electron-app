@@ -13,20 +13,20 @@ class ComplaintDetail {
     that.handle = handle
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
-    .on('did-finish-load', function () {
-      log.info('did-finish-load')
-      that.nightmare
-          .url()
-          .then(function (url) {
-            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-              log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
-              that.nightmare.end().then(function () {
-                that.nightmare = null
-                that.eventEmitter.emit('detail-login-expired', that)
-              })
-            }
-          })
-    })
+    // .on('did-finish-load', function () {
+    //   log.info('did-finish-load')
+    //   that.nightmare
+    //     .url()
+    //     .then(function (url) {
+    //       if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+    //         log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
+    //         that.nightmare.end().then(function () {
+    //           that.nightmare = null
+    //           that.eventEmitter.emit('detail-login-expired', that)
+    //         })
+    //       }
+    //     })
+    // })
   }
 
   run () {
@@ -41,13 +41,28 @@ class ComplaintDetail {
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
           .goto(url)
-          .wait('#intro_id>div')
-          .then(function () {
-            if (that.handle) {
-              that.doHandle()
+          .url()
+          .then(function (url) {
+            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+              log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
+              return that.nightmare.end().then(function () {
+                that.nightmare = null
+                that.eventEmitter.emit('detail-login-expired', that)
+              })
             } else {
-              that.doDetail()
+              return that.nightmare
             }
+          })
+          .then(function () {
+            that.nightmare
+              .wait('#intro_id>div')
+              .then(function () {
+                if (that.handle) {
+                  that.doHandle()
+                } else {
+                  that.doDetail()
+                }
+              })
           })
       })
   }
@@ -83,37 +98,39 @@ class ComplaintDetail {
 
   doDetail () {
     let that = this
-    that.nightmare.evaluate(function () {
-      var docmentsNo = document.querySelector('#task_id').innerText
-      var content = document.querySelector('#intro_id>div').innerHTML.split('<br>')
-      var entry = {
-        'docmentsNo': docmentsNo
-      }
-      var mapping = {
-        '交易单号': 'agentOrderNo',
-        '反馈原因': 'feedback',
-        '处理方式': 'coustomerRequest',
-        '联系方式': 'phoneNo'
-      }
-      for (var i in content) {
-        var pairs = content[i].split(':')
-        var prop = mapping[pairs[0]]
-        if (prop) {
-          entry[prop] = pairs[1]
+    that.nightmare
+      .evaluate(function () {
+        var docmentsNo = document.querySelector('#task_id').innerText
+        var content = document.querySelector('#intro_id>div').innerHTML.split('<br>')
+        var entry = {
+          'docmentsNo': docmentsNo
         }
-      }
-      return entry
-    }).then(function (entry) {
-      log.info('//======解析到新的投诉订单======//')
-      log.info(entry)
+        var mapping = {
+          '交易单号': 'agentOrderNo',
+          '反馈原因': 'feedback',
+          '处理方式': 'coustomerRequest',
+          '联系方式': 'phoneNo'
+        }
+        for (var i in content) {
+          var pairs = content[i].split(':')
+          var prop = mapping[pairs[0]]
+          if (prop) {
+            entry[prop] = pairs[1]
+          }
+        }
+        return entry
+      })
+      .then(function (entry) {
+        log.info('//======解析到新的投诉订单======//')
+        log.info(entry)
 
-      service.pushComplaints([entry]).then(function (result) {
-        that.nightmare.end().then(function () {
-          log.info('//======解析到的投诉订单已经发送，窗口已关闭======//')
-          that.dispose()
+        service.pushComplaints([entry]).then(function (result) {
+          that.nightmare.end().then(function () {
+            log.info('//======解析到的投诉订单已经发送，窗口已关闭======//')
+            that.dispose()
+          })
         })
       })
-    })
   }
 
   dispose () {
@@ -121,7 +138,6 @@ class ComplaintDetail {
     that.cookies = null
     that.nightmare = null
     that.link = null
-    that = null
   }
 }
 

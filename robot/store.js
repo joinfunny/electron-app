@@ -80,7 +80,7 @@ var complaints = {
         }
       })
       if (notExists && notExists.length > 0) {
-        log.warn('抓取到【' + notExists.length + '】条新的投诉订单')
+        log.warn('经比对，最终得到【' + notExists.length + '】条新的投诉订单')
       }
       return notExists
     })

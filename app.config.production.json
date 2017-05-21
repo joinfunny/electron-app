@@ -7,9 +7,9 @@
     "routeDirectory": "./routes"
   },
   "runtime": {
-    "listenPort": "9092",
+    "listenPort": "9091",
     "session": {
-      "mode": "cluster",
+      "mode": "local",
       "maxAge": 86400000,
       "store": "redis"
     },
@@ -46,6 +46,65 @@
       "prefix": "/api/v1",
       "appKey": "14dd555807e549bbb4b4f3889708ec77",
       "appSecret": "6ca89616f12a41808b1c17b296bead8a"
+    }
+  },
+   "robot": {
+    "login": {
+      "maxLoginCount":3,
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "userName": "2919415063",
+      "password": "shili8269",
+      "vcode": {
+        "serviceKey": "ae6ed8d0322a8800a28f9de897d5934c",
+        "serviceCodeType": 8001
+      }
+    },
+    "complaints": {
+      "run":true,
+      "nightmare": {
+        "width": 800,
+        "height": 600,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "worker":{
+        "tickTime":3000
+      },
+      "listener":{
+        "tickTime":5000
+      }
+    },
+    "exceptionOrder": {
+      "run":true,
+      "worker":{
+        "tickTime":10000
+      },
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      }
+    },
+    "complaintListener": {
+      "run":true
     }
   }
 }

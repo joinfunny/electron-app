@@ -72,7 +72,7 @@ class Complaints {
         return links
       })
       .then(function (links) {
-        log.info(JSON.stringify(links, null, 2))
+        // log.info(JSON.stringify(links, null, 2))
         log.info('//========本次共获取到' + links.length + '条投诉处理========//')
         store.complaints.exists(links).then(function (notExistsLinks) {
           that.loopComplaintDetail(notExistsLinks)

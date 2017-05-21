@@ -1,6 +1,6 @@
 let Nightmare = require('nightmare')
 let Runtime = require('../runtime')
-let config = Runtime.App.AppConfig.robot.login
+let config = Runtime.App.AppConfig.robot
 let log = Runtime.App.Log.helper
 var events = require('events')
 require('nightmare-iframe-manager')(Nightmare)
@@ -30,25 +30,32 @@ class Main {
   }
   init () {
     var that = this
-    this.nightmare = Nightmare(config.nightmare)
+    this.nightmare = Nightmare(config.login.nightmare)
       .on('did-finish-load', function () {
         that.nightmare.url()
           .then(function (url) {
             if (url.indexOf('&g_ty=lk') > -1) {
               log.info('//--------------------正在进入主页面----------------//')
               log.info(url)
-              // if (!that.complaints) {
-              //   that.complaints = new Complaints(that.nightmare, that.eventEmitter)
-              // }
-              // that.complaints.run()
-              if (!that.exceptionOrder) {
-                that.exceptionOrder = new ExceptionOrder(that.nightmare, that.eventEmitter)
+              if (config.complaints.run) {
+                if (!that.complaints) {
+                  that.complaints = new Complaints(that.nightmare, that.eventEmitter)
+                }
+                that.complaints.run()
               }
-              that.exceptionOrder.run()
-              // if (!that.complaintListener) {
-              //   that.complaintListener = new ComplaintListener(that.nightmare, that.eventEmitter)
-              // }
-              // that.complaintListener.run()
+              if (config.exceptionOrder.run) {
+                if (!that.exceptionOrder) {
+                  that.exceptionOrder = new ExceptionOrder(that.nightmare, that.eventEmitter)
+                }
+                that.exceptionOrder.run()
+              }
+
+              if (config.complaintListener.run) {
+                if (!that.complaintListener) {
+                  that.complaintListener = new ComplaintListener(that.nightmare, that.eventEmitter)
+                }
+                that.complaintListener.run()
+              }
             }
           })
       })

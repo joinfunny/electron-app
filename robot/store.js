@@ -73,7 +73,7 @@ var complaints = {
       }
     }).then(function (results) {
       var notExists = []
-      log.info(JSON.stringify(results))
+      // log.info(JSON.stringify(results))
       results.forEach(function (result, index) {
         if (result[1] !== 1) {
           notExists.push(complaints[index])

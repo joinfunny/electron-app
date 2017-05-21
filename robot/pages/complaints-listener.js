@@ -23,7 +23,10 @@ class ComplaintListener {
       log.info('//======投诉订单监听执行======//')
       store.handle.pop().then(function (handle) {
         log.info('.................')
-        if (!handle) return
+        if (!handle) {
+          log.warn('队列中没有需要处理的投诉订单')
+          return
+        }
 
         let link = {
           docmentsNo: handle.docmentsNo,

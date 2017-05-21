@@ -49,20 +49,20 @@ class ComplaintDetail {
                 that.nightmare = null
                 that.eventEmitter.emit('detail-login-expired', that)
               })
-            } else {
-              return that.nightmare
             }
           })
           .then(function () {
-            that.nightmare
-              .wait('#intro_id>div')
-              .then(function () {
-                if (that.handle) {
-                  that.doHandle()
-                } else {
-                  that.doDetail()
-                }
-              })
+            if (that.nightmare) {
+              that.nightmare
+                .wait('#intro_id>div')
+                .then(function () {
+                  if (that.handle) {
+                    that.doHandle()
+                  } else {
+                    that.doDetail()
+                  }
+                })
+            }
           })
       })
   }

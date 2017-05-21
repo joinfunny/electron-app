@@ -17,21 +17,6 @@ class Complaints {
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
-      .on('did-finish-load', function () {
-        log.info('did-finish-load')
-        that.nightmare
-          .url()
-          .then(function (url) {
-            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-              log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
-              that.dispose(function () {
-                that.eventEmitter.emit('login-expired', that)
-              })
-            } else if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList') > -1) {
-              that.exec()
-            }
-          })
-      })
     this.eventEmitter = eventEmitter
     return this
   }
@@ -45,13 +30,25 @@ class Complaints {
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
+          .wait(2000)
+          .url()
+          .then(function (url) {
+            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+              log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
+              that.dispose(function () {
+                that.eventEmitter.emit('login-expired', that)
+              })
+            }
+          })
           .then(function () {
             log.info('//=========进入投诉处理主页面=========//')
+            that.exec()
           })
       })
   }
   exec () {
     var that = this
+    if (!that.nightmare) return
     return that.nightmare
       .evaluate(function () {
         var error = document.querySelector('body>div.table-cont.p-t-20.b-t-white>div.error-tips')

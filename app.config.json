@@ -164,7 +164,7 @@
       }
     },
     "complaints": {
-      "run":true,
+      "run":false,
       "nightmare": {
         "width": 800,
         "height": 600,
@@ -184,7 +184,7 @@
       }
     },
     "exceptionOrder": {
-      "run":false,
+      "run":true,
       "worker":{
         "tickTime":10000
       },

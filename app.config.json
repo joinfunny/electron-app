@@ -193,7 +193,7 @@
       }
     },
     "exceptionOrder": {
-      "run": false,
+      "run": true,
       "worker": {
         "tickTime": 10000
       },
@@ -210,7 +210,7 @@
       }
     },
     "complaintListener": {
-      "run": false
+      "run": true
     },
     "service":{
       "host":"http://localhost:9091",

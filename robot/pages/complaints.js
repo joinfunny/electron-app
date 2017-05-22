@@ -138,11 +138,14 @@ class Complaints {
             console.log(text)
           }
         }
-        return next.firstChild.getAttribute('data-filter')
+        return {
+          type: next.firstChild.getAttribute('data-filter'),
+          text: next.innerText
+        }
       })
-      .then(function (filterType) {
-        console.log(filterType)
-        return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterType + '&status=20&searchCnt=&searchBy=mobile')
+      .then(function (filterResult) {
+        log.info(JSON.stringify(filterResult))
+        return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile')
         .run(function () {})
       })
   }

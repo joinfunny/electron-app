@@ -177,14 +177,14 @@
         }
       },
       "worker":{
-        "tickTime":5000
+        "tickTime":1000
       },
       "listener":{
         "tickTime":10000
       }
     },
     "exceptionOrder": {
-      "run":true,
+      "run":false,
       "worker":{
         "tickTime":10000
       },
@@ -201,7 +201,7 @@
       }
     },
     "complaintListener": {
-      "run":true
+      "run":false
     }
   },
   "message": {

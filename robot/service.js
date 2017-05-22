@@ -8,26 +8,39 @@ promise.promisifyAll(request)
 
 module.exports = {
   pushComplaints: (complaints) => {
-    return request.post({
-      url: 'http://localhost:9091/api/test',
-      json: true,
-      body: complaints
+    return store.complaints.exists(complaints).then(function (notExistsComplaints) {
+      log.info(JSON.stringify(notExistsComplaints, null, 2))
+      if (notExistsComplaints && notExistsComplaints.length > 0) {
+        return request.post({
+          url: 'http://localhost:9091/api/test',
+          json: true,
+          body: notExistsComplaints
+        })
+          .then(function (result) {
+            log.info('//======向实立发送投诉订单请求已返回消息======//')
+            log.info(JSON.stringify(result, null, 2))
+            // 如果实立保存失败，则退出，不在执行记录Redis
+            if (!result.success) {
+              return
+            }
+            return store.complaints.adds(notExistsComplaints)
+          })
+          .catch(function (err) {
+            if (err) {
+              log.warn('//======向实立发送数据发生错误======//')
+              log.warn(err)
+            }
+          })
+      } else {
+        return new Promise((resolve, reject) => {
+          log.info('//============要添加到缓存中的原始订单数组：==================//')
+          log.info(JSON.stringify(complaints, null, 2))
+          log.info('//============排重后的投诉订单数组：==================//')
+          log.info('//============排重后的投诉订单数组为空，本次没有发送任何数据到实立==================//')
+          resolve()
+        })
+      }
     })
-      .then(function (result) {
-        log.info('//======向实立发送投诉订单请求已返回消息======//')
-        log.info(JSON.stringify(result, null, 2))
-        // 如果实立保存失败，则退出，不在执行记录Redis
-        if (!result.success) {
-          return
-        }
-        return store.complaints.adds(complaints)
-      })
-      .catch(function (err) {
-        if (err) {
-          log.warn('//======向实立发送数据发生错误======//')
-          log.warn(err)
-        }
-      })
   },
   /**
    * 接收到Redis中进行存储
@@ -35,7 +48,11 @@ module.exports = {
    * 2.更新status
    */
   handleComplaints: (handles) => {
-    return Promise.all([store.handle.push(handles), store.complaints.updates(handles, store.status.handled)])
+    return Promise
+      .all([store.handle.push(handles), store.complaints.updates(handles, store.status.handled)])
+      .then(function () {
+        log.info('//////======接收到的投诉订单处理已加入缓存队列，等待处理=======//////')
+      })
   },
   /**
    * 向实立发送已经处理的通知
@@ -89,7 +106,9 @@ module.exports = {
   pushExceptionOrders: (count) => {
     request.post('http://localhost:9091/api/test', {
       json: true,
-      body: {count: count}
+      body: {
+        count: count
+      }
     }).then(function (result) {
       if (result.success) {
         log.info('成功推送异常订单统计数')
@@ -98,11 +117,11 @@ module.exports = {
         log.warn('推送异常订单统计数失败')
       }
     })
-    .catch(function (err) {
-      if (err) {
-        log.error('//======向实立推送异常订单统计数失败======//')
-        log.error(err)
-      }
-    })
+      .catch(function (err) {
+        if (err) {
+          log.error('//======向实立推送异常订单统计数失败======//')
+          log.error(err)
+        }
+      })
   }
 }

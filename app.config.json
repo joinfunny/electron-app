@@ -97,14 +97,14 @@
         "logInfo": "ALL",
         "logWarn": "ALL",
         "logErr": "ALL",
-        "logData":"ALL"
+        "logData": "ALL"
       }
     },
     "redis": {
       "local": {
         "port": 6379,
         "host": "127.0.0.1",
-        "pass":"Aaa12345"
+        "pass": "Aaa12345"
       },
       "cluster": [{
         "port": 7000,
@@ -143,11 +143,20 @@
       "prefix": "/api/v1",
       "appKey": "14dd555807e549bbb4b4f3889708ec77",
       "appSecret": "6ca89616f12a41808b1c17b296bead8a"
+    },
+    "email": {
+      "service": "qq",
+      "port": 465,
+      "secureConnection": true,
+      "auth": {
+        "user": "348380264@qq.com",
+        "pass": "dhrrpvicchuobhij"
+      }
     }
   },
   "robot": {
     "login": {
-      "maxLoginCount":3,
+      "maxLoginCount": 3,
       "nightmare": {
         "width": 1024,
         "height": 768,
@@ -164,7 +173,7 @@
       }
     },
     "complaints": {
-      "run":true,
+      "run": true,
       "nightmare": {
         "width": 800,
         "height": 600,
@@ -176,17 +185,17 @@
           "webSecurity": false
         }
       },
-      "worker":{
-        "tickTime":1000
+      "worker": {
+        "tickTime": 1000
       },
-      "listener":{
-        "tickTime":10000
+      "listener": {
+        "tickTime": 10000
       }
     },
     "exceptionOrder": {
-      "run":false,
-      "worker":{
-        "tickTime":10000
+      "run": false,
+      "worker": {
+        "tickTime": 10000
       },
       "nightmare": {
         "width": 1024,
@@ -201,7 +210,7 @@
       }
     },
     "complaintListener": {
-      "run":false
+      "run": false
     }
   },
   "message": {

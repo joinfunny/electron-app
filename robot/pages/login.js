@@ -5,6 +5,7 @@ var request = require('request')
 var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.login
+var email = require('../../runtime/email')
 
 module.exports = {
   eventEmitter: null,
@@ -166,8 +167,10 @@ module.exports = {
       .wait(2000)
       .exists('#capAns')
       .then(function (notValid) {
-        log.info(notValid ? '尝试输入验证码，但没有验证通过，将会再次重新请求验证服务' : '尝试输入验证码，并通过了验证，即将登录...')
+        var msg = notValid ? '尝试输入验证码，但没有验证通过，将会再次重新请求验证服务' : '尝试输入验证码，并通过了验证，即将登录...'
+        log.info(msg)
         if (notValid) {
+          email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
           that.validateVcode()
         }
       })

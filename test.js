@@ -19,10 +19,39 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
-nightmare.goto('http://stream.ruixuesoft.com/index')
+
+var nodemailer = require('nodemailer')
+var transporter = nodemailer.createTransport({
+  service: 'qq',
+  port: 465,
+  secureConnection: true,
+  auth: {
+    user: '348380264@qq.com',
+    pass: 'dhrrpvicchuobhij'
+  }
+})
+// setup e-mail data with unicode symbols
+var mailOptions = {
+  from: '348380264@qq.com', // 发件地址
+  to: '348380264@qq.com', // 收件列表
+  subject: 'Hello sir', // 标题
+    // text和html两者只支持一种
+  text: 'Hello world ?', // 标题
+  html: '<b>Hello world ?</b>' // html 内容
+}
+
+// send mail with defined transport object
+transporter.sendMail(mailOptions, function (error, info) {
+  if (error) {
+    return console.log(error)
+  }
+  console.log('Message sent: ' + info.response)
+})
+
+/* nightmare.goto('http://stream.ruixuesoft.com/index')
 .then(function (result) {
   console.log(result)
-})
+}) */
 
 /* var dom = 'body > div > ul > li'
 nightmare.goto('http://stream.ruixuesoft.com/login')

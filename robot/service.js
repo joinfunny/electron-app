@@ -3,18 +3,49 @@ var log = Runtime.App.Log.helper
 var request = require('request-promise')
 
 var promise = require('bluebird')
+var crypto = require('crypto')
 var store = require('./store')
+var serviceConfig = Runtime.App.AppConfig.robot.service
 promise.promisifyAll(request)
 
+function complaintmd5 (complaint) {
+  var docmentsNo = encodeURI(complaint.docmentsNo)
+  var agentOrderNo = encodeURI(complaint.agentOrderNo)
+  var feedback = encodeURI(complaint.feedback)
+  var phoneNo = encodeURI(complaint.phoneNo)
+  var coustomerRequest = encodeURI(complaint.coustomerRequest)
+  var type = encodeURI(complaint.type)
+
+  var source = docmentsNo + agentOrderNo + feedback + phoneNo + coustomerRequest + type + serviceConfig.md5
+  const hash = crypto.createHash('md5')
+  // 可任意多次调用update():
+  hash.update(source)
+  complaint.sign = hash.digest('hex')
+  console.log(complaint)
+  return complaint
+}
+
+function exceptionOrderCountmd5 (order) {
+  var countTatol = encodeURI(order.countTatol)
+  var source = countTatol + serviceConfig.md5
+  const hash = crypto.createHash('md5')
+  // 可任意多次调用update():
+  hash.update(source)
+  order.sign = hash.digest('hex')
+  console.log(order)
+  return order
+}
+
 module.exports = {
-  pushComplaints: (complaints) => {
-    return store.complaints.exists(complaints).then(function (notExistsComplaints) {
+  pushComplaint: (complaint) => {
+    return store.complaints.exists([complaint]).then(function (notExistsComplaints) {
       log.info(JSON.stringify(notExistsComplaints, null, 2))
       if (notExistsComplaints && notExistsComplaints.length > 0) {
+        notExistsComplaints[0].type = 1
         return request.post({
-          url: 'http://localhost:9091/api/test',
+          url: serviceConfig.host + serviceConfig.api.complaints,
           json: true,
-          body: notExistsComplaints
+          body: complaintmd5(notExistsComplaints[0])
         })
           .then(function (result) {
             log.info('//======向实立发送投诉订单请求已返回消息======//')
@@ -33,9 +64,9 @@ module.exports = {
           })
       } else {
         return new Promise((resolve, reject) => {
-          log.info('//============要添加到缓存中的原始订单数组：==================//')
-          log.info(JSON.stringify(complaints, null, 2))
-          log.info('//============排重后的投诉订单数组：==================//')
+          log.info('//============要添加到缓存中的原始订单：==================//')
+          log.info(JSON.stringify(complaint, null, 2))
+          log.info('//============排重后的投诉订单：==================//')
           log.info('//============排重后的投诉订单数组为空，本次没有发送任何数据到实立==================//')
           resolve()
         })
@@ -47,9 +78,9 @@ module.exports = {
    * 1.接收handles到Redis
    * 2.更新status
    */
-  handleComplaints: (handles) => {
+  handleComplaint: (handle) => {
     return Promise
-      .all([store.handle.push(handles), store.complaints.updates(handles, store.status.handled)])
+      .all([store.handle.push([handle]), store.complaints.updates([handle], store.status.handled)])
       .then(function () {
         log.info('//////======接收到的投诉订单处理已加入缓存队列，等待处理=======//////')
       })
@@ -60,26 +91,23 @@ module.exports = {
    * 1.更新投诉状态为completed
    * 2.删除投诉处理记录
    */
-  handledComplaints: (handle, result) => {
+  handledComplaint: (handle, result) => {
     if (!result) {
       log.data('处理投诉订单失败', 1)
       store.handle.push([handle])
       return
     }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
+    handle.type = 2
     return request.post({
-      url: 'http://localhost:9091/api/test',
+      url: serviceConfig.host + serviceConfig.api.complaints,
       json: true,
-      body: handle
+      body: complaintmd5(handle)
     })
       .then(function (result) {
         log.info('//======向实立发送【投诉订单已处理】请求已返回消息======//')
         log.info(JSON.stringify(result, null, 2))
-        /* let complaints = handles.map(function (handle) {
-          return {
-            docmentNo: handle.docmentsNo
-          }
-        }) */
+
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
         if (!result.success) {
           store.handle.push([handle])
@@ -104,11 +132,10 @@ module.exports = {
       })
   },
   pushExceptionOrders: (count) => {
-    request.post('http://localhost:9091/api/test', {
+    request.post({
+      url: serviceConfig.host + serviceConfig.api.exceptionorders,
       json: true,
-      body: {
-        count: count
-      }
+      body: exceptionOrderCountmd5({countTatol: count})
     }).then(function (result) {
       if (result.success) {
         log.info('成功推送异常订单统计数')

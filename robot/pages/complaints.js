@@ -17,7 +17,6 @@ class Complaints {
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
     var curConfig = Object.assign({}, config.nightmare)
-    // curConfig.parent = that.rootNightmare
     that.nightmare = new Nightmare(curConfig)
     this.eventEmitter = eventEmitter
     return this

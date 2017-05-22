@@ -13,26 +13,30 @@ class ComplaintDetail {
     that.handle = handle
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
-    // .on('did-finish-load', function () {
-    //   log.info('did-finish-load')
-    //   that.nightmare
-    //     .url()
-    //     .then(function (url) {
-    //       if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-    //         log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
-    //         that.nightmare.end().then(function () {
-    //           that.nightmare = null
-    //           that.eventEmitter.emit('detail-login-expired', that)
-    //         })
-    //       }
-    //     })
-    // })
+      .on('console', function (type, msg) {
+        console[type]('evaluate log :' + msg)
+      })
+      .on('did-finish-load', function () {
+        log.info('did-finish-load')
+        that.nightmare
+          .url()
+          .then(function (url) {
+            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+              log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
+              that.nightmare.end().then(function () {
+                that.nightmare = null
+                that.eventEmitter.emit('detail-login-expired', that)
+              })
+            } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {
+              that.exec()
+            }
+          })
+      })
   }
 
   run () {
     let that = this
     let url = that.link.url
-    log.info('//======正在打开投诉订单 ' + that.link.docmentsNo + '的处理窗口...======//')
     that.rootNightmare
       .cookies
       .get()
@@ -41,58 +45,58 @@ class ComplaintDetail {
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
           .goto(url)
-          .url()
-          .then(function (url) {
-            if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-              log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
-              return that.nightmare.end().then(function () {
-                that.nightmare = null
-                that.eventEmitter.emit('detail-login-expired', that)
-              })
-            }
-          })
           .then(function () {
-            if (that.nightmare) {
-              that.nightmare
-                .wait('#intro_id>div')
-                .then(function () {
-                  if (that.handle) {
-                    that.doHandle()
-                  } else {
-                    that.doDetail()
-                  }
-                })
-            }
+            log.info('//======正在打开投诉订单 ' + that.link.docmentsNo + '的处理窗口...======//')
           })
+      })
+  }
+  exec () {
+    var that = this
+    that.nightmare
+      .wait('#intro_id>div')
+      .then(function () {
+        if (that.handle) {
+          that.doHandle()
+        } else {
+          that.doDetail()
+        }
       })
   }
 
   doHandle () {
     let that = this
     log.info('//======处理投诉订单【开始】======//')
-    that.nightmare.evaluate(function () {
-        // 首先判断当前的投诉订单状态是什么
-        // 如果处于没有处理状态，则根据handle进行处理
-        // 如果处理过了，则直接返回
-        // 没有修改过就修改
-        // TODO...
-      return true
-    })
-      // 再次刷新浏览器，再次确认是否处理完成
-      .refresh()
-      .wait('#intro_id>div')
-      .evaluate(function () {
-        // 刷新了页面要重新判断一下页面的处理结果是否正确
-        // 处理正确最终返回true
-        // 处理失败最终返回false
-        // TODO....
-        return true
-      })
+    that.nightmare
+      .evaluate(function (coustomerRequest) {
+        var btnSubmit = document.querySelector('#btnSubmit')
+        // 如果存在归档按钮，则继续执行
+        if (!btnSubmit) {
+          return true
+        }
+        var requestMapping = {
+          '充值已到账（月初）': 1,
+          '充值已到账（月中）': 2,
+          '充值部分到账': 3,
+          '充值失败（重新充值）': 4,
+          '充值失败（可退款）': 5,
+          '充错号码（不可退款）': 6,
+          '通用': 7
+        }
+        var label = document.querySelector('#replyArea>label:nth-child(' + requestMapping[coustomerRequest] + ')')
+        label.click()
+        // TODO...点击归档按钮
+        setTimeout(function () {
+          // document.querySelector('#btnSubmit').click()
+        }, 1000)
+        return false
+      }, that.handle.coustomerRequest)
       .then(function (result) {
         log.info('//======处理投诉订单【' + (result ? '成功' : '失败') + '】======//')
-        // 处理成功，通知实立，并更新投诉订单状态
-        // 处理失败，则将handle再次放入队列中
-        service.handledComplaints(that.handle, result)
+        if (result === true) {
+          // 处理成功，通知实立，并更新投诉订单状态
+          // 处理失败，则将handle再次放入队列中
+          service.handledComplaint(that.handle, result)
+        }
       })
   }
 
@@ -123,8 +127,8 @@ class ComplaintDetail {
       .then(function (entry) {
         log.info('//======解析到新的投诉订单======//')
         log.info(entry)
-
-        service.pushComplaints([entry]).then(function (result) {
+        entry.type = 1
+        service.pushComplaint(entry).then(function (result) {
           that.nightmare.end().then(function () {
             log.info('//======解析到的投诉订单已经发送，窗口已关闭======//')
             that.dispose()

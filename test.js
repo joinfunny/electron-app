@@ -20,7 +20,17 @@ var nightmare = Nightmare({
   }
 })
 
-var nodemailer = require('nodemailer')
+const crypto = require('crypto')
+
+const hash = crypto.createHash('md5')
+
+// 可任意多次调用update():
+hash.update('admin')
+// hash.update('admin')
+
+console.log(hash.digest('hex')) // 7e1977739c748beac0c0fd14fd26a544
+
+/* var nodemailer = require('nodemailer')
 var transporter = nodemailer.createTransport({
   service: 'qq',
   port: 465,
@@ -46,7 +56,7 @@ transporter.sendMail(mailOptions, function (error, info) {
     return console.log(error)
   }
   console.log('Message sent: ' + info.response)
-})
+}) */
 
 /* nightmare.goto('http://stream.ruixuesoft.com/index')
 .then(function (result) {

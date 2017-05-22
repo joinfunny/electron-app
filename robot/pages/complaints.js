@@ -80,6 +80,8 @@ class Complaints {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)
           })
+        } else {
+          that.next()
         }
       })
   }

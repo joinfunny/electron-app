@@ -48,8 +48,10 @@ class ExceptionOrder {
               if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=3&time_begin=&time_end=&dealType=0') > -1) {
                 that.monitor()
               } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-                log.warn('//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
-                that.eventEmitter.emit('login-expired', that)
+                that.nightmare.end().run(function () {
+                  log.warn('//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
+                  that.eventEmitter.emit('login-expired', that)
+                })
               }
             })
         })

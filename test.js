@@ -23,7 +23,17 @@ var nightmare = Nightmare({
   }
 })
 
-function complaintmd5 (complaint) {
+nightmare
+.on('page', function (type = 'prompt', message, response) {
+  console.log(arguments)
+})
+.goto('http://localhost:9091/')
+.click('#btn_test')
+.then(function () {
+
+})
+
+/* function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -58,7 +68,7 @@ request.post({
   .catch(function (err) {
     console.log(err)
   })
-
+*/
 /* const crypto = require('crypto')
 
 const hash = crypto.createHash('md5')

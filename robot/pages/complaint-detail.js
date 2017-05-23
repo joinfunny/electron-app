@@ -87,6 +87,25 @@ class ComplaintDetail {
         // TODO...点击归档按钮
         setTimeout(function () {
           // document.querySelector('#btnSubmit').click()
+          console.log($('#submitFrm').serialize())
+          /* $.ajax({
+            type: 'POST',
+            url: 'index.php?d=seller&c=seller&m=submitCase',
+            data: $('#submitFrm').serialize(),
+            success: function (data) {
+              var data = eval('(' + data + ')')
+
+              if (data.ret == '0') {
+                console.log('处理成功')
+                // location.href = location.href
+              } else {
+                console.log('操作失败，' + data.msg)
+              }
+            },
+            error: function () {
+              console('系统繁忙，请稍后再试')
+            }
+          }) */
         }, 1000)
         return false
       }, that.handle.coustomerRequest)

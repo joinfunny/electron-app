@@ -50,11 +50,13 @@ function complaintmd5 (complaint) {
   console.log(complaint)
   return complaint
 }
-var complaint = { agentOrderNo: '3713002741201704246873282448',
+var complaint = {
+  agentOrderNo: '3176000951201705237642275462',
   'coustomerRequest': '充值失败（重新充值）',
-  docmentsNo: '17052313463781559841',
-  feedback: '话费未到帐',
-  phoneNo: '13578477744' }
+  docmentsNo: '17052313571381739762',
+  feedback: '充错号码',
+  phoneNo: '18336510996' }
+
 request.post({
   url: 'http://localhost:9091/api/complaint/handling',
   json: true,

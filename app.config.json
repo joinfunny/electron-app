@@ -186,14 +186,14 @@
         }
       },
       "worker": {
-        "tickTime": 1000
+        "tickTime": 5000
       },
       "listener": {
         "tickTime": 10000
       }
     },
     "exceptionOrder": {
-      "run": true,
+      "run": false,
       "worker": {
         "tickTime": 10000
       },

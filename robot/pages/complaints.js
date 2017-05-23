@@ -80,7 +80,9 @@ class Complaints {
             that.loopComplaintDetail(notExistsLinks)
           })
         } else {
-          that.next()
+          setTimeout(function () {
+            that.next()
+          }, config.worker.tickTime)
         }
       })
   }

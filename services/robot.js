@@ -31,17 +31,33 @@ module.exports = {
     callback: function (req, res, callback) {
       let handle = req.body
       log.info('//======接受到实立传输的已处理投诉订单=======//')
-      if (complaintmd5(handle).sign === handle.sign) {
-        service.handleComplaint(handle)
+      var requests = {
+        '充值已到账（月初）': 1,
+        '充值已到账（月中）': 2,
+        '充值部分到账': 3,
+        '充值失败（重新充值）': 4,
+        '充值失败（可退款）': 5,
+        '充错号码（不可退款）': 6,
+        '通用': 7
+      }
+      if (handle.coustomerRequest && requests[handle.coustomerRequest] !== undefined) {
+        if (complaintmd5(handle).sign === handle.sign) {
+          service.handleComplaint(handle)
         .then(function () {
           callback({
             success: true
           })
         })
+        } else {
+          callback({
+            success: false,
+            msg: '签名失效'
+          })
+        }
       } else {
         callback({
           success: false,
-          msg: '签名失效'
+          msg: '没有当前投诉处理类型'
         })
       }
     }

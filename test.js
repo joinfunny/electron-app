@@ -3,6 +3,7 @@ var Moment = require('moment')
 var Nightmare = require('nightmare')
 var request = require('request-promise')
 var fs = require('fs')
+var crypto = require('crypto')
 
 var Runtime = require('./runtime')
 var serviceConfig = Runtime.App.AppConfig.robot.service
@@ -23,7 +24,7 @@ var nightmare = Nightmare({
   }
 })
 
-nightmare
+/* nightmare
 .on('page', function (type = 'prompt', message, response) {
   console.log(arguments)
 })
@@ -31,9 +32,9 @@ nightmare
 .click('#btn_test')
 .then(function () {
 
-})
+}) */
 
-/* function complaintmd5 (complaint) {
+function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -49,16 +50,13 @@ nightmare
   console.log(complaint)
   return complaint
 }
-var complaint = {
-  agentOrderNo: '3084000971201705177511517199',
-  coustomerRequest: '通用',
-  docmentsNo: '17052223164581331551',
+var complaint = { agentOrderNo: '3713002741201704246873282448',
+  'coustomerRequest': '充值失败（重新充值）',
+  docmentsNo: '17052313463781559841',
   feedback: '话费未到帐',
-  phoneNo: '13414804686'
-}
-
+  phoneNo: '13578477744' }
 request.post({
-  url: 'http://60.205.169.23:9091/api/complaint/handling',
+  url: 'http://localhost:9091/api/complaint/handling',
   json: true,
   body: complaintmd5(complaint)
 })
@@ -68,7 +66,7 @@ request.post({
   .catch(function (err) {
     console.log(err)
   })
-*/
+
 /* const crypto = require('crypto')
 
 const hash = crypto.createHash('md5')

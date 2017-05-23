@@ -14,7 +14,28 @@ class ComplaintDetail {
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
       .on('console', function (type, msg) {
-        console[type]('evaluate log :' + msg)
+        log.info('evaluate log :' + msg)
+        // 修改这几个消息时，一定要注意下面代码中的对应的消息。否则会接受不到正确的指令
+        if (msg === '//======异步提交投诉处理信息成功======//') {
+          service.handledComplaint(that.handle, true).then(function () {
+            that.nightmare.end().then(function () {
+              log.info('//======解析到的投诉处理已经操作完毕，窗口已关闭======//')
+              that.dispose()
+            })
+          })
+        } else if (msg === '//======异步提交投诉处理信息失败======//') {
+          service.handledComplaint(that.handle, false).then(function () {
+            that.nightmare.end().then(function () {
+              log.info('//======解析到的投诉处理已经操作完毕，窗口已关闭======//')
+              that.dispose()
+            })
+          })
+        } else if (msg === '//======当前投诉处理已经经过处理======//') {
+          that.nightmare.end().then(function () {
+            log.info('//======解析到的投诉处理已经操作完毕，窗口已关闭======//')
+            that.dispose()
+          })
+        }
       })
       .on('did-finish-load', function () {
         log.info('did-finish-load')
@@ -71,8 +92,10 @@ class ComplaintDetail {
         var btnSubmit = document.querySelector('#btnSubmit')
         // 如果存在归档按钮，则继续执行
         if (!btnSubmit) {
-          return true
+          console.log('//======当前投诉处理已经经过处理======//')
+          return
         }
+        console.log(coustomerRequest)
         var requestMapping = {
           '充值已到账（月初）': 1,
           '充值已到账（月中）': 2,
@@ -83,39 +106,37 @@ class ComplaintDetail {
           '通用': 7
         }
         var label = document.querySelector('#replyArea>label:nth-child(' + requestMapping[coustomerRequest] + ')')
-        label.click()
-        // TODO...点击归档按钮
-        setTimeout(function () {
-          // document.querySelector('#btnSubmit').click()
+        if (label) {
+          label.click()
           console.log($('#submitFrm').serialize())
-          /* $.ajax({
-            type: 'POST',
-            url: 'index.php?d=seller&c=seller&m=submitCase',
-            data: $('#submitFrm').serialize(),
-            success: function (data) {
-              var data = eval('(' + data + ')')
+          setTimeout(function () {
+            console.log('//======异步提交投诉处理信息成功======//')
+          }, 1000)
 
-              if (data.ret == '0') {
-                console.log('处理成功')
-                // location.href = location.href
-              } else {
-                console.log('操作失败，' + data.msg)
+            /* $.ajax({
+              type: 'POST',
+              url: 'index.php?d=seller&c=seller&m=submitCase',
+              data: $('#submitFrm').serialize(),
+              success: function (data) {
+                var data = eval('(' + data + ')')
+
+                if (data.ret == '0') {
+                  console.log('处理成功')
+                  // location.href = location.href
+                } else {
+                  console.log('操作失败，' + data.msg)
+                }
+              },
+              error: function () {
+                console('系统繁忙，请稍后再试')
               }
-            },
-            error: function () {
-              console('系统繁忙，请稍后再试')
-            }
-          }) */
-        }, 1000)
-        return false
-      }, that.handle.coustomerRequest)
-      .then(function (result) {
-        log.info('//======处理投诉订单【' + (result ? '成功' : '失败') + '】======//')
-        if (result === true) {
-          // 处理成功，通知实立，并更新投诉订单状态
-          // 处理失败，则将handle再次放入队列中
-          service.handledComplaint(that.handle, result)
+            }) */
+        } else {
+          console.log('//======订单处理没有匹配到======//')
         }
+      }, that.handle.coustomerRequest)
+      .then(function () {
+        log.info('//======处理投诉订单中...======//')
       })
   }
 

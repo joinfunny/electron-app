@@ -85,13 +85,15 @@ class ExceptionOrder {
           var lastPage = pager.lastElementChild
           console.log(lastPage.innerText)
           return 'http://chong.qq.com' + lastPage.getAttribute('href')
+        } else {
+          return 1
         }
       })
       .then(function (url) {
         log.info(url)
         if (!url) return
-        var countTotal = +_queryString('page', url)
-        service.pushExceptionOrders(countTotal * 20)
+        var countTotal = url !== 1 ? +_queryString('page', url) : 1
+        service.pushExceptionOrders(countTotal)
       })
   }
 }

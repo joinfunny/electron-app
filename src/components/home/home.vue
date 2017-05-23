@@ -32,7 +32,7 @@
   <div class="stream-admin">
     <admin-page-container>
       <div slot="header">
-        <div class="logo">RX Stream Admin管理平台</div>
+        <div class="logo">Admin管理平台</div>
         <div class="login" :style="{float:'right'}"  v-if="username">
           <a><admin-icon type="ion-person" size="20px"></admin-icon>{{username}}</a>
           <a @click="logout"><admin-icon type="ion-log-out" size="20px"></admin-icon></a>

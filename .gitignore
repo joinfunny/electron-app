@@ -11,3 +11,5 @@ logs/**/*.log
 .project
 *.log**
 dist/
+
+*.pid

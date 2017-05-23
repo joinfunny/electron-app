@@ -1,15 +1,15 @@
 {
   "app": {
-    "remoteHost": "http://10.200.32.25:8088",
+    "remoteHost": "'http://10.26.27.107:8081",
     "staticSrc": "./dist/src",
     "renderView": "./dist/view",
     "serviceDirectory": "./services",
     "routeDirectory": "./routes"
   },
   "runtime": {
-    "listenPort": "9092",
+    "listenPort": "9091",
     "session": {
-      "mode": "cluster",
+      "mode": "local",
       "maxAge": 86400000,
       "store": "redis"
     },
@@ -19,24 +19,25 @@
         "port": 6379,
         "host": "127.0.0.1"
       },
-      "cluster": [{
+      "cluster": [
+      {
         "port": 7000,
-        "host": "10.200.1.89"
-      }, {
-        "port": 7000,
-        "host": "10.200.1.90"
+        "host": "10.26.24.22"
       }, {
         "port": 7000,
-        "host": "10.200.1.91"
+        "host": "10.26.26.203"
       }, {
-        "port": 7001,
-        "host": "10.200.1.89"
+        "port": 7000,
+        "host": "10.26.24.16"
       }, {
-        "port": 7001,
-        "host": "10.200.1.90"
+        "port": 7000,
+        "host": "10.26.24.44"
       }, {
-        "port": 7001,
-        "host": "10.200.1.91"
+        "port": 7000,
+        "host": "10.47.213.253"
+      }, {
+        "port": 7000,
+        "host": "10.45.41.161"
       }]
     },
     "caas": {
@@ -45,6 +46,73 @@
       "prefix": "/api/v1",
       "appKey": "14dd555807e549bbb4b4f3889708ec77",
       "appSecret": "6ca89616f12a41808b1c17b296bead8a"
+    }
+  },
+   "robot": {
+    "login": {
+      "maxLoginCount":3,
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "userName": "2919415063",
+      "password": "shili8269",
+      "vcode": {
+        "serviceKey": "ae6ed8d0322a8800a28f9de897d5934c",
+        "serviceCodeType": 8001
+      }
+    },
+    "complaints": {
+      "run":true,
+      "nightmare": {
+        "width": 800,
+        "height": 600,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "worker":{
+        "tickTime":3000
+      },
+      "listener":{
+        "tickTime":5000
+      }
+    },
+    "exceptionOrder": {
+      "run":true,
+      "worker":{
+        "tickTime":10000
+      },
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      }
+    },
+    "complaintListener": {
+      "run":true
+    },
+    "service":{
+      "host":"http://switchfour.zgslcx.com",
+      "md5":"2192dc67d8a0e90acbf0a7a61f1625ab",
+      "api":{
+        "complaints":"/complaints/complaints_getMessage.action",
+        "exceptionorders":"/complaints/complaints_getCount.action"
+      }
     }
   }
 }

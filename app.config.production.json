@@ -19,8 +19,7 @@
         "port": 6379,
         "host": "127.0.0.1"
       },
-      "cluster": [
-      {
+      "cluster": [{
         "port": 7000,
         "host": "10.26.24.22"
       }, {
@@ -48,9 +47,9 @@
       "appSecret": "6ca89616f12a41808b1c17b296bead8a"
     }
   },
-   "robot": {
+  "robot": {
     "login": {
-      "maxLoginCount":3,
+      "maxLoginCount": 3,
       "nightmare": {
         "width": 1024,
         "height": 768,
@@ -67,7 +66,7 @@
       }
     },
     "complaints": {
-      "run":true,
+      "run": true,
       "nightmare": {
         "width": 800,
         "height": 600,
@@ -79,16 +78,16 @@
           "webSecurity": false
         }
       },
-      "worker":{
-        "tickTime":3000
+      "worker": {
+        "tickTime": 3000
       },
-      "listener":{
-        "tickTime":5000
+      "listener": {
+        "tickTime": 5000
       }
     },
     "exceptionOrder": {
-      "run":true,
-      "worker":{
+      "run": true,
+      "worker": {
         "tickTime": 60000
       },
       "nightmare": {
@@ -104,14 +103,14 @@
       }
     },
     "complaintListener": {
-      "run":true
+      "run": true
     },
-     "service":{
-      "host":"http://switchfour.zgslcx.com",
-      "md5":"2192dc67d8a0e90acbf0a7a61f1625ab",
-      "api":{
-        "complaints":"/complaints/complaints_getMessage.action",
-        "exceptionorders":"/complaints/complaints_getCount.action"
+    "service": {
+      "host": "http://switchfour.zgslcx.com",
+      "md5": "2192dc67d8a0e90acbf0a7a61f1625ab",
+      "api": {
+        "complaints": "/complaints/complaints_getMessage.action",
+        "exceptionorders": "/complaints/complaints_getCount.action"
       }
     }
   }

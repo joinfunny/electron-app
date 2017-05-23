@@ -75,9 +75,9 @@ module.exports = {
     if (that.vcodeRequestCount >= config.maxLoginCount) {
       log.warn('登录次数超过' + config.maxLoginCount + '次，页面将会重新刷新尝试登录')
       that.nightmare.resetFrame()
-      .then(function () {
-        that.run(that.nightmare)
-      })
+        .then(function () {
+          that.run(that.nightmare)
+        })
       return
     }
     that.nightmare
@@ -132,10 +132,17 @@ module.exports = {
             .enterIFrame('#login_frame')
             .enterIFrame('#newVcodeIframe>iframe')
             .then(function () {
+              console.log(JSON.stringify(config.vcode))
+
               request.post({
-                key: config.vcode.serviceKey,
-                codeType: config.vcode.serviceCodeType,
-                image: fs.createReadStream(that.getVcodePath())
+                url: config.vcode.serviceUrl,
+                json: true,
+                formData: {
+                  url: config.vcode.serviceUrl,
+                  key: config.vcode.serviceKey,
+                  codeType: config.vcode.serviceCodeType,
+                  image: fs.createReadStream(that.getVcodePath())
+                }
               }, function (err, response, body) {
                 log.info('//=======请求验证码服务返回=======//')
                 log.info(JSON.stringify(body, null, 2))

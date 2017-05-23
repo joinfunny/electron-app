@@ -45,7 +45,7 @@ class ExceptionOrder {
             .then(function (url) {
               log.info('//--------------------【异常订单统计数监控】URL---------------//')
               log.info(url)
-              if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=3&time_begin=&time_end=&dealType=0') > -1) {
+              if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0') > -1) {
                 that.monitor()
               } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
                 that.nightmare.end().run(function () {
@@ -58,7 +58,7 @@ class ExceptionOrder {
         .goto('http://chong.qq.com/')
         .cookies
         .set(cookies)
-        .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=3&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
+        .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
         .run(function () {
           log.info('已进入异常订单统计数监听页面')
           that.timeTick()
@@ -69,7 +69,7 @@ class ExceptionOrder {
     var that = this
     setInterval(function () {
       that.nightmare
-        .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=3&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
+        .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
         .run(function () {
           log.info('已刷新异常订单统计数监听页面')
         })
@@ -81,12 +81,10 @@ class ExceptionOrder {
       .wait('.ui-page-cont')
       .evaluate(function () {
         var pager = document.querySelector('.ui-page-cont')
-        var lastPage = pager.lastElementChild
-        console.log(lastPage.innerText)
-        if (lastPage.innerText === '尾页') {
+        if (pager.children.length > 0) {
+          var lastPage = pager.lastElementChild
+          console.log(lastPage.innerText)
           return 'http://chong.qq.com' + lastPage.getAttribute('href')
-        } else {
-          return ''
         }
       })
       .then(function (url) {

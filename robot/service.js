@@ -44,14 +44,14 @@ module.exports = {
         notExistsComplaints[0].type = 1
         return request.post({
           url: serviceConfig.host + serviceConfig.api.complaints,
-          json: true,
-          body: complaintmd5(notExistsComplaints[0])
+          // json: true,
+          form: complaintmd5(notExistsComplaints[0])
         })
           .then(function (result) {
             log.info('//======向实立发送投诉订单请求已返回消息======//')
-            log.info(JSON.stringify(result, null, 2))
+            log.info(result)
             // 如果实立保存失败，则退出，不在执行记录Redis
-            if (!result.success) {
+            if (result !== 'ok') {
               return
             }
             return store.complaints.adds(notExistsComplaints)
@@ -101,15 +101,15 @@ module.exports = {
     handle.type = 2
     return request.post({
       url: serviceConfig.host + serviceConfig.api.complaints,
-      json: true,
-      body: complaintmd5(handle)
+      // json: true,
+      form: complaintmd5(handle)
     })
       .then(function (result) {
         log.info('//======向实立发送【投诉订单已处理】请求已返回消息======//')
-        log.info(JSON.stringify(result, null, 2))
+        log.info(result)
 
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
-        if (!result.success) {
+        if (!result === 'ok') {
           store.handle.push([handle])
           log.data('处理投诉订单失败', 1)
           return
@@ -134,14 +134,15 @@ module.exports = {
   pushExceptionOrders: (count) => {
     request.post({
       url: serviceConfig.host + serviceConfig.api.exceptionorders,
-      json: true,
-      body: exceptionOrderCountmd5({countTatol: count})
+      // json: true,
+      form: exceptionOrderCountmd5({countTatol: count})
     }).then(function (result) {
-      if (result.success) {
+      if (result === 'ok') {
         log.info('成功推送异常订单统计数')
         log.data('推送异常订单统计数', count)
       } else {
         log.warn('推送异常订单统计数失败')
+        log.warn(result)
       }
     })
       .catch(function (err) {

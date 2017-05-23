@@ -168,6 +168,7 @@
       "userName": "2919415063",
       "password": "shili8269",
       "vcode": {
+        "serviceUrl":"http://op.juhe.cn/vercode/index",
         "serviceKey": "ae6ed8d0322a8800a28f9de897d5934c",
         "serviceCodeType": 8001
       }
@@ -193,7 +194,7 @@
       }
     },
     "exceptionOrder": {
-      "run": false,
+      "run": true,
       "worker": {
         "tickTime": 10000
       },
@@ -210,14 +211,14 @@
       }
     },
     "complaintListener": {
-      "run": true
+      "run": false
     },
-    "service":{
-      "host":"http://localhost:9091",
-      "md5":"2192dc67d8a0e90acbf0a7a61f1625ab",
-      "api":{
-        "complaints":"/api/complaints_getMessage",
-        "exceptionorders":"/api/complaints_getCount"
+    "service": {
+      "host": "http://switchfour.zgslcx.com",
+      "md5": "2192dc67d8a0e90acbf0a7a61f1625ab",
+      "api": {
+        "complaints": "/complaints/complaints_getMessage.action",
+        "exceptionorders": "/complaints/complaints_getCount.action"
       }
     }
   },

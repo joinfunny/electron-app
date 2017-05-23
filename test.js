@@ -6,6 +6,7 @@ var fs = require('fs')
 var crypto = require('crypto')
 
 var Runtime = require('./runtime')
+var vcodeConfig = Runtime.App.AppConfig.robot.login
 var serviceConfig = Runtime.App.AppConfig.robot.service
 
 require('nightmare-iframe-manager')(Nightmare)
@@ -24,6 +25,17 @@ var nightmare = Nightmare({
   }
 })
 
+request.post({
+  url: vcodeConfig.vcode.serviceUrl,
+  json: true,
+  formData: {
+    key: vcodeConfig.vcode.serviceKey,
+    codeType: vcodeConfig.vcode.serviceCodeType,
+    image: fs.createReadStream(path.join(path.resolve(), './snapshot/vcodes/yyyy-05-Tu 16:01:04.png'))}
+}, function (err, response, body) {
+  console.log(arguments)
+})
+
 /* nightmare
 .on('page', function (type = 'prompt', message, response) {
   console.log(arguments)
@@ -34,7 +46,7 @@ var nightmare = Nightmare({
 
 }) */
 
-function complaintmd5 (complaint) {
+/* function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -67,7 +79,7 @@ request.post({
   })
   .catch(function (err) {
     console.log(err)
-  })
+  }) */
 
 /* const crypto = require('crypto')
 

@@ -88,7 +88,8 @@ class ComplaintDetail {
     let that = this
     log.info('//======处理投诉订单【开始】======//')
     that.nightmare
-      .evaluate(function (coustomerRequest) {
+      .evaluate(function (coustomerRequest, env) {
+        console.log('//======当前运行的环境变量：' + env + '======//')
         var btnSubmit = document.querySelector('#btnSubmit')
         // 如果存在归档按钮，则继续执行
         if (!btnSubmit) {
@@ -112,29 +113,30 @@ class ComplaintDetail {
           setTimeout(function () {
             console.log('//======异步提交投诉处理信息成功======//')
           }, 1000)
-
+          if (env === 'production') {
             /* $.ajax({
-              type: 'POST',
-              url: 'index.php?d=seller&c=seller&m=submitCase',
-              data: $('#submitFrm').serialize(),
-              success: function (data) {
-                var data = eval('(' + data + ')')
+                  type: 'POST',
+                  url 'index.php?d=seller&c=seller&m=submitCase',
+                  data: $('#submitFrm').serialize(),
+                  success: function (data) {
+                    var data = eval('(' + data + ')')
 
-                if (data.ret == '0') {
-                  console.log('处理成功')
-                  // location.href = location.href
-                } else {
-                  console.log('操作失败，' + data.msg)
-                }
-              },
-              error: function () {
-                console('系统繁忙，请稍后再试')
-              }
-            }) */
+                    if (data.ret == '0') {
+                      console.log('处理成功')
+                      // location.href = location.href
+                    } else {
+                      console.log('操作失败，' + data.msg)
+                    }
+                  },
+                  error: function () {
+                    console('系统繁忙，请稍后再试')
+                  }
+                }) */
+          }
         } else {
           console.log('//======订单处理没有匹配到======//')
         }
-      }, that.handle.coustomerRequest)
+      }, that.handle.coustomerRequest, process.env.NODE_ENV)
       .then(function () {
         log.info('//======处理投诉订单中...======//')
       })
@@ -142,6 +144,7 @@ class ComplaintDetail {
 
   doDetail () {
     let that = this
+    // console.log(process.env.NODE_ENV)
     that.nightmare
       .evaluate(function () {
         var docmentsNo = document.querySelector('#task_id').innerText

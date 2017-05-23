@@ -211,7 +211,7 @@
       }
     },
     "complaintListener": {
-      "run": true
+      "run": false
     },
     "service":{
       "host":"http://localhost:9091",

@@ -211,14 +211,14 @@
       }
     },
     "complaintListener": {
-      "run": false
+      "run": true
     },
-    "service": {
-      "host": "http://switchfour.zgslcx.com",
-      "md5": "2192dc67d8a0e90acbf0a7a61f1625ab",
-      "api": {
-        "complaints": "/complaints/complaints_getMessage.action",
-        "exceptionorders": "/complaints/complaints_getCount.action"
+    "service":{
+      "host":"http://localhost:9091",
+      "md5":"2192dc67d8a0e90acbf0a7a61f1625ab",
+      "api":{
+        "complaints":"/api/complaints_getMessage",
+        "exceptionorders":"/api/complaints_getCount"
       }
     }
   },

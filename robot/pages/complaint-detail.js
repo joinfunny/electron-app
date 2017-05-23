@@ -110,28 +110,25 @@ class ComplaintDetail {
         if (label) {
           label.click()
           console.log($('#submitFrm').serialize())
-          setTimeout(function () {
-            console.log('//======异步提交投诉处理信息成功======//')
-          }, 1000)
           if (env === 'production') {
-            /* $.ajax({
-                  type: 'POST',
-                  url 'index.php?d=seller&c=seller&m=submitCase',
-                  data: $('#submitFrm').serialize(),
-                  success: function (data) {
-                    var data = eval('(' + data + ')')
+            $.ajax({
+              type: 'POST',
+              url: 'index.php?d=seller&c=seller&m=submitCase',
+              data: $('#submitFrm').serialize(),
+              success: function (data) {
+                var data = eval('(' + data + ')')
 
-                    if (data.ret == '0') {
-                      console.log('处理成功')
-                      // location.href = location.href
-                    } else {
-                      console.log('操作失败，' + data.msg)
-                    }
-                  },
-                  error: function () {
-                    console('系统繁忙，请稍后再试')
-                  }
-                }) */
+                if (data.ret == '0') {
+                  console.log('//======异步提交投诉处理信息成功======//')
+                } else {
+                  console.log('//======异步提交投诉处理信息失败======//')
+                  console.log(data.msg)
+                }
+              },
+              error: function () {
+                console('系统繁忙，请稍后再试')
+              }
+            })
           }
         } else {
           console.log('//======订单处理没有匹配到======//')
@@ -144,7 +141,6 @@ class ComplaintDetail {
 
   doDetail () {
     let that = this
-    // console.log(process.env.NODE_ENV)
     that.nightmare
       .evaluate(function () {
         var docmentsNo = document.querySelector('#task_id').innerText

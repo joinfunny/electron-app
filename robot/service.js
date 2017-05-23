@@ -2,11 +2,11 @@ var Runtime = require('../runtime')
 var log = Runtime.App.Log.helper
 var request = require('request-promise')
 
-var promise = require('bluebird')
+// var promise = require('bluebird')
 var crypto = require('crypto')
 var store = require('./store')
 var serviceConfig = Runtime.App.AppConfig.robot.service
-promise.promisifyAll(request)
+// promise.promisifyAll(request)
 
 function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)

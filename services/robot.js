@@ -1,6 +1,8 @@
+var crypto = require('crypto')
 let Runtime = require('../runtime/index')
 let log = Runtime.App.Log.helper
 let service = require('../robot/service')
+var serviceConfig = Runtime.App.AppConfig.robot.service
 
 function complaintmd5 (complaint) {
   var docmentsNo = decodeURI(complaint.docmentsNo)
@@ -8,7 +10,7 @@ function complaintmd5 (complaint) {
   var feedback = decodeURI(complaint.feedback)
   var phoneNo = decodeURI(complaint.phoneNo)
   var coustomerRequest = decodeURI(complaint.coustomerRequest)
-  var type = ''// encodeURI(complaint.type)
+  var type = ''// decodeURI(complaint.type)
 
   var source = docmentsNo + agentOrderNo + feedback + phoneNo + coustomerRequest + type + serviceConfig.md5
   const hash = crypto.createHash('md5')
@@ -21,8 +23,9 @@ function complaintmd5 (complaint) {
 
 module.exports = {
   /**
-   * 处理投诉
+   * 处理投诉--提供给实立的接口
    */
+  // 接收
   '/api/complaint/handling': {
     method: 'post',
     callback: function (req, res, callback) {
@@ -43,6 +46,7 @@ module.exports = {
       }
     }
   },
+  // 接收投诉订单和投诉处理--实立提供的接口
   '/api/complaints_getMessage': {
     method: 'post',
     mock: false,
@@ -53,6 +57,7 @@ module.exports = {
       })
     }
   },
+  // 接收异常订单统计数--实立需要提供的接口
   '/api/complaints_getCount': {
     method: 'post',
     mock: false,

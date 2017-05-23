@@ -1,8 +1,11 @@
 var path = require('path')
 var Moment = require('moment')
 var Nightmare = require('nightmare')
-var request = require('request')
+var request = require('request-promise')
 var fs = require('fs')
+
+var Runtime = require('./runtime')
+var serviceConfig = Runtime.App.AppConfig.robot.service
 
 require('nightmare-iframe-manager')(Nightmare)
 
@@ -20,7 +23,43 @@ var nightmare = Nightmare({
   }
 })
 
-const crypto = require('crypto')
+function complaintmd5 (complaint) {
+  var docmentsNo = encodeURI(complaint.docmentsNo)
+  var agentOrderNo = encodeURI(complaint.agentOrderNo)
+  var feedback = encodeURI(complaint.feedback)
+  var phoneNo = encodeURI(complaint.phoneNo)
+  var coustomerRequest = encodeURI(complaint.coustomerRequest)
+  var type = '' // encodeURI(complaint.type)
+
+  var source = docmentsNo + agentOrderNo + feedback + phoneNo + coustomerRequest + type + serviceConfig.md5
+  const hash = crypto.createHash('md5')
+  // 可任意多次调用update():
+  hash.update(source)
+  complaint.sign = hash.digest('hex')
+  console.log(complaint)
+  return complaint
+}
+var complaint = {
+  agentOrderNo: '3084000971201705177511517199',
+  coustomerRequest: '通用',
+  docmentsNo: '17052223164581331551',
+  feedback: '话费未到帐',
+  phoneNo: '13414804686'
+}
+
+request.post({
+  url: 'http://60.205.169.23:9091/api/complaint/handling',
+  json: true,
+  body: complaintmd5(complaint)
+})
+  .then(function (result) {
+    console.log(result)
+  })
+  .catch(function (err) {
+    console.log(err)
+  })
+
+/* const crypto = require('crypto')
 
 const hash = crypto.createHash('md5')
 
@@ -28,7 +67,7 @@ const hash = crypto.createHash('md5')
 hash.update('admin')
 // hash.update('admin')
 
-console.log(hash.digest('hex')) // 7e1977739c748beac0c0fd14fd26a544
+console.log(hash.digest('hex')) // 7e1977739c748beac0c0fd14fd26a544 */
 
 /* var nodemailer = require('nodemailer')
 var transporter = nodemailer.createTransport({

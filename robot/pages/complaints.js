@@ -137,11 +137,12 @@ class Complaints {
         var currentLink = document.querySelector('#frm>div:nth-child(7)>ul>li>a.on')
         var current = currentLink.parentNode
         var next = null
-
+        var first = document.querySelector('#frm>div:nth-child(7)>ul>li:nth-child(2)')
         while (!next) {
           next = current.nextElementSibling
+
           if (!next) {
-            next = document.querySelector('#frm>div:nth-child(7)>ul>li:nth-child(2)')
+            next = first
             break
           }
 
@@ -162,7 +163,7 @@ class Complaints {
       })
       .then(function (filterResult) {
         log.info('complaints', JSON.stringify(filterResult))
-        return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile')
+        return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile&r=' + new Date() * 1)
           .run(function () {})
       })
   }

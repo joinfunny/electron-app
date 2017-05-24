@@ -206,7 +206,7 @@
       }
     },
     "exceptionOrder": {
-      "run": true,
+      "run": false,
       "worker": {
         "tickTime": 10000
       },

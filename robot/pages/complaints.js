@@ -28,10 +28,23 @@ class Complaints {
       .get()
       .then(function (cookies) {
         that.nightmare
+        .on('did-fail-load', function () {
+          log.info('did-fail-load')
+          log.info(arguments)
+        })
+        .on('did-frame-finish-load', function () {
+          log.info('did-frame-finish-load')
+          log.info(arguments)
+        })
+        .on('did-get-redirect-request', function () {
+          log.info('did-get-redirect-request')
+          log.info(arguments)
+        })
           .on('did-finish-load', function () {
             that.nightmare
               .url()
               .then(function (url) {
+                log.info(url)
                 if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseList') > -1) {
                   that.exec()
                 } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
@@ -46,7 +59,7 @@ class Complaints {
           .cookies.set(cookies)
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
           .run(function () {
-            console.log('complaints', '进入投诉订单查询页面')
+            log.info('complaints', '进入投诉订单查询页面')
           })
       })
   }

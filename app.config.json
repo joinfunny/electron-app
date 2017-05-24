@@ -172,7 +172,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": true,
+        "show": false,
         "webPreferences": {
           "webSecurity": false
         }

@@ -32,7 +32,7 @@ class Main {
     var that = this
     this.nightmare = Nightmare(config.login.nightmare)
       .on('did-finish-load', function () {
-        that.nightmare.url()
+        that.nightmare.resetFrame().url()
           .then(function (url) {
             if (url.indexOf('&g_ty=lk') > -1) {
               log.info('//--------------------正在进入主页面----------------//')

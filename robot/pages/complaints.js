@@ -28,19 +28,21 @@ class Complaints {
       .get()
       .then(function (cookies) {
         that.nightmare
-        .on('did-fail-load', function () {
-          log.info('did-fail-load')
-          log.info(arguments)
-        })
-        .on('did-frame-finish-load', function () {
-          log.info('did-frame-finish-load')
-          log.info(arguments)
-        })
-        .on('did-get-redirect-request', function () {
-          log.info('did-get-redirect-request')
-          log.info(arguments)
-        })
+          .on('did-fail-load', function () {
+            log.info('did-fail-load')
+            log.info(arguments)
+          })
+          .on('did-frame-finish-load', function () {
+            log.info('did-frame-finish-load')
+            log.info(arguments)
+          })
+          .on('did-get-redirect-request', function () {
+            log.info('did-get-redirect-request')
+            log.info(arguments)
+          })
           .on('did-finish-load', function () {
+            log.info('did-finish-load')
+            log.info(arguments)
             that.nightmare
               .url()
               .then(function (url) {
@@ -161,7 +163,7 @@ class Complaints {
       .then(function (filterResult) {
         log.info('complaints', JSON.stringify(filterResult))
         return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile')
-        .run(function () {})
+          .run(function () {})
       })
   }
   dispose (cb) {

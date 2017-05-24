@@ -193,7 +193,7 @@
         "openDevTools": {
           "mode": "detach"
         },
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }

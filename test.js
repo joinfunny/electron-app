@@ -6,6 +6,7 @@ var fs = require('fs')
 var crypto = require('crypto')
 
 var Runtime = require('./runtime')
+var log = Runtime.App.Log.helper
 var vcodeConfig = Runtime.App.AppConfig.robot.login
 var serviceConfig = Runtime.App.AppConfig.robot.service
 
@@ -25,7 +26,23 @@ var nightmare = Nightmare({
   }
 })
 
-request.post({
+nightmare
+  .on('did-fail-load', function () {
+    console.log('did-fail-load')
+    console.log(arguments)
+  })
+  .on('did-frame-finish-load', function () {
+    console.log('did-frame-finish-load')
+    console.log(arguments)
+  })
+  .on('did-get-redirect-request', function () {
+    console.log('did-get-redirect-request')
+    console.log(arguments)
+  })
+  .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=2&status=20&searchCnt=&searchBy=mobile')
+  .then(function () {})
+
+/* request.post({
   url: vcodeConfig.vcode.serviceUrl,
   json: true,
   formData: {
@@ -35,7 +52,7 @@ request.post({
 }, function (err, response, body) {
   console.log(arguments)
 })
-
+*/
 /* nightmare
 .on('page', function (type = 'prompt', message, response) {
   console.log(arguments)

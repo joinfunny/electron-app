@@ -20,11 +20,10 @@ class ComplaintListener {
   run () {
     var that = this
     setInterval(function () {
-      log.info('//======投诉订单监听执行======//')
+      log.info('handles', '//======投诉订单监听执行======//')
       store.handle.pop().then(function (handle) {
-        log.info('.................')
         if (!handle) {
-          log.warn('队列中没有需要处理的投诉订单')
+          log.warn('handles', '队列中没有需要处理的投诉订单')
           return
         }
 

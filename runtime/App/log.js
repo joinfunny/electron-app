@@ -46,30 +46,53 @@ function parse (logConfig) {
   var logInfo = log4js.getLogger('logInfo')
   var logWarn = log4js.getLogger('logWarn')
   var logErr = log4js.getLogger('logErr')
-  var logData = log4js.getLogger('logData')
 
-  helper.debug = function (msg) {
-    if (msg == null) { msg = '' }
-    logDebug.debug(msg)
+  function getLogger (category) {
+    return log4js.getLogger(category)
   }
 
-  helper.info = function (msg) {
+  helper.debug = function (category, msg) {
+    var log = logDebug
+    if (arguments.length === 2) {
+      log = getLogger(category)
+    } else {
+      msg = category
+    }
     if (msg == null) { msg = '' }
-    logInfo.info(msg)
+    log.debug(msg)
   }
 
-  helper.warn = function (msg) {
+  helper.info = function (category, msg) {
+    var log = logInfo
+    if (arguments.length === 2) {
+      log = getLogger(category)
+    } else {
+      msg = category
+    }
     if (msg == null) { msg = '' }
-    logWarn.warn(msg)
+    log.info(msg)
   }
 
-  helper.error = function (msg, exp) {
+  helper.warn = function (category, msg) {
+    var log = logWarn
+    if (arguments.length === 2) {
+      log = getLogger(category)
+    } else {
+      msg = category
+    }
     if (msg == null) { msg = '' }
-    if (exp != null) { msg += '\r\n' + exp }
-    logErr.error(msg)
+    log.warn(msg)
   }
-  helper.data = function (category, data) {
-    logData.info(category + ' : ' + data)
+
+  helper.error = function (category, msg) {
+    var log = logErr
+    if (arguments.length >= 2) {
+      log = getLogger(category)
+    } else {
+      msg = category
+    }
+    if (msg == null) { msg = '' }
+    log.error(msg)
   }
 
   return logInfo

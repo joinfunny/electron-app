@@ -88,7 +88,19 @@
         },
         {
           "pattern": "yyyy-MM-dd/data.log",
-          "category": "logData"
+          "category": "data"
+        },
+        {
+          "pattern": "yyyy-MM-dd/complaints/data.log",
+          "category": "complaints"
+        },
+        {
+          "pattern": "yyyy-MM-dd/exceptionorders/data.log",
+          "category": "exception-orders"
+        },
+        {
+          "pattern": "yyyy-MM-dd/handles/data.log",
+          "category": "handles"
         }
       ],
       "replaceConsole": true,
@@ -160,7 +172,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }

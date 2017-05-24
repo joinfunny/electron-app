@@ -19,7 +19,7 @@ let status = {
 var complaints = {
   adds: (items) => {
     return complaints.updates(items, status.init).then(function () {
-      log.data('抓取到投诉订单', items.length)
+      log.info('data', '抓取到投诉订单+' + items.length)
     })
   },
   updates: (items, state) => {
@@ -29,10 +29,10 @@ var complaints = {
     })
     return promise.exec(function (err, result) {
       if (!err) {
-        log.info('//======投诉订单已记录======//')
+        log.info('complaints', '//======投诉订单已记录======//')
       } else {
-        log.error('//======投诉订单记录【失败】======//')
-        log.error(err)
+        log.error('complaints', '//======投诉订单记录【失败】======//')
+        log.error('complaints', err)
       }
     })
   },
@@ -44,9 +44,9 @@ var complaints = {
     return promise.exec(function (err, result) {
       let actionResult = true
       if (err) {
-        log.error(err)
+        log.error('complaints', err)
       } else {
-        log.info(JSON.stringify(result))
+        log.info('complaints', JSON.stringify(result))
         result.forEach(function (rs, index) {
           if (actionResult && rs !== 1) {
             actionResult = false
@@ -66,23 +66,22 @@ var complaints = {
     })
     return promise.exec(function (err, results) {
       if (err) {
-        log.error(err)
+        log.error('complaints', err)
         return []
       } else {
         return results
       }
     }).then(function (results) {
       var notExists = []
-      // log.info(JSON.stringify(results))
       results.forEach(function (result, index) {
         if (result[1] !== 1) {
           notExists.push(complaints[index])
         }
       })
       if (notExists && notExists.length > 0) {
-        log.warn('经比对，最终得到【' + notExists.length + '】条新的投诉订单')
+        log.warn('complaints', '经比对，最终得到【' + notExists.length + '】条新的投诉订单')
       } else {
-        log.warn('经比对，没有发现新的投诉订单')
+        log.warn('complaints', '经比对，没有发现新的投诉订单')
       }
       return notExists
     })
@@ -103,17 +102,17 @@ let handle = {
 
     return promise.exec(function (err, result) {
       if (err) {
-        log.warn('//======投诉数据存储到队列【失败】======//')
-        log.warn(err)
+        log.warn('handles', '//======投诉数据存储到队列【失败】======//')
+        log.warn('handles', err)
       } else {
-        log.info('//======投诉数据存储到队列【成功】======//')
+        log.info('handles', '//======投诉数据存储到队列【成功】======//')
       }
     })
       .then(function (result) {
         if (!result[0][0] && result[0][1] > 0) {
           return true
         }
-        log.info('//======存储处理数据到队列失败======//')
+        log.info('handles', '//======存储处理数据到队列失败======//')
         return false
       })
   },
@@ -128,8 +127,8 @@ let handle = {
       .exec()
       .then(function (result) {
         var returnValue = null
-        log.info('//======投诉数据移除检索【成功】======//')
-        log.info(result[0][1])
+        log.info('handles', '//======投诉数据移除检索【成功】======//')
+        log.info('handles', result[0][1])
         returnValue = JSON.parse(result[0][1])
         return returnValue
       })

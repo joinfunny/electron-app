@@ -43,13 +43,13 @@ class ExceptionOrder {
           that.nightmare
             .url()
             .then(function (url) {
-              log.info('//--------------------【异常订单统计数监控】URL---------------//')
-              log.info(url)
+              log.info('exception-orders', '//--------------------【异常订单统计数监控】URL---------------//')
+              log.info('exception-orders', url)
               if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0') > -1) {
                 that.monitor()
               } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
                 that.nightmare.end().run(function () {
-                  log.warn('//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
+                  log.warn('exception-orders', '//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
                   that.eventEmitter.emit('login-expired', that)
                 })
               }
@@ -60,7 +60,7 @@ class ExceptionOrder {
         .set(cookies)
         .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
         .run(function () {
-          log.info('已进入异常订单统计数监听页面')
+          log.info('exception-orders', '已进入异常订单统计数监听页面')
           that.timeTick()
         })
     }
@@ -71,7 +71,7 @@ class ExceptionOrder {
       that.nightmare
         .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
         .run(function () {
-          log.info('已刷新异常订单统计数监听页面')
+          log.info('exception-orders', '已刷新异常订单统计数监听页面')
         })
     }, config.worker.tickTime)
   }
@@ -90,7 +90,7 @@ class ExceptionOrder {
         }
       })
       .then(function (url) {
-        log.info(url)
+        log.info('exception-orders', url)
         if (!url) return
         var countTotal = url !== 1 ? +_queryString('page', url) : 1
         service.pushExceptionOrders(countTotal)

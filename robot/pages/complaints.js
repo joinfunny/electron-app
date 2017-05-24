@@ -35,7 +35,7 @@ class Complaints {
                 if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseList') > -1) {
                   that.exec()
                 } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-                  log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
+                  log.warn('complaints', '//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
                   that.dispose(function () {
                     that.eventEmitter.emit('login-expired', that)
                   })
@@ -46,7 +46,7 @@ class Complaints {
           .cookies.set(cookies)
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
           .run(function () {
-            console.log('进入投诉订单查询页面')
+            console.log('complaints', '进入投诉订单查询页面')
           })
       })
   }
@@ -73,8 +73,7 @@ class Complaints {
         return links
       })
       .then(function (links) {
-        // log.info(JSON.stringify(links, null, 2))
-        log.info('//========本次共获取到' + links.length + '条投诉处理========//')
+        log.info('complaints', '//========本次共获取到' + links.length + '条投诉处理========//')
         if (links && links.length > 0) {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)
@@ -100,8 +99,8 @@ class Complaints {
           .cookies
           .get()
           .then(function (cookies) {
-            log.info('//======获取到的投诉处理地址：======//')
-            log.info(link)
+            log.info('complaints', '//======获取到的投诉处理地址：======//')
+            log.info('complaints', link)
             let complaintDetail = new ComplaintDetail(that.rootNightmare, link, that.eventEmitter)
             complaintDetail.run()
           })
@@ -137,7 +136,7 @@ class Complaints {
             current = next
             next = null
           } else {
-            console.log('//======捕获到新的投诉订单=====//')
+            console.log('complaints', '//======捕获到新的投诉订单=====//')
             console.log(text)
           }
         }
@@ -147,7 +146,7 @@ class Complaints {
         }
       })
       .then(function (filterResult) {
-        log.info(JSON.stringify(filterResult))
+        log.info('complaints', JSON.stringify(filterResult))
         return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile')
         .run(function () {})
       })
@@ -157,7 +156,7 @@ class Complaints {
     that.nightmare
       .end()
       .then(function () {
-        log.info('//======投诉订单窗口已销毁======//')
+        log.info('complaints', '//======投诉订单窗口已销毁======//')
         that.nightmare = null
         cb && cb()
       })

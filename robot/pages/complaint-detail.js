@@ -14,31 +14,30 @@ class ComplaintDetail {
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
       .on('console', function (type, msg) {
-        log.info('evaluate log :' + msg)
+        log.info('handles', 'evaluate log :' + msg)
         // 修改这几个消息时，一定要注意下面代码中的对应的消息。否则会接受不到正确的指令
         if (msg === '//======异步提交投诉处理信息成功======//') {
           service.handledComplaint(that.handle, true).then(function () {
             that.nightmare.end().then(function () {
-              log.info('//======解析到的投诉处理已经操作完毕，窗口已关闭======//')
+              log.info('handles', '//======异步提交投诉处理信息成功，窗口已关闭======//')
               that.dispose()
             })
           })
         } else if (msg === '//======异步提交投诉处理信息失败======//') {
           service.handledComplaint(that.handle, false).then(function () {
             that.nightmare.end().then(function () {
-              log.info('//======解析到的投诉处理已经操作完毕，窗口已关闭======//')
+              log.info('handles', '//======异步提交投诉处理信息失败，窗口已关闭======//')
               that.dispose()
             })
           })
         } else if (msg === '//======当前投诉处理已经经过处理======//') {
           that.nightmare.end().then(function () {
-            log.info('//======解析到的投诉处理已经操作完毕，窗口已关闭======//')
+            log.info('handles', '//======当前投诉处理已经经过处理，窗口已关闭======//')
             that.dispose()
           })
         }
       })
       .on('did-finish-load', function () {
-        log.info('did-finish-load')
         that.nightmare
           .url()
           .then(function (url) {
@@ -86,7 +85,7 @@ class ComplaintDetail {
 
   doHandle () {
     let that = this
-    log.info('//======处理投诉订单【开始】======//')
+    log.info('handles', '//======处理投诉订单【开始】======//')
     that.nightmare
       .evaluate(function (coustomerRequest, env) {
         console.log('//======当前运行的环境变量：' + env + '======//')
@@ -135,7 +134,7 @@ class ComplaintDetail {
         }
       }, that.handle.coustomerRequest, process.env.NODE_ENV)
       .then(function () {
-        log.info('//======处理投诉订单中...======//')
+        log.info('handles', '//======处理投诉订单中...======//')
       })
   }
 
@@ -164,12 +163,12 @@ class ComplaintDetail {
         return entry
       })
       .then(function (entry) {
-        log.info('//======解析到新的投诉订单======//')
-        log.info(entry)
+        log.info('complaints', '//======解析到新的投诉订单======//')
+        log.info('complaints', entry)
         entry.type = 1
         service.pushComplaint(entry).then(function (result) {
           that.nightmare.end().then(function () {
-            log.info('//======解析到的投诉订单已经发送，窗口已关闭======//')
+            log.info('complaints', '//======解析到的投诉订单已经发送，窗口已关闭======//')
             that.dispose()
           })
         })

@@ -133,7 +133,6 @@ module.exports = {
             .enterIFrame('#newVcodeIframe>iframe')
             .then(function () {
               console.log(JSON.stringify(config.vcode))
-
               request.post({
                 url: config.vcode.serviceUrl,
                 json: true,
@@ -145,6 +144,8 @@ module.exports = {
                 }
               }, function (err, response, body) {
                 log.info('//=======请求验证码服务返回=======//')
+                log.info(JSON.stringify(err, null, 2))
+                log.info(JSON.stringify(response, null, 2))
                 log.info(JSON.stringify(body, null, 2))
                 that.vcodeRequestCount += 1
                 if (!err) {

@@ -50,7 +50,7 @@ module.exports = {
           .then(function (result) {
             log.info('complaints', '//======向实立发送投诉订单请求已返回消息======//')
             log.info('complaints', result)
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV !== 'production') {
               result = 'ok'
             }
             // 如果实立保存失败，则退出，不在执行记录Redis
@@ -110,7 +110,7 @@ module.exports = {
       .then(function (result) {
         log.info('handles', '//======向实立发送【投诉订单已处理】请求已返回消息======//')
         log.info('handles', result)
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV !== 'production') {
           result = 'ok'
         }
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
@@ -142,7 +142,7 @@ module.exports = {
       // json: true,
       form: exceptionOrderCountmd5({countTatol: count})
     }).then(function (result) {
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env.NODE_ENV !== 'production') {
         result = 'ok'
       }
       if (result === 'ok') {

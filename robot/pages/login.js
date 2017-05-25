@@ -13,7 +13,7 @@ module.exports = {
   vcodeRequestCount: 0,
   getVcodePath: function () {
     if (!this._vcodePath) {
-      this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('yyyy-MM-dd HH:mm:ss') + '.png')
+      this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('YYYYMMDDHHmmss') + '.png')
       log.info('//======初始化验证码图片路径=======//')
       log.info(this._vcodePath)
     }
@@ -21,7 +21,7 @@ module.exports = {
   },
   generateNewVcodePath: function () {
     log.info('//======生成新的验证码图片路径=======//')
-    this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('yyyy-MM-dd HH:mm:ss') + '.png')
+    this._vcodePath = path.join(process.cwd(), './snapshot/vcodes/' + Moment().format('YYYYMMDDHHmmss') + '.png')
     log.info(this._vcodePath)
     return this._vcodePath
   },
@@ -57,9 +57,7 @@ module.exports = {
             })
         } else {
           log.info('不需要输入验证码')
-          return that.nightmare
-          .screenshot(that.generateNewVcodePath())
-          .resetFrame()
+          return that.nightmare.resetFrame()
         }
       })
       .then(function () {

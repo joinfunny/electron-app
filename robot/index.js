@@ -25,7 +25,10 @@ class Main {
     that.init()
     that.eventEmitter.on('login-expired', function (target) {
       target = null
-      that.run()
+      if (that.starting === false) {
+        that.starting = true
+        that.run()
+      }
     })
   }
   init () {
@@ -56,6 +59,9 @@ class Main {
                 }
                 that.complaintListener.run()
               }
+              setTimeout(function () {
+                that.starting = false
+              }, 1000)
             }
           })
       })

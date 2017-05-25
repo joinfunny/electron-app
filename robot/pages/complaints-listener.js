@@ -3,7 +3,6 @@ require('nightmare-iframe-manager')(Nightmare)
 var Runtime = require('../../runtime')
 var config = Runtime.App.AppConfig.robot.complaintListener
 var log = Runtime.App.Log.helper
-var service = require('../service')
 var store = require('../store')
 var ComplaintDetail = require('./complaint-detail')
 

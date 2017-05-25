@@ -57,7 +57,9 @@ module.exports = {
             })
         } else {
           log.info('不需要输入验证码')
-          return that.nightmare.resetFrame()
+          return that.nightmare
+          .screenshot(that.generateNewVcodePath())
+          .resetFrame()
         }
       })
       .then(function () {

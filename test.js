@@ -26,7 +26,7 @@ var nightmare = Nightmare({
   }
 })
 
-nightmare
+/* nightmare
   .on('did-fail-load', function () {
     console.log('did-fail-load')
     console.log(arguments)
@@ -40,7 +40,7 @@ nightmare
     console.log(arguments)
   })
   .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=2&status=20&searchCnt=&searchBy=mobile')
-  .then(function () {})
+  .then(function () {}) */
 
 /* request.post({
   url: vcodeConfig.vcode.serviceUrl,
@@ -63,7 +63,7 @@ nightmare
 
 }) */
 
-/* function complaintmd5 (complaint) {
+function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -79,24 +79,34 @@ nightmare
   console.log(complaint)
   return complaint
 }
-var complaint = {
-  agentOrderNo: '3176000951201705237642275462',
-  'coustomerRequest': '充值失败（重新充值）',
-  docmentsNo: '17052313571381739762',
-  feedback: '充错号码',
-  phoneNo: '18336510996' }
+function postHandles () {
+  var complaint = {
+    agentOrderNo: '3176000951201705237642275462',
+    'coustomerRequest': '充值失败（重新充值）',
+    docmentsNo: '17052313571381739762' + new Date() * 1,
+    feedback: '充错号码',
+    phoneNo: '18336510996'
+  }
 
-request.post({
-  url: 'http://localhost:9091/api/complaint/handling',
-  json: true,
-  body: complaintmd5(complaint)
-})
+  request.post({
+    url: 'http://localhost:9091/api/complaint/handling',
+    json: true,
+    body: complaintmd5(complaint)
+  })
   .then(function (result) {
     console.log(result)
   })
   .catch(function (err) {
     console.log(err)
-  }) */
+  })
+}
+var index = 0
+setInterval(function () {
+  while (index < 20) {
+    postHandles()
+    index++
+  }
+}, 0)
 
 /* const crypto = require('crypto')
 

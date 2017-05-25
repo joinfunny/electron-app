@@ -1,7 +1,7 @@
 var Nightmare = require('nightmare')
 require('nightmare-iframe-manager')(Nightmare)
 var Runtime = require('../../runtime')
-var config = Runtime.App.AppConfig.robot.complaints
+var config = Runtime.App.AppConfig.robot.complaintListener
 var log = Runtime.App.Log.helper
 var service = require('../service')
 var store = require('../store')
@@ -39,7 +39,7 @@ class ComplaintListener {
 
         complaintDetail.run()
       })
-    }, config.listener.tickTime)
+    }, config.worker.tickTime)
   }
 }
 

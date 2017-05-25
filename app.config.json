@@ -186,14 +186,14 @@
       }
     },
     "complaints": {
-      "run": true,
+      "run": false,
       "nightmare": {
         "width": 800,
         "height": 600,
         "openDevTools": {
           "mode": "detach"
         },
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -223,7 +223,10 @@
       }
     },
     "complaintListener": {
-      "run": false
+      "run": true,
+       "worker": {
+        "tickTime": 5000
+      }
     },
     "service":{
       "host":"http://localhost:9091",

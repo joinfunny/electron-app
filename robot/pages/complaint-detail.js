@@ -31,9 +31,11 @@ class ComplaintDetail {
             })
           })
         } else if (msg === '//======当前投诉处理已经经过处理======//') {
-          that.nightmare.end().then(function () {
-            log.info('handles', '//======当前投诉处理已经经过处理，窗口已关闭======//')
-            that.dispose()
+          service.handledComplaint(that.handle, true).then(function () {
+            that.nightmare.end().then(function () {
+              log.info('handles', '//======当前投诉处理已经经过处理，窗口已关闭======//')
+              that.dispose()
+            })
           })
         }
       })

@@ -103,7 +103,10 @@
       }
     },
     "complaintListener": {
-      "run": true
+      "run": true,
+       "worker": {
+        "tickTime": 2000
+      }
     },
     "service": {
       "host": "http://switchfour.zgslcx.com",

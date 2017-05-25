@@ -54,7 +54,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -71,10 +71,7 @@
       "nightmare": {
         "width": 800,
         "height": 600,
-        "openDevTools": {
-          "mode": "detach"
-        },
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -94,19 +91,18 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "openDevTools": {
-          "mode": "detach"
-        },
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
       }
     },
     "complaintListener": {
-      "run":true
+      "run": true,
+       "worker": {
+        "tickTime": 5000
+      }
     },
-
     "service":{
       "host":"http://localhost:9091",
       "md5":"2192dc67d8a0e90acbf0a7a61f1625ab",

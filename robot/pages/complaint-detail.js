@@ -111,26 +111,28 @@ class ComplaintDetail {
         if (label) {
           label.click()
           console.log($('#submitFrm').serialize())
-          if (env === 'production') {
-            $.ajax({
-              type: 'POST',
-              url: 'index.php?d=seller&c=seller&m=submitCase',
-              data: $('#submitFrm').serialize(),
-              success: function (data) {
-                var data = eval('(' + data + ')')
-
-                if (data.ret == '0') {
-                  console.log('//======异步提交投诉处理信息成功======//')
-                } else {
-                  console.log('//======异步提交投诉处理信息失败======//')
-                  console.log(data.msg)
-                }
-              },
-              error: function () {
-                console('系统繁忙，请稍后再试')
-              }
-            })
+          if (env !== 'production') {
+            console.log('//======异步提交投诉处理信息成功======//')
+            return
           }
+          $.ajax({
+            type: 'POST',
+            url: 'index.php?d=seller&c=seller&m=submitCase',
+            data: $('#submitFrm').serialize(),
+            success: function (data) {
+              var data = eval('(' + data + ')')
+
+              if (data.ret == '0') {
+                console.log('//======异步提交投诉处理信息成功======//')
+              } else {
+                console.log('//======异步提交投诉处理信息失败======//')
+                console.log(data.msg)
+              }
+            },
+            error: function () {
+              console('系统繁忙，请稍后再试')
+            }
+          })
         } else {
           console.log('//======订单处理没有匹配到======//')
         }

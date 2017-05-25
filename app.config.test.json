@@ -54,7 +54,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": true,
+        "show": false,
         "webPreferences": {
           "webSecurity": false
         }
@@ -71,7 +71,7 @@
       "nightmare": {
         "width": 800,
         "height": 600,
-        "show": true,
+        "show": false,
         "webPreferences": {
           "webSecurity": false
         }
@@ -91,7 +91,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": true,
+        "show": false,
         "webPreferences": {
           "webSecurity": false
         }

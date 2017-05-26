@@ -46,7 +46,7 @@ class ComplaintDetail {
             if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
               log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
               that.nightmare.end().then(function () {
-                that.nightmare = null
+                that.dispose()
                 that.eventEmitter.emit('detail-login-expired', that)
               })
             } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {

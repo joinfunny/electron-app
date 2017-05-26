@@ -11,14 +11,20 @@ class ComplaintListener {
     var that = this
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
-    that.eventEmitter.on('detail-login-expired', function (target) {
+    that.eventEmitter.once('detail-login-expired', function (target) {
       target = null
-      that.eventEmitter.emit('login-expired', that)
+      if (that.timer) {
+        clearInterval(that.timer)
+        that.timer = null
+      }
+      log.info('handles', '//======监听到投诉处理处理页面用户登录过期，已关闭======//')
+      that.eventEmitter.emit('login-expired', 'complaintListener')
     })
   }
   run () {
     var that = this
-    setInterval(function () {
+
+    that.timer = setInterval(function () {
       log.info('handles', '//======投诉订单监听执行======//')
       store.handle.pop().then(function (handle) {
         if (!handle) {

@@ -21,12 +21,14 @@ class Main {
     that.complaints = null
     that.exceptionOrder = null
     that.complaintListener = null
+    that.timer = null
+    that.timerCount = 0
     that.eventEmitter = new events.EventEmitter()
     that.init()
     that.eventEmitter.on('login-expired', function (target) {
-      target = null
-      if (that.starting === false) {
-        that.starting = true
+      that[target] = null
+      if (!that.reloading) {
+        that.reloading = true
         that.run()
       }
     })
@@ -40,28 +42,41 @@ class Main {
             if (url.indexOf('&g_ty=lk') > -1) {
               log.info('//--------------------正在进入主页面----------------//')
               log.info(url)
-              if (config.complaints.run) {
-                if (!that.complaints) {
-                  that.complaints = new Complaints(that.nightmare, that.eventEmitter)
+              var timerMaxCount = 20
+              var timerTick = 1000
+              // 20秒内轮询可能漏掉的已经关掉的服务
+              if (that.timer) return
+              that.timer = setInterval(function () {
+                if (config.complaints.run) {
+                  if (!that.complaints) {
+                    that.complaints = new Complaints(that.nightmare, that.eventEmitter)
+                    that.complaints.run()
+                  }
                 }
-                that.complaints.run()
-              }
-              if (config.exceptionOrder.run) {
-                if (!that.exceptionOrder) {
-                  that.exceptionOrder = new ExceptionOrder(that.nightmare, that.eventEmitter)
+                if (config.exceptionOrder.run) {
+                  if (!that.exceptionOrder) {
+                    that.exceptionOrder = new ExceptionOrder(that.nightmare, that.eventEmitter)
+                    that.exceptionOrder.run()
+                  }
                 }
-                that.exceptionOrder.run()
-              }
-
-              if (config.complaintListener.run) {
-                if (!that.complaintListener) {
-                  that.complaintListener = new ComplaintListener(that.nightmare, that.eventEmitter)
+                if (config.complaintListener.run) {
+                  if (!that.complaintListener) {
+                    that.complaintListener = new ComplaintListener(that.nightmare, that.eventEmitter)
+                    that.complaintListener.run()
+                  }
                 }
-                that.complaintListener.run()
-              }
-              setTimeout(function () {
-                that.starting = false
-              }, 1000)
+                that.timerCount++
+                if (that.timerCount >= timerMaxCount) {
+                  clearInterval(that.timer)
+                  that.timer = null
+                  that.timerCount = 0
+                  console.log('///-------重置加载中标记-------/')
+                  that.reloading = false
+                  return
+                }
+              }, timerTick)
+            } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login')) {
+              loginPage.run(that.nightmare, that.eventEmitter)
             }
           })
       })
@@ -71,10 +86,11 @@ class Main {
   }
   run () {
     var that = this
-    this.nightmare
-    .then(function () {
-      return loginPage.run(that.nightmare, that.eventEmitter)
-    })
+    that.nightmare
+      .goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
+      .run(function () {
+
+      })
   }
 }
 

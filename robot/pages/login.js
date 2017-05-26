@@ -30,20 +30,16 @@ module.exports = {
     this.nightmare = nightmare
     this.eventEmitter = eventEmitter
     return that.nightmare
-      .goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
-      .then(function () {
-        return that.nightmare
-          .enterIFrame('#login_frame')
-          .wait('#switcher_plogin')
-          .click('#switcher_plogin')
-          .wait('#u')
-          .type('#u', config.userName)
-          .type('#p', config.password)
-          .wait(1000)
-          .type('#p', '\u000d') // 回车
-          .wait(1000)
-          .exists('#newVcodeIframe>iframe')
-      })
+      .enterIFrame('#login_frame')
+      .wait('#switcher_plogin')
+      .click('#switcher_plogin')
+      .wait('#u')
+      .type('#u', config.userName)
+      .type('#p', config.password)
+      .wait(1000)
+      .type('#p', '\u000d') // 回车
+      .wait(1000)
+      .exists('#newVcodeIframe>iframe')
       .then(function (existsVcodeIFrame) {
         log.info(existsVcodeIFrame)
         if (existsVcodeIFrame) {

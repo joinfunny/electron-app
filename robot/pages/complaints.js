@@ -18,7 +18,6 @@ class Complaints {
     that.eventEmitter = eventEmitter
     var curConfig = Object.assign({}, config.nightmare)
     that.nightmare = new Nightmare(curConfig)
-    this.eventEmitter = eventEmitter
     return this
   }
   run () {
@@ -28,18 +27,6 @@ class Complaints {
       .get()
       .then(function (cookies) {
         that.nightmare
-          .on('did-fail-load', function () {
-            log.info('did-fail-load')
-            log.info(arguments)
-          })
-          .on('did-frame-finish-load', function () {
-            log.info('did-frame-finish-load')
-            log.info(arguments)
-          })
-          .on('did-get-redirect-request', function () {
-            log.info('did-get-redirect-request')
-            log.info(arguments)
-          })
           .on('did-finish-load', function () {
             log.info('did-finish-load')
             log.info(arguments)
@@ -52,7 +39,7 @@ class Complaints {
                 } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
                   log.warn('complaints', '//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
                   that.dispose(function () {
-                    that.eventEmitter.emit('login-expired', that)
+                    that.eventEmitter.emit('login-expired', 'complaints')
                   })
                 }
               })
@@ -107,7 +94,7 @@ class Complaints {
   loopComplaintDetail (links) {
     var that = this
     // 定时器模拟打开新的投诉详情页面
-    var timer = setInterval(function () {
+    that.timer = setInterval(function () {
       if (links && links.length > 0) {
         let link = links.splice(0, 1)[0]
         that.nightmare
@@ -120,7 +107,7 @@ class Complaints {
             complaintDetail.run()
           })
       } else {
-        clearInterval(timer)
+        clearInterval(that.timer)
         that.next()
       }
     }, config.worker.tickTime)
@@ -163,12 +150,17 @@ class Complaints {
       })
       .then(function (filterResult) {
         log.info('complaints', JSON.stringify(filterResult))
-        return that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile&r=' + new Date() * 1)
+        return that.nightmare
+          .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile&r=' + new Date() * 1)
           .run(function () {})
       })
   }
   dispose (cb) {
     var that = this
+    if (that.timer) {
+      clearInterval(that.timer)
+      that.timer = null
+    }
     that.nightmare
       .end()
       .then(function () {

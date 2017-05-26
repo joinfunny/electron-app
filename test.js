@@ -4,6 +4,7 @@ var Nightmare = require('nightmare')
 var request = require('request-promise')
 var fs = require('fs')
 var crypto = require('crypto')
+var events = require('events')
 
 var Runtime = require('./runtime')
 var log = Runtime.App.Log.helper
@@ -25,6 +26,14 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
+
+var eventEmitter = new events.EventEmitter()
+
+eventEmitter.on('firstEvent', function (target) {
+  console.log(arguments)
+})
+
+eventEmitter.emit('firstEvent', {a: 1})
 
 /* nightmare
   .on('did-fail-load', function () {
@@ -63,7 +72,7 @@ var nightmare = Nightmare({
 
 }) */
 
-function complaintmd5 (complaint) {
+/* function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -107,7 +116,7 @@ setInterval(function () {
     index++
   }
 }, 0)
-
+*/
 /* const crypto = require('crypto')
 
 const hash = crypto.createHash('md5')

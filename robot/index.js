@@ -75,7 +75,7 @@ class Main {
                   return
                 }
               }, timerTick)
-            } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login')) {
+            } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
               loginPage.run(that.nightmare, that.eventEmitter)
             }
           })
@@ -87,9 +87,13 @@ class Main {
   run () {
     var that = this
     that.nightmare
-      .goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
-      .run(function () {
+        .cookies
+        .clearAll()
+      .then(function () {
+        that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
+          .run(function () {
 
+          })
       })
   }
 }

@@ -70,9 +70,10 @@ module.exports = {
     var that = this
     if (that.vcodeRequestCount >= config.maxLoginCount) {
       log.warn('登录次数超过' + config.maxLoginCount + '次，页面将会重新刷新尝试登录')
+      that.vcodeRequestCount = 0
       that.nightmare.resetFrame()
         .then(function () {
-          that.run(that.nightmare)
+          that.run(that.nightmare, that.eventEmitter)
         })
       return
     }

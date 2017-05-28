@@ -8,5 +8,6 @@ module.exports = {
   ViewParser: require('./viewParser'),
   WeChat: require('./wechat'),
   Internationalization: require('./i18n'),
-  Mock: require('mockjs')
+  Mock: require('mockjs'),
+  OrmMapping: require('./orm')
 }

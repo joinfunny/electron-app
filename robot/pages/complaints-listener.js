@@ -18,7 +18,7 @@ class ComplaintListener {
         that.timer = null
       }
       log.info('handles', '//======监听到投诉处理处理页面用户登录过期，已关闭======//')
-      that.eventEmitter.emit('login-expired', 'complaintListener')
+      that.eventEmitter.emit('login-expired', 'robotComplaintsHandler')
     })
   }
   run () {

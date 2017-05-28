@@ -47,7 +47,13 @@ class Main {
               // 20秒内轮询可能漏掉的已经关掉的服务
               if (that.timer) return
               that.timer = setInterval(function () {
-                if (config.complaints.run) {
+                if (!that[process.env.NODE_SERVICE]) {
+                  var Service = Main.services[process.env.NODE_SERVICE].service
+                  that[that.serviceName] = new Service(that.nightmare, that.eventEmitter)
+                  that[that.serviceName].run()
+                }
+
+                /* if (config.complaints.run) {
                   if (!that.complaints) {
                     that.complaints = new Complaints(that.nightmare, that.eventEmitter)
                     that.complaints.run()
@@ -64,13 +70,13 @@ class Main {
                     that.complaintListener = new ComplaintListener(that.nightmare, that.eventEmitter)
                     that.complaintListener.run()
                   }
-                }
+                } */
                 that.timerCount++
                 if (that.timerCount >= timerMaxCount) {
                   clearInterval(that.timer)
                   that.timer = null
                   that.timerCount = 0
-                  console.log('///-------重置加载中标记-------/')
+                  log.info('///-------重置加载中标记-------/')
                   that.reloading = false
                   return
                 }
@@ -87,14 +93,30 @@ class Main {
   run () {
     var that = this
     that.nightmare
-        .cookies
-        .clearAll()
+      .cookies
+      .clearAll()
       .then(function () {
         that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
           .run(function () {
 
           })
       })
+  }
+
+}
+
+Main.services = {
+  robotComplaintsCollector: {
+    type: 'robotComplaintsCollector',
+    service: Complaints
+  },
+  robotComplaintsHandler: {
+    type: 'robotComplaintsHandler',
+    service: ComplaintListener
+  },
+  robotExceptionOrderListener: {
+    type: 'robotExceptionOrderListener',
+    service: ExceptionOrder
   }
 }
 

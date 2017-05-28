@@ -105,10 +105,12 @@ exports.use = function (app, appConfig) {
   这样做 的好处在于，在生产环境中我们可能只关心异常和错误，并不关心调试信息。
   从而大大减少日志的输出，能减少磁盘写入。
   而在开发环境中，我们可以需要打印非常 多的信息，帮助开发人员定位错误，调试代码。 */
-  app.use(log4js.connectLogger(logger, {
+  if (app) {
+    app.use(log4js.connectLogger(logger, {
     // 输出级别
-    level: log4js.levels.INFO
-  }))
+      level: log4js.levels.INFO
+    }))
+  }
 }
 exports.helper = helper
 

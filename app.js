@@ -15,6 +15,8 @@ let logger = Runtime.App.Log.helper
 // 注册国际化
 Runtime.Internationalization.use(app, Runtime.App.AppConfig)
 
+Runtime.OrmMapping.use(app, Runtime.App.AppConfig)
+
 // 全局跨域设置
 app.use(function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -25,9 +27,9 @@ app.use(function (req, res, next) {
 // 注册路由与服务
 Runtime.Router.use(app, Runtime.App.AppConfig)
 
-console.log('----正在启动机器人------')
+// console.log('----正在启动机器人------')
 // 启动机器人
-robot.run()
+// robot.run()
 
 // 启用授权
 // Runtime.Authorization.use(app)

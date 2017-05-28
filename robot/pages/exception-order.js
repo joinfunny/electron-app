@@ -54,7 +54,7 @@ class ExceptionOrder {
                     that.timer = null
                   }
                   log.warn('exception-orders', '//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
-                  that.eventEmitter.emit('login-expired', 'exceptionOrder')
+                  that.eventEmitter.emit('login-expired', 'robotExceptionOrderListener')
                 })
               }
             })

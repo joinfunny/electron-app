@@ -39,7 +39,7 @@ class Complaints {
                 } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
                   log.warn('complaints', '//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
                   that.dispose(function () {
-                    that.eventEmitter.emit('login-expired', 'complaints')
+                    that.eventEmitter.emit('login-expired', 'robotComplaintsCollector')
                   })
                 }
               })

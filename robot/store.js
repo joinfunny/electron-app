@@ -1,4 +1,5 @@
 let Runtime = require('../runtime')
+let orm = Runtime.OrmMapping
 let log = Runtime.App.Log.helper
 let Redis = require('ioredis')
 let redis = new Redis()
@@ -20,6 +21,12 @@ var complaints = {
   adds: (items) => {
     return complaints.updates(items, status.init).then(function () {
       log.info('data', '抓取到投诉订单+' + items.length)
+      orm.models.complaints.createEach(items)
+      .catch(function (err) {
+        console.log(err)
+      }).then(function () {
+        console.log(arguments)
+      })
     })
   },
   updates: (items, state) => {

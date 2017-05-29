@@ -10,12 +10,22 @@ export default [
     children: [
       {
         path: '/',
-        component: resolve => require(['../components/userlist/index'], resolve)
+        component: resolve => require(['../components/complaints/index'], resolve)
       },
       {
         path: '/userlist',
         name: 'userlist',
         component: resolve => require(['../components/userlist/index'], resolve)
+      },
+      {
+        path: '/complaints',
+        name: 'complaintList',
+        component: resolve => require(['../components/complaints/index'], resolve)
+      },
+      {
+        path: '/handles',
+        name: 'handlesList',
+        component: resolve => require(['../components/handles/index'], resolve)
       }
     ]
   },

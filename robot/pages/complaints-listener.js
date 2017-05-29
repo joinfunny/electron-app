@@ -17,18 +17,18 @@ class ComplaintListener {
         clearInterval(that.timer)
         that.timer = null
       }
-      log.info('handles', '//======监听到投诉处理处理页面用户登录过期，已关闭======//')
-      that.eventEmitter.emit('login-expired', 'robotComplaintsHandler')
+      log.info('//======监听到投诉处理处理页面用户登录过期，已关闭======//')
+      that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
     })
   }
   run () {
     var that = this
 
     that.timer = setInterval(function () {
-      log.info('handles', '//======投诉订单监听执行======//')
+      // log.info('//======投诉订单监听执行======//')
       store.handle.pop().then(function (handle) {
         if (!handle) {
-          log.warn('handles', '队列中没有需要处理的投诉订单')
+          // log.warn('队列中没有需要处理的投诉订单')
           return
         }
 

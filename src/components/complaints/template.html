@@ -1,0 +1,26 @@
+<div>
+  <div class="stream-page-nav">
+    投诉订单>订单管理
+  </div>
+  <div class="stream-form-field">
+    <admin-input
+      class="stream-search-input"
+      v-model="searchKey"
+      placeholder="表名、字段名、数据域名"
+      iconClass="ion-ios-search">
+    </admin-input>
+    <admin-datepicker
+      v-model="date">
+    </admin-datepicker>
+    <input type="button" value="搜索" @click="queryData" />
+  </div>
+  <data-grid
+    :loading="loading"
+    :columns="columns"
+    :total-count="totalCount"
+    :page-size="pageSize"
+    :current-page="currentPage"
+    :data-list="dataList"
+    @on-toggle-page="fetchData">
+  </data-grid>
+</div>

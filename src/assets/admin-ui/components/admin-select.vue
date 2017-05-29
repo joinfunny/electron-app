@@ -2,8 +2,8 @@
   @import '../style/vars.scss';
   .admin-select {
     position: relative;
-    display: inline-block;
     width: 198px;
+    display: inline-block;
   }
   .admin-select-label-text {
     font-size: $normal;
@@ -53,14 +53,16 @@
     color: $info;
   }
   .admin-select-option-container {
-    position: absolute;
     z-index: 9990;
     top: 36px;
+    position: absolute;
     border: 1px solid $grayBrighten5;
     border-radius: 2px;
     padding: 4px 0;
     min-width: 84px;
     width: 100%;
+    max-height: 237px;
+    overflow-y: auto;
     box-shadow: $shadowLevel3;
     background-color: #fff;
     & > li {
@@ -133,19 +135,57 @@
   .admin-form-disabled .admin-select-core {
     background-color: $grayBrighten20;
   }
+  .admin-select-search-input {
+    position: relative;
+    .admin-select-search-input-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      margin-top: -9.5px;
+    }
+  }
+  .admin-select-multiple {
+    li {
+      float: left;
+      margin-right: 12px;
+    }
+    &:after {
+      content: '';
+      clear: both;
+      display: block;
+    }
+  }
+  .admin-select-close-icon {
+    cursor: pointer;
+  }
+  .admin-select-placeholder {
+    color: $grayBrighten5;
+  }
 </style>
 <template>
   <div class="admin-select" :class="classes">
     <div class="admin-select-label-text" @click="labelClick" v-if="label" @click.stop="()=>{}">{{ label }}</div>
-    <div class="admin-select-core-container" :class="{ 'admin-select-active': optionDisplay}">
-      <div class="admin-select-core" ref="core" tabindex="0" @focus="coreFocus" @blur="coreBlur" @click="coreClick">
-        {{ placeholderText }}
-        <span class="admin-select-arrow" :class="optionDisplay ? 'admin-select-arrow-active' : ''">
+    <div class="admin-select-core-container" :class="{ 'admin-select-active': active}">
+      <div id="test" class="admin-select-core" ref="core" tabindex="0" @click.stop="coreClick" @focus="coreFocus" @blur="coreBlur">
+        <ul class="admin-select-multiple">
+          <li v-show="!selectedOptions.length" class="admin-select-placeholder">{{ placeholder }}</span>
+          <li v-if="!multiple && selectedOptions.length">{{ selectedOptions[0].text }}</li>
+          <li v-else v-for="(option, index) in selectedOptions">
+            <span>{{ option.text }}</span>
+            <span @click.stop="deleteSelectedOption(index)" class="admin-select-close-icon">
+              <admin-icon type="ion-android-close"></admin-icon>
+            </span>
+          </li>
+        </ul>
+        <span  class="admin-select-arrow" :class="optionDisplay ? 'admin-select-arrow-active' : ''">
           <admin-icon type="ion-android-arrow-dropdown"></admin-icon>
         </span>
       </div>
       <ul class="admin-select-option-container" v-show="optionDisplay" ref="options" tabindex="0" @blur="optionsBlur">
-        <li v-for="option in options" @click.stop="select(option)" :class="option.value==localValue?'selected':''">{{ option.text }}</li>
+        <li
+          v-for="option in options"
+          :class="{'selected': multiple ? localValue.includes(option.value) : (localValue === option.value)}"
+          @click.stop="select(option, $event)">{{ option.text }}</li>
       </ul>
     </div>
     <div class="admin-select-warning" v-for="warning in warnings">{{ warning }}</div>
@@ -158,32 +198,35 @@
   // github: https://github.com/BboyAwey
   // blog: http://www.jianshu.com/u/3c8fe1455914
 
-  // Modifier:
+  // last Modifier: lianghao
+  // email: lianghao@rongcapital.cn
 
   import localValidatorMixin from '../helpers/local-validator-mixin'
   import standardFormApiMixin from '../helpers/standard-form-api-mixin'
+  import { getElementSize } from '../helpers/common'
   import adminIcon from './admin-icon'
+  import adminInput from './admin-input'
   export default {
     name: 'admin-select',
     mixins: [localValidatorMixin, standardFormApiMixin],
     components: {
-      adminIcon
+      adminIcon,
+      adminInput
     },
     created () {
-      let { options, localValue } = this
-      if (options && options.length) {
-        for (let i = 0; i < options.length; i++) {
-          if (options[i].value === localValue) {
-            this.placeholderText = options[i].text
-            break
-          }
-        }
+      this.localValueToSelectedOptions()
+    },
+    mounted () {
+      if (this.multiple && !(this.value instanceof Array)) {
+        console.error('admin-select: value should be Array if multiple selecting allowed.')
       }
+      this.reposPopup()
     },
     data () {
       return {
         optionDisplay: false,
-        placeholderText: this.placeholder
+        selectedOptions: [],
+        active: false
       }
     },
     props: {
@@ -194,25 +237,25 @@
       options: {
         type: Array,
         required: true
+      },
+      multiple: {
+        type: Boolean,
+        default: false
       }
     },
     watch: {
-      localValue (v) {
-        let options = this.options
-        for (let i = 0; i < options.length; i++) {
-          if (options[i].value === v) {
-            this.placeholderText = options[i].text
-            this.input() // input first to ensure changes of father comp
-            this.change()
-            return false
-          }
-        }
-      },
-      optionDisplay (v) {
-
+      localValue () {
+        this.localValueToSelectedOptions()
+        this.input()
+        this.change()
+        this.$nextTick(this.reposPopup)
       }
     },
     methods: {
+      deleteSelectedOption (index) {
+        this.selectedOptions.splice(index, 1)
+        this.localValue.splice(index, 1)
+      },
       labelClick () {
         if (this.disabled) return false
         this.$refs.core.focus()
@@ -220,6 +263,7 @@
       },
       coreClick () {
         if (this.disabled) return false
+        this.active = !this.active
         this.optionDisplay = !this.optionDisplay
       },
       coreFocus (e) {
@@ -230,6 +274,7 @@
       coreBlur (e) {
         if (e.relatedTarget !== this.$refs.options) {
           this.optionDisplay = false
+          this.active = false
           this.blur(e)
         }
       },
@@ -239,11 +284,42 @@
           this.blur(e)
         }
       },
-      select (option) {
-        this.localValue = option.value
-        this.placeholderText = option.text
-        this.optionDisplay = false
+      select (option, index, e) {
+        if (this.multiple) {
+          if (!this.localValue.includes(option.value)) {
+            this.localValue.push(option.value)
+          } else {
+            this.localValue.splice(this.localValue.indexOf(option.value), 1)
+          }
+        } else {
+          if (this.localValue !== option.value) {
+            this.selectedOptions = [option]
+            this.localValue = option.value
+          }
+        }
+        if (!this.multiple) this.optionDisplay = false
+        this.active = false
         this.$emit('select', option)
+      },
+      localValueToSelectedOptions () {
+        let {options, localValue} = this
+        let res = []
+        for (let i = 0; i < options.length; i++) {
+          if (localValue instanceof Array && localValue.includes(options[i].value)) {
+            res.push(options[i])
+          } else if (localValue === options[i].value) {
+            res.push(options[i])
+            break
+          }
+        }
+        this.selectedOptions = res
+      },
+      reposPopup () {
+        if (this.multiple) {
+          let coreHeight = getElementSize(this.$refs.core).height
+          let options = this.$refs.options
+          options.style.top = coreHeight + 2 + 'px'
+        }
       }
     }
   }

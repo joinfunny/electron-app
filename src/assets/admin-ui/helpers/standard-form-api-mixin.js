@@ -28,8 +28,11 @@ export default {
     }
   },
   watch: {
-    value (v) {
-      if (this.localValue !== v) this.localValue = v
+    value: {
+      deep: true,
+      handler (v) {
+        if (this.localValue !== v) this.localValue = v
+      }
     }
   },
   computed: {
@@ -37,7 +40,7 @@ export default {
       let classes = ''
       if (this.hasLocalWarnings || this.warnings) classes += 'admin-form-warning '
       if (this.small) classes += 'admin-form-small '
-      if (this.iconClass) classes += 'admin-form-icon '
+      if (this.iconClass) classes += this.iconPosition === 'right' ? 'admin-form-icon-right ' : 'admin-form-icon'
       if (this.disabled) classes += 'admin-form-disabled'
       return classes
     }

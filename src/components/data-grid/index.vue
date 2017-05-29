@@ -41,7 +41,7 @@ export default {
   name: 'data-grid',
   data () {
     return {
-      searchKey: ''
+
     }
   },
   props: {
@@ -73,11 +73,7 @@ export default {
   methods: {
     togglePage (currentPage) {
       console.log(currentPage)
-      this.$emit('fetch-data', currentPage)
-    },
-    search () {
-      console.log(this.searchKey)
-      this.$emit('query-data', this.searchKey)
+      this.$emit('on-toggle-page', currentPage)
     }
   }
 }

@@ -15,7 +15,7 @@ let logger = Runtime.App.Log.helper
 // 注册国际化
 Runtime.Internationalization.use(app, Runtime.App.AppConfig)
 
-Runtime.OrmMapping.use(app, Runtime.App.AppConfig)
+Runtime.OrmMapping.use(Runtime.App.AppConfig)
 
 // 全局跨域设置
 app.use(function (req, res, next) {

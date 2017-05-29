@@ -50,32 +50,16 @@ let instances = {
 instances.modal.$on('admin-modal-off', () => {
   if (instances.modal.$el.parentNode) {
     instances.modal.$el.parentNode.removeChild(instances.modal.$el)
+    instances.modal.display = false
   }
-  instances.modal.display = false
 })
 // when click buttons call the handler
-instances.modal.$on('admin-modal-confirm', () => {
-  let config = instances.modal.config
-  if (config.type === 'prompt') {
-    if (config.confirm && typeof config.confirm === 'function') {
-      if (instances[config.type].validate(instances[config.type].value)) {
-        config.confirm(instances[config.type].value)
-        instances.modal.display = false
-      } else {
-        // config.confirm(instances[config.type].value)
-        return true
-      }
-    }
-  } else {
-    if (config.confirm && typeof config.confirm === 'function') {
-      config.confirm()
-    }
-  }
-})
 instances.modal.$on('admin-modal-cancel', () => {
   let config = instances.modal.config
   if (config.cancel && typeof config.cancel === 'function') {
-    config.cancel(config.type === 'prompt' ? instances[config.type].value : undefined)
+    Vue.nextTick(() => {
+      config.cancel(config.type === 'prompt' ? instances[config.type].value : undefined)
+    })
   }
 })
 // refresh el innnerHTML
@@ -85,7 +69,7 @@ function refreshContent (el, content) {
 }
 
 function MessageBox (config) {
-  let { type = 'alert', message, validator, reset, buttonClass } = config
+  let { type = 'alert', message, validators, reset, buttonClass, placeholder } = config
   if (!type || ['alert', 'confirm', 'prompt'].indexOf(type) === -1) {
     console.warn('massage box: type is required and must be "alert","confirm" or "prompt"')
   }
@@ -96,31 +80,48 @@ function MessageBox (config) {
     instances.modal.buttons = [{
       name: 'confirm',
       text: '确定',
-      buttonClass: buttonClass ? buttonClass.confirm : undefined
+      buttonClass: buttonClass ? buttonClass.confirm : ''
     }]
   }
   if (type === 'confirm') {
     instances.modal.buttons = [{
       name: 'cancel',
       text: '取消',
-      buttonClass: buttonClass ? buttonClass.cancel : undefined
+      buttonClass: buttonClass ? buttonClass.cancel : 'admin-auxiliary'
     }, {
       name: 'confirm',
       text: '确定',
-      buttonClass: buttonClass ? buttonClass.confirm : undefined
+      buttonClass: buttonClass ? buttonClass.confirm : ''
     }]
   }
   if (type === 'prompt') {
     instances.modal.buttons = [{
       name: 'cancel',
       text: '取消',
-      buttonClass: buttonClass ? buttonClass.cancel : undefined
+      buttonClass: buttonClass ? buttonClass.cancel : 'admin-auxiliary'
     }, {
       name: 'confirm',
       text: '确定',
-      buttonClass: buttonClass ? buttonClass.confirm : undefined,
+      buttonClass: buttonClass ? buttonClass.confirm : '',
       handler () {
-        return true
+        let config = instances.modal.config
+        if (config.type === 'prompt') {
+          if (config.confirm && typeof config.confirm === 'function') {
+            if (instances[config.type].validate()) {
+              Vue.nextTick(() => {
+                config.confirm(instances[config.type].value)
+              })
+            } else {
+              return true
+            }
+          }
+        } else {
+          if (config.confirm && typeof config.confirm === 'function') {
+            Vue.nextTick(() => {
+              config.confirm()
+            })
+          }
+        }
       }
     }]
   }
@@ -134,7 +135,7 @@ function MessageBox (config) {
     contentInstance.warnings = null
   }
   // set content instance props
-  Object.assign(contentInstance, {message, validator})
+  Object.assign(contentInstance, {message, validators, placeholder})
   // put the content into modal and show them on document
   refreshContent(instances.modal.$refs.content, contentInstance.$el)
   instances.modal.display = true
@@ -144,5 +145,19 @@ function MessageBox (config) {
   }
   document.body.appendChild(instances.modal.$el)
 }
-
+MessageBox.alert = function (config) {
+  MessageBox(Object.assign(config, {
+    type: 'alert'
+  }))
+}
+MessageBox.confirm = function (config) {
+  MessageBox(Object.assign(config, {
+    type: 'confirm'
+  }))
+}
+MessageBox.prompt = function (config) {
+  MessageBox(Object.assign(config, {
+    type: 'prompt'
+  }))
+}
 export default MessageBox

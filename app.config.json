@@ -71,36 +71,20 @@
           "type": "console"
         },
         {
-          "pattern": "yyyy-MM-dd/debug.log",
+          "pattern": "yyyy-MM-dd/service-name/debug.log",
           "category": "logDebug"
         },
         {
-          "pattern": "yyyy-MM-dd/info.log",
+          "pattern": "yyyy-MM-dd/service-name/info.log",
           "category": "logInfo"
         },
         {
-          "pattern": "yyyy-MM-dd/warn.log",
+          "pattern": "yyyy-MM-dd/service-name/warn.log",
           "category": "logWarn"
         },
         {
-          "pattern": "yyyy-MM-dd/err.log",
+          "pattern": "yyyy-MM-dd/service-name/err.log",
           "category": "logErr"
-        },
-        {
-          "pattern": "yyyy-MM-dd/data.log",
-          "category": "data"
-        },
-        {
-          "pattern": "yyyy-MM-dd/complaints/data.log",
-          "category": "complaints"
-        },
-        {
-          "pattern": "yyyy-MM-dd/exceptionorders/data.log",
-          "category": "exception-orders"
-        },
-        {
-          "pattern": "yyyy-MM-dd/handles/data.log",
-          "category": "handles"
         }
       ],
       "replaceConsole": true,
@@ -200,9 +184,6 @@
       },
       "worker": {
         "tickTime": 5000
-      },
-      "listener": {
-        "tickTime": 10000
       }
     },
     "exceptionOrder": {
@@ -225,7 +206,7 @@
     "complaintListener": {
       "run": true,
       "worker": {
-        "tickTime": 5000
+        "tickTime": 100
       }
     },
     "service": {

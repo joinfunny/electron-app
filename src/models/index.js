@@ -1,9 +1,11 @@
 import userListModel from './user-list.js'
 import loginModel from './login.js'
+import complaints from './complaints.js'
 
 let models = {
   userListModel,
-  loginModel
+  loginModel,
+  complaints
 }
 
 let allModels = {}

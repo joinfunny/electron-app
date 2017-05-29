@@ -49,34 +49,15 @@ class Main {
               that.timer = setInterval(function () {
                 if (!that[process.env.NODE_SERVICE]) {
                   var Service = Main.services[process.env.NODE_SERVICE].service
-                  that[that.serviceName] = new Service(that.nightmare, that.eventEmitter)
-                  that[that.serviceName].run()
+                  that[process.env.NODE_SERVICE] = new Service(that.nightmare, that.eventEmitter)
+                  that[process.env.NODE_SERVICE].run()
                 }
-
-                /* if (config.complaints.run) {
-                  if (!that.complaints) {
-                    that.complaints = new Complaints(that.nightmare, that.eventEmitter)
-                    that.complaints.run()
-                  }
-                }
-                if (config.exceptionOrder.run) {
-                  if (!that.exceptionOrder) {
-                    that.exceptionOrder = new ExceptionOrder(that.nightmare, that.eventEmitter)
-                    that.exceptionOrder.run()
-                  }
-                }
-                if (config.complaintListener.run) {
-                  if (!that.complaintListener) {
-                    that.complaintListener = new ComplaintListener(that.nightmare, that.eventEmitter)
-                    that.complaintListener.run()
-                  }
-                } */
                 that.timerCount++
                 if (that.timerCount >= timerMaxCount) {
                   clearInterval(that.timer)
                   that.timer = null
                   that.timerCount = 0
-                  log.info('///-------重置加载中标记-------/')
+                  log.info('///-------重置加载中标记-------///')
                   that.reloading = false
                   return
                 }
@@ -114,8 +95,8 @@ Main.services = {
     type: 'robotComplaintsHandler',
     service: ComplaintListener
   },
-  robotExceptionOrderListener: {
-    type: 'robotExceptionOrderListener',
+  robotExceptionListener: {
+    type: 'robotExceptionListener',
     service: ExceptionOrder
   }
 }

@@ -1,11 +1,17 @@
 <template>
 <div class="admin-tabs-wrapper">
-    <div class="admin-tabs-nav">
+    <div class="admin-tabs-nav" v-show="tabs && tabs.length">
         <ul>
-            <li v-for="(entry, index) in tabs" :class="entry.name==activeTabName?'admin-tabs-active':''" :name="['tab-'+entry.name]"  @click="toggleTabs(entry.name);"><a href="javascript:void(0);" :title="entry.text">{{entry.text}}</a></li>
+            <li
+              v-for="(entry, index) in tabs"
+              :class="entry.name==activeTabName?'admin-tabs-active':''"
+              :name="['tab-'+entry.name]"
+              @click="toggleTabs(entry.name, $event)">
+              <a href="javascript:void(0);" :title="entry.text">{{entry.text}}</a>
+            </li>
         </ul>
     </div>
-    <div  class="admin-tabs-container">
+    <div  class="admin-tabs-container" v-show="tabs && tabs.length">
         <slot class="admin-tabs-content"></slot>
     </div>
 </div>
@@ -26,6 +32,9 @@
 // github: https://github.com/BboyAwey
 // blog: http://www.jianshu.com/u/3c8fe1455914
 
+// last Modifier: lianghao
+// email: lianghao@rongcapital.cn
+
 export default {
   name: 'admin-tabs',
   data () {
@@ -33,34 +42,37 @@ export default {
       activeTabName: this.currentTabName
     }
   },
-  props: ['tabs', 'currentTabName'],
+  props: {
+    tabs: {
+      type: Array,
+      default () {
+        return []
+      }
+    },
+    currentTabName: [String, Number]
+  },
   watch: {
     currentTabName (v) {
-      this.activeTabName = this.currentTabName
-      this.toggleTabs(this.currentTabName)
+      if (this.activeTabName !== this.currentTabName) {
+        this.activeTabName = this.currentTabName
+        this.toggleTabs(this.currentTabName)
+      }
     }
   },
   methods: {
-    toggleTabs (name) {
+    toggleTabs (name, e) {
+      if (e && e.target.parentNode.className === 'admin-tabs-active') return false
       this.activeTabName = name
-      this.$emit('toggle-tab', name)
+      this.$emit('admin-tabs-toggle', name, e)
       var cons = this.$el.querySelectorAll('.admin-tabs-container>*')
-      var tabs = this.$el.querySelectorAll('.admin-tabs-nav li')
-      var activeEl = this.$el.querySelectorAll('* [ name=' + name + ']')
-      for (var i = 0, len = cons.length; i < len; i++) {
-        cons[i].style.display = 'none'
-      }
-      if (activeEl && activeEl[0]) {
+      var activeEl = this.$el.querySelectorAll(`* [name="${name}"]`)
+      if (activeEl && activeEl.length) {
+        for (var i = 0, len = cons.length; i < len; i++) {
+          cons[i].style.display = 'none'
+        }
         activeEl[0].style.display = 'block'
       }
-      for (var m = 0, num = tabs.length; m < num; m++) {
-        var label = tabs[m]
-        label.name === 'tab-' + name ? label.classList.add('admin-tabs-active') : label.classList.remove('admin-tabs-active')
-      }
     }
-  },
-  components: {
-    child: {template: '<div></div>'}
   },
   mounted () {
     var els = this.$el.querySelectorAll('.admin-tabs-container > *')
@@ -74,7 +86,7 @@ export default {
   @import '../style/vars';
   .admin-tabs-wrapper {
     position: relative;
-    z-index: 0;
+    padding-top: 36px;
     width: 100%;
     height: 100%;
     display: block;
@@ -82,12 +94,16 @@ export default {
   .admin-tabs-nav {
     position: absolute;
     top: 0;
-    z-index: 2;
     left: 0;
-    right: 0;
+    width: 100%;
     padding-left: 40px;
+    border-bottom: 1px solid $grayBrighten10;
+    & > ul {
+      position: relative;
+      top: 1px;
+    }
     & > ul:after {
-      conten: '';
+      content: '';
       display: block;
       clear: both;
     }
@@ -122,20 +138,9 @@ export default {
     }
   }
   .admin-tabs-container {
-    border-top: 1px solid $grayBrighten10;
-    clear: both;
-    // height: 100%;
-    position: absolute;
-    top: 34px;
-    z-index: 1;
-    left: 0;
-    right: 0;
-    bottom: 1px;
     display: block;
-    overflow-y: auto;
     .admin-tabs-content {
       display: none;
-      // padding: 10px;
     }
     .admin-tabs-content:first-child {
       display: block;

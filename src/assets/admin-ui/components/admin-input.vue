@@ -27,10 +27,9 @@
       position: absolute;
       display: inline-block;
       top: 50%;
-      left: 8px;
       height: 30px;
-      line-height: 30px;
       margin-top: -15px;
+      line-height: 30px;
       font-size: 16px;
     }
     .admin-input-focus {
@@ -94,6 +93,17 @@
     .admin-input-core {
       padding-left: 34px;
     }
+    .admin-input-icon {
+      left: 8px;
+    }
+  }
+  .admin-input.admin-form-icon-right {
+    .admin-input-core {
+      padding-right: 34px;
+    }
+    .admin-input-icon {
+      right: 8px;
+    }
   }
   .admin-input.admin-form-small {
     .admin-input-label-text {
@@ -152,12 +162,12 @@
       @keydown="keydown($event)"
       ref="core"></textarea>
     <span class="admin-input-container" :class="{ 'admin-input-focus': active }" v-else>
-      <i v-if="iconClass" class="admin-input-icon" :class="iconClass"></i>
+      <i v-if="iconClass" class="admin-input-icon" :class="iconClass" @click="iconClick"></i>
       <input
         class="admin-input-core"
+        :class="small?'small':''"
         type="text"
         v-if="type === 'text'"
-        :class="small?'small':''"
         v-model="localValue"
         :disabled="disabled"
         :placeholder="placeholder"
@@ -249,6 +259,7 @@
       },
       associations: Array,
       iconClass: String,
+      iconPosition: String,
       minWidth: String,
       maxWidth: String,
       minHeight: String,
@@ -289,6 +300,9 @@
       },
       associationsBlur (e) {
         if (e.relatedTarget !== this.$refs.core) this.associationsShow = false
+      },
+      iconClick () {
+        this.$refs.core.focus()
       }
     }
   }

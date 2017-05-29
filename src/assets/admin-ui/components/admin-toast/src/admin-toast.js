@@ -22,9 +22,9 @@ let toastQueue = []
 toastQueue.shifting = false
 toastQueue.shiftToast = function () {
   if (!this.length) return false
-  if (this.shifting) return false
   // only if there are config in queue and no other instance is showing will the next show up
   let instance = namespace.get('getToastInstance')()
+  if (this.shifting) return false
   let config = this.shift()
   instance.originConfig = Object.assign({}, config)
   // calc and set the pos to config
@@ -67,7 +67,7 @@ ToastConstructor.prototype.close = function () {
 ToastConstructor.prototype.show = function (config) {
   toastQueue.shifting = true
   let instance = this
-  if (!instance.$el.parentNode)document.body.appendChild(instance.$el)
+  if (!instance.$el.parentNode) document.body.appendChild(instance.$el)
   // set a resize listener to repos and it should be removed when close
   if (!instance.originConfig.top || !instance.originConfig.left) window.addEventListener('resize', instance.rePos.bind(instance))
   instance.display = true
@@ -96,18 +96,19 @@ ToastConstructor.prototype.rePos = function () {
 
 // the Toast function for public
 let Toast = function (config = {}) {
-  if (toastQueue.length) {
-    let prev = toastQueue[toastQueue.length - 1]
-    for (let key in prev) {
-      // same config to prev
-      if (prev[key] !== config[key]) {
-        toastQueue.push(config)
-        break
-      }
-    }
-  } else {
-    toastQueue.push(config)
-  }
+  // if (toastQueue.length) {
+  //   let prev = toastQueue[toastQueue.length - 1]
+  //   for (let key in prev) {
+  //     // same config to prev
+  //     if (prev[key] !== config[key]) {
+  //       toastQueue.push(config)
+  //       break
+  //     }
+  //   }
+  // } else {
+  //   toastQueue.push(config)
+  // }
+  toastQueue.push(config)
   // start the show queue
   toastQueue.shiftToast()
 }

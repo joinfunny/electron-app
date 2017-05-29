@@ -17,22 +17,21 @@ export default {
     getMenuList: function () {
       return [
         {
-          'text': '用户管理',
+          'text': '投诉订单',
           'active': true,
           'url': '',
           'collapse': false,
           'children': [
             {
-              'text': '用户列表',
-              'url': '/userlist',
+              'text': '订单列表',
+              'url': '/complaints',
               'active': true
+            },
+            {
+              'text': '订单处理',
+              'url': '/handles'
             }
           ]
-        },
-        {
-          'text': '权限管理',
-          'url': '',
-          'collapse': true
         }
       ]
     }

@@ -10,7 +10,8 @@ var Runtime = require('./runtime')
 var log = Runtime.App.Log.helper
 var vcodeConfig = Runtime.App.AppConfig.robot.login
 var serviceConfig = Runtime.App.AppConfig.robot.service
-
+Runtime.OrmMapping.use(Runtime.App.AppConfig)
+let orm = Runtime.OrmMapping
 require('nightmare-iframe-manager')(Nightmare)
 
 var capturePlugin = require('nightmare-screenshot')
@@ -27,13 +28,13 @@ var nightmare = Nightmare({
   }
 })
 
-var eventEmitter = new events.EventEmitter()
+/* var eventEmitter = new events.EventEmitter()
 
 eventEmitter.on('firstEvent', function (target) {
   console.log(arguments)
 })
 
-eventEmitter.emit('firstEvent', {a: 1})
+eventEmitter.emit('firstEvent', {a: 1}) */
 
 /* nightmare
   .on('did-fail-load', function () {
@@ -72,7 +73,7 @@ eventEmitter.emit('firstEvent', {a: 1})
 
 }) */
 
-/* function complaintmd5 (complaint) {
+function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -89,34 +90,38 @@ eventEmitter.emit('firstEvent', {a: 1})
   return complaint
 }
 function postHandles () {
-  var complaint = {
-    agentOrderNo: '3176000951201705237642275462',
-    'coustomerRequest': '充值失败（重新充值）',
-    docmentsNo: '17052313571381739762' + new Date() * 1,
-    feedback: '充错号码',
-    phoneNo: '18336510996'
-  }
-
-  request.post({
-    url: 'http://localhost:9091/api/complaint/handling',
-    json: true,
-    body: complaintmd5(complaint)
-  })
+  var requestMapping = [
+    '充值已到账（月初）',
+    '充值已到账（月中）',
+    '充值部分到账',
+    '充值失败（重新充值）',
+    '充值失败（可退款）',
+    '充错号码（不可退款）',
+    '通用'
+  ]
+  orm.models.complaints.findOne({type: 1}).then(function (complaint) {
+    complaint.coustomerRequest = requestMapping[Runtime.App.Utils._.random(0, 6)]
+    request.post({
+      url: 'http://localhost:9091/api/complaint/handling',
+      json: true,
+      body: complaintmd5(complaint)
+    })
   .then(function (result) {
     console.log(result)
   })
   .catch(function (err) {
     console.log(err)
   })
+  })
 }
 var index = 0
 setInterval(function () {
-  while (index < 20) {
+  if (index < 20) {
     postHandles()
     index++
   }
-}, 0)
-*/
+}, 1000)
+
 /* const crypto = require('crypto')
 
 const hash = crypto.createHash('md5')

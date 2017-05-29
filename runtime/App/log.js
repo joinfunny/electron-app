@@ -4,6 +4,14 @@ var path = require('path')
 var helper = {}
 
 function parse (logConfig) {
+  var serviceName = process.env.NODE_SERVICE
+  if (serviceName) {
+    logConfig.appenders.forEach(function (appender, index) {
+      if (appender.pattern) {
+        appender.pattern = appender.pattern.replace('service-name', serviceName)
+      }
+    })
+  }
   // 检查配置文件所需的目录是否存在，不存在时创建
   if (logConfig.appenders) {
     var baseDir = logConfig['customBaseDir']
@@ -12,7 +20,7 @@ function parse (logConfig) {
     baseDir = path.join(rootDir, baseDir)
     for (var i = 0, j = logConfig.appenders.length; i < j; i++) {
       var item = logConfig.appenders[i]
-      if (item['type'] == 'console') { continue }
+      if (item['type'] === 'console') { continue }
 
       if (defaultAtt != null) {
         for (var att in defaultAtt) {
@@ -96,6 +104,16 @@ function parse (logConfig) {
   }
 
   return logInfo
+}
+
+function formatServiceConfig (logConfig) {
+  var serviceName = process.env.NODE_SERVICE
+  logConfig.appenders.forEach(function (appender, index) {
+    if (appender.pattern) {
+      appender.pattern = appender.pattern.replace('service-name', serviceName)
+    }
+  })
+  return logConfig
 }
 
 // 配合express用的方法

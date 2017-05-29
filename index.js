@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+process.env.NODE_SERVICE = 'website'
 var config = require('./runtime/App/AppConfig')
 // process.env.UV_THREADPOOL_SIZE= 128;
 var app = require('./app')

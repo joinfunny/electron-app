@@ -1,4 +1,5 @@
 let Runtime = require('../runtime')
+let Utils = Runtime.App.Utils
 let orm = Runtime.OrmMapping
 let log = Runtime.App.Log.helper
 let Redis = require('ioredis')
@@ -19,41 +20,52 @@ let status = {
 
 var complaints = {
   adds: (items) => {
-    return complaints.updates(items, status.init).then(function () {
-      log.info('data', '抓取到投诉订单+' + items.length)
-      orm.models.complaints.createEach(items)
-      .catch(function (err) {
-        console.log(err)
-      }).then(function () {
-        console.log(arguments)
+    return orm.models.complaints
+      .createEach(items)
+      .then(function () {
+        log.info('抓取到投诉订单+' + items.length)
+      }).catch(function (err) {
+        log.error(err)
       })
-    })
   },
   updates: (items, state) => {
-    let promise = redis.multi()
-    items.forEach((complaint) => {
-      promise.hset(keys.complaints, complaint.docmentsNo, state)
+    let docmentsNos = items.map(function (complaint) {
+      return complaint.docmentsNo
     })
-    return promise.exec(function (err, result) {
-      if (!err) {
-        log.info('complaints', '//======投诉订单已记录======//')
-      } else {
-        log.error('complaints', '//======投诉订单记录【失败】======//')
-        log.error('complaints', err)
+    return orm.models.complaints.findByDocmentsNoIn(docmentsNos)
+    .then(function (result) {
+      result.forEach(function (item) {
+        var index = Utils._.findIndex(items, function (it) { return it.docmentsNo === item.docmentsNo })
+        var it = items[index]
+        item.type = it.type
+        item.coustomerRequest = it.coustomerRequest
+
+        item.save(function (err) {
+          if (err) {
+            log.error(err)
+          }
+        })
+      })
+    })
+    .catch(function (err) {
+      if (err) {
+        log.error(err)
       }
     })
   },
   delete: (complaints) => {
-    let promise = redis.multi()
+    let promise = orm.models.complaints
     complaints.forEach((complaint) => {
-      promise.hdel(keys.complaints, complaint.docmentsNo)
+      promise.delete({
+        docmentsNo: complaint.docmentsNo
+      })
     })
     return promise.exec(function (err, result) {
       let actionResult = true
       if (err) {
-        log.error('complaints', err)
+        log.error(err)
       } else {
-        log.info('complaints', JSON.stringify(result))
+        log.info(JSON.stringify(result))
         result.forEach(function (rs, index) {
           if (actionResult && rs !== 1) {
             actionResult = false
@@ -67,31 +79,27 @@ var complaints = {
    * 返回不存在的投诉数组
    */
   exists: (complaints) => {
-    let promise = redis.multi()
-    complaints.forEach((complaint) => {
-      promise.hexists(keys.complaints, complaint.docmentsNo)
+    let docmentsNos = complaints.map(function (complaint) {
+      return complaint.docmentsNo
     })
-    return promise.exec(function (err, results) {
-      if (err) {
-        log.error('complaints', err)
-        return []
-      } else {
-        return results
-      }
-    }).then(function (results) {
-      var notExists = []
-      results.forEach(function (result, index) {
-        if (result[1] !== 1) {
-          notExists.push(complaints[index])
+    return orm.models.complaints.findByDocmentsNoIn(docmentsNos)
+      .then(function (results) {
+        var ids = results.map(function (result, index) {
+          return result.docmentsNo
+        })
+        var notExists = Utils._.filter(complaints, function (item) {
+          return ids.indexOf(item.docmentsNo) === -1
+        })
+        if (notExists && notExists.length > 0) {
+          log.warn('经比对，最终得到【' + notExists.length + '】条新的投诉订单')
+        } else {
+          log.warn('经比对，没有发现新的投诉订单')
         }
+        return notExists
       })
-      if (notExists && notExists.length > 0) {
-        log.warn('complaints', '经比对，最终得到【' + notExists.length + '】条新的投诉订单')
-      } else {
-        log.warn('complaints', '经比对，没有发现新的投诉订单')
-      }
-      return notExists
-    })
+      .catch(function (err) {
+        log.error(err)
+      })
   }
 }
 
@@ -109,17 +117,17 @@ let handle = {
 
     return promise.exec(function (err, result) {
       if (err) {
-        log.warn('handles', '//======投诉数据存储到队列【失败】======//')
-        log.warn('handles', err)
+        log.warn('//======投诉数据存储到队列【失败】======//')
+        log.warn(err)
       } else {
-        log.info('handles', '//======投诉数据存储到队列【成功】======//')
+        log.info('//======投诉数据存储到队列【成功】======//')
       }
     })
       .then(function (result) {
         if (!result[0][0] && result[0][1] > 0) {
           return true
         }
-        log.info('handles', '//======存储处理数据到队列失败======//')
+        log.info('//======存储处理数据到队列失败======//')
         return false
       })
   },
@@ -134,10 +142,22 @@ let handle = {
       .exec()
       .then(function (result) {
         var returnValue = null
-        log.info('handles', '//======投诉数据移除检索【成功】======//')
-        log.info('handles', result[0][1])
+        // log.info('//======投诉数据移除检索【成功】======//')
+        // log.info(result[0][1])
         returnValue = JSON.parse(result[0][1])
         return returnValue
+      })
+  }
+}
+
+let exceptionOrders = {
+  add: (item) => {
+    orm.models.exceptionorders
+      .create(item)
+      .then(function () {
+        log.info('保存异常订单数量+' + item.total)
+      }).catch(function (err) {
+        log.error(err)
       })
   }
 }
@@ -148,5 +168,6 @@ module.exports = {
   status: status,
   // 记录投诉订单
   complaints: complaints,
-  handle: handle
+  handle: handle,
+  exceptionOrders: exceptionOrders
 }

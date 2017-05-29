@@ -1,0 +1,27 @@
+{
+  "name": "admin-ui",
+  "private": true,
+  "version": "1.2.17",
+  "description": "A management-system-like ui library based on vue.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.dataengine.com:awey/admin-ui-publish.git"
+  },
+  "keywords": [
+    "vue",
+    "ui",
+    "library",
+    "management",
+    "system"
+  ],
+  "author": "https://github.com/BboyAwey",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "http://wiki.dataengine.com/display/AD/Admin-UI"
+  },
+  "homepage": "http://wiki.dataengine.com/display/AD/Admin-UI"
+}

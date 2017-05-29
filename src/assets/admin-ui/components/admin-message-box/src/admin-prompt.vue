@@ -22,7 +22,7 @@
   <div class="admin-prompt">
     <div class="admin-prompt-message">{{ message }}</div>
     <div class="admin-prompt-core-container">
-      <admin-input class="admin-prompt-core" v-model="value" :warnings="warnings" @input="validate" ref="core"></admin-input>
+      <admin-input class="admin-prompt-core" v-model="value" :placeholder="placeholder" :warnings="warnings || localWarnings" @input="validate" ref="core"></admin-input>
     </div>
   </div>
 </template>
@@ -35,35 +35,42 @@
   // Modifier:
 
   import AdminInput from '../../admin-input'
+
   export default {
     name: 'admin-prompt',
     data () {
       return {
         value: '',
-        warnings: null
+        localWarnings: null
       }
     },
     props: {
       message: String,
       required: '',
       trigger: Boolean,
-      validator: Object
+      validators: Array,
+      placeholder: String,
+      warnings: null
     },
     components: {
       AdminInput
     },
     methods: {
       validate (v) {
-        if (!this.validator) return true
-        if (this.validator.validate && typeof this.validator.validate === 'function') {
-          if (this.validator.validate(v)) {
-            this.warnings = null
-            return true
+        if (this.warnings && this.warnings.length) return false
+        if (!this.validators) return false
+        // execute sync validation
+        for (let v of this.validators) {
+          let res = v.validator(this.value)
+          if (res) {
+            this.localWarnings = null
+            continue
           } else {
-            this.warnings = [this.validator.warning]
+            this.localWarnings = [v.warning]
             return false
           }
         }
+        if (!this.localWarnings) return true
       }
     }
   }

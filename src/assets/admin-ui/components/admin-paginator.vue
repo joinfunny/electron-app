@@ -1,6 +1,6 @@
 <style lang="scss">
-  @import '../style/ionicons/ionicons.css';
-  @import '../style/vars';
+  @import '../../admin-ui/style/ionicons/ionicons.css';
+  @import '../../admin-ui/style/vars';
   .admin-paginator {
     display: inline-block;
     user-select: none;
@@ -54,14 +54,19 @@
 <template lang="html">
   <div class="admin-paginator">
     <ul>
-      <li :class="{disabled: curPage == 1||pageCount<curPage}" @click="prevPage" v-if="pageCount >= 0"><i class="ion-chevron-left"></i></li>
-      <li :class="{active: curPage == 1}" @click="page(1)">1</li>
-      <li class="ellipsis " v-show="curPage > 5 && pageCount > 10"><i class="ion-more"></i></li>
-      <li :class="{active: curPage == index+offset}" v-for="(item,index) in middlePages" @click="page(index+offset)">{{index+offset}}</li>
-      <li class="ellipsis" v-show="curPage <= bigLimit && pageCount > 10"><i class="ion-more"></i></li>
-      <li :class="{active: curPage == pageCount}" @click="page(pageCount)" v-if="pageCount > 1">{{pageCount}}</li>
-      <li :class="{disabled: curPage == pageCount||pageCount<curPage}" @click="nextPage" v-if="pageCount >=0"><i class="ion-chevron-right"></i></li>
-    </ul>
+     <li :class="{disabled: curPage <= 1 }" @click="prevPage" v-if="_pageCount() >= 0"><i class="ion-chevron-left"></i></li>
+     <!-- 总数小等于 0-->
+     <li  attr="ion-more-1" :class="{active: curPage == 1}" v-if="_pageCount()<=0" @click="page(1)">1</li>
+     <!-- 总数大于等于 0 且小于等10-->
+     <li :class="{active: curPage == index}" v-show="_pageCount() > 0 && _pageCount() <= 10" v-for="index in _pageCount()" @click="page(index)">{{index}}</li>
+     <!-- 总数大于 10-->
+     <li  attr="ion-more-1" :class="{active: curPage == 1}" v-if="_pageCount() > 10 " @click="page(1)">1</li>
+     <li attr="ion-more-left" class="ellipsis " v-show="_offset()>1 && _pageCount() > 10"><i class="ion-more"></i></li>
+     <li :class="{active: curPage == _cPage(index)}" v-show="(_cPage(index) <= _limit() ) && _pageCount() > 10" v-for="index in _limit()" @click="page(_cPage(index))">{{_cPage(index)}}</li>
+     <li attr="ion-more-right" class="ellipsis" v-show="(_limit() < _pageCount() - 1) && _pageCount() > 10"><i class="ion-more"></i></li>
+     <li attr="pageCount"  :class="{active: curPage == _pageCount()}" @click="page(_pageCount())" v-if="_pageCount() > 10">{{_pageCount()}}</li>
+     <li :class="{disabled: curPage >= _pageCount() }" @click="nextPage" v-if="_pageCount() >=0"><i class="ion-chevron-right"></i></li>
+     </ul>
   </div>
 </template>
 <script>
@@ -93,10 +98,12 @@
     },
     data () {
       return {
+        // _newMiddleLimit: 0,
+        middleLimit: 6,
+        showPageNum: 10,
         curPage: 1,
         totalC: 0,
-        pageS: 10,
-        pageCount: 0
+        pageS: 10
       }
     },
     created () {
@@ -111,71 +118,69 @@
       }
       this.totalC = this.totalCount
       this.pageS = this.pageSize
-      this.pageCount = pc
     },
     computed: {
-      middlePages () {
-        if (this.pageCount <= 2) {
-          return 0
-        } else if (this.pageCount > 2 && this.pageCount <= 10) {
-          return this.pageCount - 2
-        } else {
-          return this.curPage > 999 ? 5 : 8
-        }
-      },
-      bigLimit () {
-        return this.middlePages > 5 ? this.pageCount - 6 : this.pageCount - 3
-      },
-      offset () {
-        if (this.curPage <= 5) {
-          return 2
-        } else if (this.curPage >= this.bigLimit) {
-          return this.bigLimit - 2
-        } else {
-          return this.middlePages > 5 ? this.curPage - 3 : this.curPage - 2
-        }
+      _newMiddleLimit () {
+        // console.log('_newMiddleLimit', this.curPage + 3)
+        return this.curPage + 3
       }
     },
     watch: {
       totalCount (val) {
-        this.totalC = val
-        this.setPageCount()
+        this.totalC = val > 0 ? val : 0
       },
       currentPage (val) {
-        this.setPageCount()
-        if (this.pageCount < val) {
-          this.curPage = this.pageCount
-        } else {
-          this.curPage = val
-        }
+        this.curPage = val > this.totalC ? this.totalC || 1 : val
       },
       pageSize (val) {
         this.pageS = val
-        this.setPageCount()
+        this._currentPage = val > this.totalC ? this.totalC || 1 : val
       }
     },
     methods: {
+      _offset () {
+        var v = this.curPage + 3 - this.middleLimit
+        var r = 1
+        if (v > 1 && this._pageCount() - v <= this.middleLimit) {
+          r = this._pageCount() - this.middleLimit
+        } else if (v > 1 && this._pageCount() - v > this.middleLimit) {
+          r = v
+        }
+        return r
+      },
+      _limit () {
+        var c = 0
+        if (this._newMiddleLimit <= this.middleLimit) {
+          c = this.middleLimit
+        } else if (this._newMiddleLimit > this._pageCount() - 1) {
+          c = this._pageCount() - 1
+        } else {
+          c = this._newMiddleLimit
+        }
+        return c
+      },
+      _cPage (p) {
+        // console.log('this._offset()', this._offset())
+        return p + this._offset()
+      },
+      _pageCount () {
+        return Math.ceil(this.totalCount / this.pageSize)
+      },
       page (indexPage) {
         this.$emit('toggle-page', indexPage)
         this.curPage = indexPage
       },
-      prevPage () {
-        if (this.curPage !== 1) {
-          this.page(this.curPage - 1)
-        }
-      },
-      setPageCount () {
-        if (this.totalC > 0 && this.pageS > 0 && this.totalC >= this.pageS) {
-          this.pageCount = Math.ceil(this.totalC / this.pageS)
-        } else if (this.totalC >= 0 && this.pageS >= 0 && this.totalC <= this.pageS) {
-          this.pageCount = 1
-        }
-      },
       nextPage () {
-        if (this.curPage !== this.pageCount) {
+        if (this.curPage < this.totalC) {
           this.page(this.curPage + 1)
         }
+      },
+      prevPage () {
+        if (this.curPage > 1) {
+          this.page(this.curPage - 1)
+        }
       }
+
     }
   }
 </script>

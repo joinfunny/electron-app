@@ -14,6 +14,9 @@
       font-size: $normal;
       color: $grayDarken35;
     }
+    .admin-radio-label:last-child {
+      margin-right: 0;
+    }
     .admin-radio-text {
       color: $grayDarken45;
     }

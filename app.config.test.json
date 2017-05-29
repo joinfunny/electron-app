@@ -78,9 +78,6 @@
       },
       "worker":{
         "tickTime":3000
-      },
-      "listener":{
-        "tickTime":5000
       }
     },
     "exceptionOrder": {

@@ -60,7 +60,7 @@ const install = function (Vue, options = {}) {
   Vue.prototype.$alert = AdminMessageBox.alert
   Vue.prototype.$confirm = AdminMessageBox.confirm
   Vue.prototype.$prompt = AdminMessageBox.prompt
-  Vue.prototype.$taost = AdminToast
+  Vue.prototype.$toast = AdminToast
 }
 
 install(Vue)

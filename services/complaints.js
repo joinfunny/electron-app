@@ -10,18 +10,49 @@ module.exports = {
       }
       var pageSize = req.query.pageSize
       var pageIndex = req.query.startIndex
-      orm.models.complaints.count().then(function (count) {
+      var searchKey = req.query.searchKey
+      var dateTime = req.query.dateTime
+      var type = req.query.type
+      var condition = {}
+      if (searchKey) {
+        condition['or'] = [
+          {agentOrderNo: searchKey},
+          {coustomerRequest: searchKey},
+          {docmentsNo: searchKey},
+          {feedback: searchKey},
+          {phoneNo: searchKey}
+        ]
+      }
+      if (dateTime) {
+        if (type === '1') {
+          condition['createdAt'] = {
+            '>': new Date(dateTime + ' 00:00:00'),
+            '<': new Date(dateTime + ' 23:59:59')
+          }
+        } else if (type === '2') {
+          condition['updatedAt'] = {
+            '>': new Date(dateTime + ' 00:00:00'),
+            '<': new Date(dateTime + ' 23:59:59')
+          }
+        }
+      }
+      if (type) {
+        condition.type = type
+      }
+      orm.models.complaints.count(condition).then(function (count) {
         console.log(count)
-        orm.models.complaints.find().paginate({page: pageIndex, limit: pageSize}).then(function (results) {
+        return orm.models.complaints.find(condition).paginate({
+          page: pageIndex,
+          limit: pageSize
+        }).then(function (results) {
           responseData.dataObject = {
             'orderField': '',
             'orderFieldType': '',
             'startIndex': pageIndex,
             'pageSize': pageSize,
             'totalNum': count,
-            complaints: results
+            'complaints': results
           }
-
           callback(responseData)
         })
       })

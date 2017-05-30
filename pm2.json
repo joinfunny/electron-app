@@ -70,6 +70,24 @@
       "env_release": {
         "NODE_ENV": "production"
       }
+    },
+    {
+      "name": "robot-complaints-handle-sender",
+      "script": "robot-complaints-handle-sender.js",
+      "log_date_format": "YYYY-MM-DD HH",
+      "error_file": "logs/robot-complaints-handle-sender-err.log",
+      "pid_file": "logs/robot-complaints-handle-sender.pid",
+      "exec_mode": "cluster",
+      "instances": 1,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_test": {
+        "NODE_ENV": "test"
+      },
+      "env_release": {
+        "NODE_ENV": "production"
+      }
     }
   ]
 }

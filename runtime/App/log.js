@@ -106,16 +106,6 @@ function parse (logConfig) {
   return logInfo
 }
 
-function formatServiceConfig (logConfig) {
-  var serviceName = process.env.NODE_SERVICE
-  logConfig.appenders.forEach(function (appender, index) {
-    if (appender.pattern) {
-      appender.pattern = appender.pattern.replace('service-name', serviceName)
-    }
-  })
-  return logConfig
-}
-
 // 配合express用的方法
 exports.use = function (app, appConfig) {
   var logger = parse(appConfig.runtime.log4js)
@@ -134,7 +124,27 @@ exports.helper = helper
 
 // 判断日志目录是否存在，不存在时创建日志目录
 function checkAndCreateDir (dir) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir)
+  mkdirsSync(dir)
+}
+
+function mkdirsSync (dirpath) {
+  if (process.platform === 'win32') {
+    dirpath = dirpath.replace('/', '\\')
   }
+  if (!fs.existsSync(dirpath)) {
+    var pathtmp
+    dirpath.split(path.sep).forEach(function (dirname) {
+      if (pathtmp) {
+        pathtmp = path.join(pathtmp, dirname)
+      } else {
+        pathtmp = dirname
+      }
+      if (!fs.existsSync(pathtmp)) {
+        if (!fs.mkdirSync(pathtmp)) {
+          return false
+        }
+      }
+    })
+  }
+  return true
 }

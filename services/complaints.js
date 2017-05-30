@@ -34,11 +34,10 @@ module.exports = {
             '>': new Date(dateTime + ' 00:00:00'),
             '<': new Date(dateTime + ' 23:59:59')
           }
+          condition.type = type
         }
       }
-      if (type) {
-        condition.type = type
-      }
+
       orm.models.complaints.count(condition).then(function (count) {
         console.log(count)
         return orm.models.complaints.find(condition).paginate({

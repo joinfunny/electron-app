@@ -26,17 +26,17 @@ export default {
       { code: 'feedback', text: '反馈原因' },
       { code: 'coustomerRequest', text: '处理方式' },
       {
-        code: 'createAt',
+        code: 'createdAt',
         text: '添加时间',
         formatter: function (value, rowData, index) {
-          return moment(value).format('YYYY-MM-DD')
+          return moment(value).format('YYYY-MM-DD HH:mm:ss')
         }
       },
       {
         code: 'updatedAt',
         text: '更新时间',
         formatter: function (value, rowData, index) {
-          return moment(value).format('YYYY-MM-DD')
+          return moment(value).format('YYYY-MM-DD HH:mm:ss')
         }
       }
     ]
@@ -49,7 +49,7 @@ export default {
       columns,
       searchKey: '',
       loading: false,
-      date: ''
+      date: moment(new Date()).format('YYYY-MM-DD')
     }
   },
   created () {

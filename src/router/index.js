@@ -10,7 +10,7 @@ export default [
     children: [
       {
         path: '/',
-        component: resolve => require(['../components/complaints/index'], resolve)
+        component: resolve => require(['../components/home/myData'], resolve)
       },
       {
         path: '/userlist',

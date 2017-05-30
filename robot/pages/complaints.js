@@ -75,7 +75,7 @@ class Complaints {
         return links
       })
       .then(function (links) {
-        log.info('//========本次共获取到' + links.length + '条投诉处理========//')
+        log.info('//========本次共获取到' + links.length + '条投诉订单========//')
         if (links && links.length > 0) {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)

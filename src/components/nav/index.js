@@ -15,24 +15,27 @@ export default {
       this.$router.push(item.url)
     },
     getMenuList: function () {
-      return [
+      return [{
+        'text': '数据概览',
+        'active': true,
+        'url': '/home'
+      },
+      {
+        'text': '投诉订单',
+        'active': false,
+        'url': '',
+        'collapse': false,
+        'children': [{
+          'text': '订单列表',
+          'url': '/complaints',
+          'active': false
+        },
         {
-          'text': '投诉订单',
-          'active': true,
-          'url': '',
-          'collapse': false,
-          'children': [
-            {
-              'text': '订单列表',
-              'url': '/complaints',
-              'active': true
-            },
-            {
-              'text': '订单处理',
-              'url': '/handles'
-            }
-          ]
-        }
+          'text': '订单处理',
+          'url': '/handles',
+          'active': false
+        }]
+      }
       ]
     }
   }

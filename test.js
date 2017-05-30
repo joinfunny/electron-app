@@ -89,6 +89,7 @@ function complaintmd5 (complaint) {
   console.log(complaint)
   return complaint
 }
+
 function postHandles () {
   var requestMapping = [
     '充值已到账（月初）',
@@ -99,27 +100,31 @@ function postHandles () {
     '充错号码（不可退款）',
     '通用'
   ]
-  orm.models.complaints.findOne({type: 1}).then(function (complaint) {
-    complaint.coustomerRequest = requestMapping[Runtime.App.Utils._.random(0, 6)]
-    request.post({
-      url: 'http://localhost:9091/api/complaint/handling',
-      json: true,
-      body: complaintmd5(complaint)
-    })
-  .then(function (result) {
-    console.log(result)
-  })
-  .catch(function (err) {
-    console.log(err)
-  })
+  orm.models.complaints.findOne({
+    type: 1
+  }).then(function (complaint) {
+    if (complaint) {
+      complaint.coustomerRequest = requestMapping[Runtime.App.Utils._.random(0, 6)]
+      request.post({
+        url: 'http://localhost:9091/api/complaint/handling',
+        json: true,
+        body: complaintmd5(complaint)
+      })
+        .then(function (result) {
+          console.log(result)
+        })
+        .catch(function (err) {
+          console.log(err)
+        })
+    }
   })
 }
 var index = 0
 setInterval(function () {
-  if (index < 20) {
-    postHandles()
-    index++
-  }
+  // if (index < 20) {
+  postHandles()
+  index++
+  // }
 }, 1000)
 
 /* const crypto = require('crypto')

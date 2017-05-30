@@ -21,6 +21,7 @@
     vertical-align:middle;
     a{
       color:#fff;
+      cursor: pointer;
     }
   }
   .admin-icon{

@@ -1,0 +1,63 @@
+<div>
+  <div class="stream-page-nav">
+    我的数据概览
+  </div>
+  <admin-pannel class="stream-panel">
+    <div class="admin-grid-container">
+      <div class="admin-grid-cell-6">
+        系统运行时间：{{runtimeFormmater(mydata.service.runTime)}}
+      </div>
+      <div class="admin-grid-cell-6">
+        最新服务状态：
+      </div>
+    </div>
+  </admin-pannel>
+  <admin-pannel class="stream-panel" title="投诉订单监听服务" titleIcon="ion-email-unread stream-ion-color-red">
+    <div class="admin-grid-container">
+      <div class="admin-grid-cell-6">
+        <ul class="admin-list">
+          <li>今天：{{mydata.complaints.today}}条</li>
+          <li>总计：{{mydata.complaints.total}}条</li>
+          <li>最新抓取时间：{{timestampFormmater(mydata.complaints.latestTime)}}</li>
+        </ul>
+      </div>
+      <div class="admin-grid-cell-6">
+        <div class="stream-chart">
+
+        </div>
+      </div>
+    </div>
+  </admin-pannel>
+  <admin-pannel class="stream-panel" title="投诉订单处理服务" titleIcon="ion-flag stream-ion-color-red">
+    <div class="admin-grid-container">
+      <div class="admin-grid-cell-6">
+        <ul class="admin-list">
+          <li>今天：{{mydata.handles.today}}</li>
+          <li>所有：{{mydata.handles.total}}</li>
+          <li>最新抓取时间：{{timestampFormmater(mydata.handles.latestTime)}}</li>
+        </ul>
+      </div>
+      <div class="admin-grid-cell-6">
+        <div class="stream-chart">
+
+        </div>
+      </div>
+    </div>
+  </admin-pannel>
+  <admin-pannel class="stream-panel" title="发货中订单监听服务" titleIcon="ion-ios-pulse-strong stream-ion-color-red">
+    <div class="admin-grid-container">
+      <div class="admin-grid-cell-6">
+        <ul class="admin-list">
+          <li>今天：{{mydata.exceptionorders.today}}</li>
+          <li>所有：{{mydata.exceptionorders.total}}</li>
+          <li>最新抓取时间：{{timestampFormmater(mydata.exceptionorders.latestTime)}}</li>
+        </ul>
+      </div>
+      <div class="admin-grid-cell-6">
+        <div class="stream-chart">
+
+        </div>
+      </div>
+    </div>
+  </admin-pannel>
+</div>

@@ -19,7 +19,10 @@
 </style>
 <template>
   <div class="admin-pannel" :class="{'padding': padding}">
-    <h3 class="admin-pannel-title" v-if="title" :class="{'padding': !padding}">{{ title }}</h3>
+    <h3 class="admin-pannel-title" v-if="title" :class="{'padding': !padding}">
+      <admin-icon v-if="titleIcon" :type="titleIcon" size="24px"></admin-icon>
+      {{ title }}
+    </h3>
     <div class="admin-pannel-content">
       <slot></slot>
     </div>
@@ -40,6 +43,10 @@
       padding: {
         type: Boolean,
         default: true
+      },
+      titleIcon: {
+        type: String,
+        default: ''
       }
     }
   }

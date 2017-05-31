@@ -10,5 +10,9 @@ export default {
   exceptionOrders: {
     'url': '/api/exceptionOrders',
     'type': 'get'
+  },
+  mydata: {
+    'url': '/api/mydata',
+    'type': 'get'
   }
 }

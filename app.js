@@ -1,9 +1,8 @@
 ﻿let express = require('express')
 let Runtime = require('./runtime')
-let robot = require('./robot')
 
 // let wechat = require("./runtime/wechat")
-
+global.AppStartTimestamp = new Date() * 1
 var app = express()
 // 注册Session/Cookie持久化存储
 Runtime.SessionStore.use(app, Runtime.App.AppConfig)
@@ -26,10 +25,6 @@ app.use(function (req, res, next) {
 
 // 注册路由与服务
 Runtime.Router.use(app, Runtime.App.AppConfig)
-
-// console.log('----正在启动机器人------')
-// 启动机器人
-// robot.run()
 
 // 启用授权
 // Runtime.Authorization.use(app)

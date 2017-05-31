@@ -23,6 +23,14 @@
 .stream-paginator {
   padding: 12px;
   text-align: right;
+
+  .stream-paginator-summary{
+    float: left;
+    height: 32px;
+    line-height: 32px;
+    font-size: 13px;
+    color: #a79c9c;
+  }
 }
 .stream-grid-loading{
   position: absolute;

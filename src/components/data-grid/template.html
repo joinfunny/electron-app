@@ -23,6 +23,9 @@
       </table>
     </div>
     <div class="stream-paginator">
+      <ol v-if="totalCount>0" class="stream-paginator-summary">
+        合计：{{totalCount}}
+      </ol>
       <admin-paginator :total-count="totalCount" :page-size="pageSize" :current-page="currentPage" @toggle-page="togglePage" />
     </div>
   </div>

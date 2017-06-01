@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "robot-website",
+      "script": "index.js",
+      "log_date_format": "YYYY-MM-DD HH",
+      "error_file": "logs/robot-website-err.log",
+      "pid_file": "logs/robot-website.pid",
+      "exec_mode": "cluster",
+      "instances": 2,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_test": {
+        "NODE_ENV": "test"
+      },
+      "env_release": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

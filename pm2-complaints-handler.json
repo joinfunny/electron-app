@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "robot-complaints-handler",
+      "script": "robot-complaints-handler.js",
+      "log_date_format": "YYYY-MM-DD HH",
+      "error_file": "logs/robot-complaints-handler-err.log",
+      "pid_file": "logs/robot-complaints-handler.pid",
+      "exec_mode": "cluster",
+      "instances": 1,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_test": {
+        "NODE_ENV": "test"
+      },
+      "env_release": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

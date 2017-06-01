@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "robot-exceptionOrder-listener",
+      "script": "robot-exceptionOrder-listener.js",
+      "log_date_format": "YYYY-MM-DD HH",
+      "error_file": "logs/robot-exceptionOrder-listener-err.log",
+      "pid_file": "logs/robot-exceptionOrder-listener.pid",
+      "exec_mode": "cluster",
+      "instances": 1,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_test": {
+        "NODE_ENV": "test"
+      },
+      "env_release": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

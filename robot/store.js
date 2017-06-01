@@ -33,25 +33,40 @@ var complaints = {
       return complaint.docmentsNo
     })
     return orm.models.complaints.findByDocmentsNoIn(docmentsNos)
-    .then(function (result) {
-      result.forEach(function (item) {
-        var index = Utils._.findIndex(items, function (it) { return it.docmentsNo === item.docmentsNo })
-        var it = items[index]
-        item.type = it.type
-        item.coustomerRequest = it.coustomerRequest
-
-        item.save(function (err) {
-          if (err) {
-            log.error(err)
-          }
+      .then(function (result) {
+        var thePromise = (items, item) => {
+          return new Promise(function (resolve, reject) {
+            var index = Utils._.findIndex(items, function (it) {
+              return it.docmentsNo === item.docmentsNo
+            })
+            var it = items[index]
+            item.type = it.type
+            item.coustomerRequest = it.coustomerRequest
+            item.save(function (err) {
+              if (err) {
+                log.error(err)
+                reject(err)
+              } else {
+                resolve(true)
+              }
+            })
+          })
+        }
+        var promises = []
+        result.forEach(function (item) {
+          promises.push(thePromise(items, item))
+        })
+        return Promise.all(promises).then(function (result) {
+          return result.reduce((pre, cur) => pre && cur, true)
+        }).catch(function (err) {
+          log.error(err)
         })
       })
-    })
-    .catch(function (err) {
-      if (err) {
-        log.error(err)
-      }
-    })
+      .catch(function (err) {
+        if (err) {
+          log.error(err)
+        }
+      })
   },
   delete: (complaints) => {
     let promise = orm.models.complaints

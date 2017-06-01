@@ -28,11 +28,8 @@ import echarts from 'echarts'
 import moment from 'moment'
 export default {
   name: 'login-panel',
-  beforeCreate () {
-    var that = this
-    that.api.mydata({ r: new Date() * 1 }).then(function (res) {
-      that.mydata = res.dataObject
-    })
+  created () {
+    this.getMydata()
   },
   data () {
     return {
@@ -54,7 +51,7 @@ export default {
           latestTime: 0,
           chart: {}
         },
-        exceptionOrders: {
+        exceptionorders: {
           today: 0,
           total: 0,
           latestTime: 0,
@@ -66,7 +63,19 @@ export default {
   computed: {
 
   },
+  mounted () {
+    var that = this
+    setInterval(() => {
+      that.getMydata()
+    }, 5000)
+  },
   methods: {
+    getMydata () {
+      var that = this
+      that.api.mydata({ r: new Date() * 1 }).then(function (res) {
+        that.mydata = res.dataObject
+      })
+    },
     timestampFormmater (timestamp) {
       if (timestamp <= 0) {
         return '----'

@@ -139,7 +139,7 @@ function mkdirsSync (dirpath) {
       } else {
         pathtmp = dirname
       }
-      if (!fs.existsSync(pathtmp)) {
+      if (pathtmp.length > 0 && !fs.existsSync(pathtmp)) {
         if (!fs.mkdirSync(pathtmp)) {
           return false
         }

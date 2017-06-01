@@ -34,29 +34,36 @@ function postHandles () {
     '充错号码（不可退款）',
     '通用'
   ]
-  orm.models.complaints.findOne({
+  var rdm = Runtime.App.Utils._.random(5, 30)
+  orm.models.complaints.find({
     type: 1
-  }).then(function (complaint) {
-    if (complaint) {
-      complaint.coustomerRequest = requestMapping[Runtime.App.Utils._.random(0, 6)]
-      request.post({
-        url: 'http://localhost:9091/api/complaint/handling',
-        json: true,
-        body: complaintmd5(complaint)
-      })
+  }).limit(rdm).then(function (complaints) {
+    if (complaints && complaints.length > 0) {
+      complaints.forEach(function (complaint) {
+        complaint.coustomerRequest = requestMapping[Runtime.App.Utils._.random(0, 6)]
+        request.post({
+          url: 'http://localhost:9091/api/complaint/handling',
+          json: true,
+          body: complaintmd5(complaint)
+        })
         .then(function (result) {
           console.log(result)
         })
         .catch(function (err) {
           console.log(err)
         })
+      })
     }
   })
 }
+var base = Runtime.App.Utils._.random(1, 20)
 var index = 0
 setInterval(function () {
-  // if (index < 20) {
-  postHandles()
-  index++
-  // }
+  if (index > base) {
+    postHandles()
+    index = 0
+    base = Runtime.App.Utils._.random(1, 20)
+  } else {
+    index++
+  }
 }, 1000)

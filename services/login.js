@@ -40,6 +40,7 @@ module.exports = {
     // loginServer.login
     callback: function (request, response, callback) {
       if (request.body.username === 'admin' && request.body.password === 'Aaa12345') {
+        SessionStore.setUserName(request.body.username)
         callback({
           success: true
         })
@@ -78,9 +79,12 @@ module.exports = {
     },
     callback: function (req, res, callback) {
       var actionResult = {}
-      if (SessionStore.getAccessInfo(req)) {
+      if (SessionStore.SessionStore.getUserName(req)) {
         actionResult.code = 0
         actionResult.success = true
+      } else {
+        actionResult.code = 0
+        actionResult.success = false
       }
       callback(actionResult)
     }
@@ -97,6 +101,8 @@ module.exports = {
       }
     },
     // loginServer.vcode
-    callback: function () {}
+    callback: function (req, res, callback) {
+      callback({success: true, result: ''})
+    }
   }
 }

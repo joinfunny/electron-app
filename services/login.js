@@ -6,7 +6,7 @@ module.exports = {
   '/api/user/login': {
     method: 'post',
     mock: {
-      on: true,
+      on: false,
       /**
        * Mock数据规则，可为Function，也可为直接Mock规则
        */
@@ -40,7 +40,7 @@ module.exports = {
     // loginServer.login
     callback: function (request, response, callback) {
       if (request.body.username === 'admin' && request.body.password === 'Aaa12345') {
-        SessionStore.setUserName(request.body.username)
+        SessionStore.setUserName(request, request.body.username)
         callback({
           success: true
         })

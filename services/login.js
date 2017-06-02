@@ -38,7 +38,7 @@ module.exports = {
       }
     }],
     // loginServer.login
-    callback: function (request, response, next, callback) {
+    callback: function (request, response, callback) {
       if (request.body.username === 'admin' && request.body.password === 'Aaa12345') {
         callback({
           success: true

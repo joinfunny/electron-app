@@ -7,9 +7,9 @@ module.exports = {
     method: 'post',
     mock: {
       on: true,
-/**
- * Mock数据规则，可为Function，也可为直接Mock规则
- */
+      /**
+       * Mock数据规则，可为Function，也可为直接Mock规则
+       */
       dataRegular: (request) => {
         if (request.body.username === 'admin' && request.body.password === 'Aaa12345') {
           return {
@@ -37,8 +37,19 @@ module.exports = {
         invalidMessage: '密码长度必须大于5位、小于20位'
       }
     }],
-// loginServer.login
-    callback: function () {}
+    // loginServer.login
+    callback: function (request, response, next, callback) {
+      if (request.body.username === 'admin' && request.body.password === 'Aaa12345') {
+        callback({
+          success: true
+        })
+        return
+      }
+      callback({
+        success: false,
+        msg: '用户名或密码错误'
+      })
+    }
   },
   '/api/user/logout': {
     method: 'post',
@@ -85,7 +96,7 @@ module.exports = {
         }
       }
     },
-// loginServer.vcode
+    // loginServer.vcode
     callback: function () {}
   }
 }

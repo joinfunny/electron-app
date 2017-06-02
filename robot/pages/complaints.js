@@ -51,6 +51,9 @@ class Complaints {
             log.info('进入投诉订单查询页面')
           })
       })
+      .catch(function (err) {
+        log.error(err)
+      })
   }
   exec () {
     var that = this
@@ -80,6 +83,9 @@ class Complaints {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)
           })
+          .catch(function (err) {
+            log.error(err)
+          })
         } else {
           setTimeout(function () {
             that.next()
@@ -105,6 +111,9 @@ class Complaints {
             log.info(link)
             let complaintDetail = new ComplaintDetail(that.rootNightmare, link, that.eventEmitter)
             complaintDetail.run()
+          })
+          .catch(function (err) {
+            log.error(err)
           })
       } else {
         clearInterval(that.timer)
@@ -154,6 +163,9 @@ class Complaints {
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile&r=' + new Date() * 1)
           .run(function () {})
       })
+      .catch(function (err) {
+        log.error(err)
+      })
   }
   dispose (cb) {
     var that = this
@@ -167,6 +179,9 @@ class Complaints {
         log.info('//======投诉订单窗口已销毁======//')
         that.nightmare = null
         cb && cb()
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   }
 }

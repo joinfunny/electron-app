@@ -51,6 +51,9 @@ module.exports = {
             .then(function () {
               that.validateVcode()
             })
+            .catch(function (err) {
+              log.error(err)
+            })
         } else {
           log.info('不需要输入验证码')
           return that.nightmare.resetFrame()
@@ -58,6 +61,9 @@ module.exports = {
       })
       .then(function () {
         log.info('//===========login ok==============//')
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   },
   /**
@@ -160,6 +166,9 @@ module.exports = {
                 }
               })
             })
+            .catch(function (err) {
+              log.error(err)
+            })
         }
       })
   },
@@ -192,6 +201,9 @@ module.exports = {
           .catch(function (error) {
             log.error(error)
           })
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   }
 }

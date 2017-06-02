@@ -22,6 +22,9 @@ class ComplaintDetail {
               log.info('//======异步提交投诉处理信息成功，窗口已关闭======//')
               that.dispose()
             })
+            .catch(function (err) {
+              log.error(err)
+            })
           })
         } else if (msg === '//======异步提交投诉处理信息失败======//') {
           service.handledComplaint(that.handle, false).then(function () {
@@ -29,12 +32,18 @@ class ComplaintDetail {
               log.info('//======异步提交投诉处理信息失败，窗口已关闭======//')
               that.dispose()
             })
+            .catch(function (err) {
+              log.error(err)
+            })
           })
         } else if (msg === '//======当前投诉处理已经经过处理======//') {
           service.handledComplaint(that.handle, true).then(function () {
             that.nightmare.end().then(function () {
               log.info('//======当前投诉处理已经经过处理，窗口已关闭======//')
               that.dispose()
+            })
+            .catch(function (err) {
+              log.error(err)
             })
           })
         }
@@ -49,9 +58,15 @@ class ComplaintDetail {
                 that.dispose()
                 that.eventEmitter.emit('detail-login-expired', that)
               })
+              .catch(function (err) {
+                log.error(err)
+              })
             } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {
               that.exec()
             }
+          })
+          .catch(function (err) {
+            log.error(err)
           })
       })
   }
@@ -70,6 +85,12 @@ class ComplaintDetail {
           .then(function () {
             log.info('//======正在打开投诉订单 ' + that.link.docmentsNo + '的处理窗口...======//')
           })
+          .catch(function (err) {
+            log.error(err)
+          })
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   }
   exec () {
@@ -82,6 +103,9 @@ class ComplaintDetail {
         } else {
           that.doDetail()
         }
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   }
 
@@ -141,6 +165,9 @@ class ComplaintDetail {
       .then(function () {
         log.info('//======处理投诉订单中...======//')
       })
+      .catch(function (err) {
+        log.error(err)
+      })
   }
 
   doDetail () {
@@ -177,6 +204,12 @@ class ComplaintDetail {
             that.dispose()
           })
         })
+        .catch(function (err) {
+          log.error(err)
+        })
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   }
 

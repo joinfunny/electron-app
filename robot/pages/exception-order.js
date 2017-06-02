@@ -31,6 +31,9 @@ class ExceptionOrder {
       .then(function (cookies) {
         that.init(cookies)
       })
+      .catch(function (err) {
+        log.error(err)
+      })
   }
   init (cookies) {
     var that = this
@@ -57,6 +60,9 @@ class ExceptionOrder {
                   that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
                 })
               }
+            })
+            .catch(function (err) {
+              log.error(err)
             })
         })
         .goto('http://chong.qq.com/')
@@ -98,6 +104,9 @@ class ExceptionOrder {
         if (!url) return
         var countTotal = url !== 1 ? +_queryString('page', url) : 1
         service.pushExceptionOrders(countTotal)
+      })
+      .catch(function (err) {
+        log.error(err)
       })
   }
 }

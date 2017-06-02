@@ -44,6 +44,9 @@ class ComplaintListener {
 
         complaintDetail.run()
       })
+      .catch(function (err) {
+        log.error(err)
+      })
     }, config.worker.tickTime)
   }
 }

@@ -41,6 +41,15 @@ class Complaints {
                   that.dispose(function () {
                     that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
                   })
+                } else if (url.indexOf('data:text/html,chromewebdata') > -1) {
+                  log.warn('//--------------------【投诉订单监控】请求返回发生错误，重新发起----------------//')
+                  that.nightmare
+                    .goto('http://chong.qq.com/')
+                    .cookies.set(cookies)
+                    .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
+                    .run(function () {
+                      log.info('再次进入投诉订单查询页面')
+                    })
                 }
               })
           })
@@ -83,9 +92,9 @@ class Complaints {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)
           })
-          .catch(function (err) {
-            log.error(err)
-          })
+            .catch(function (err) {
+              log.error(err)
+            })
         } else {
           setTimeout(function () {
             that.next()

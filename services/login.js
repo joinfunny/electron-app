@@ -79,7 +79,7 @@ module.exports = {
     },
     callback: function (req, res, callback) {
       var actionResult = {}
-      if (SessionStore.SessionStore.getUserName(req)) {
+      if (SessionStore.getUserName(req)) {
         actionResult.code = 0
         actionResult.success = true
       } else {

@@ -11,7 +11,7 @@ module.exports = {
  * Mock数据规则，可为Function，也可为直接Mock规则
  */
       dataRegular: (request) => {
-        if (request.query.username === 'admin' && request.query.password === 'admin') {
+        if (request.body.username === 'admin' && request.body.password === 'Aaa12345') {
           return {
             success: true
           }

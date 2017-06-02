@@ -96,10 +96,7 @@ class ServiceDirector {
     } else {
       data = Mock.mock(dataRegular)
     }
-    response.json({
-      success: true,
-      dataObject: data
-    })
+    response.json(data)
     response.end()
   }
   packaging (req, res, callbacks) {

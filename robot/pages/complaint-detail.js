@@ -22,9 +22,9 @@ class ComplaintDetail {
               log.info('//======异步提交投诉处理信息成功，窗口已关闭======//')
               that.dispose()
             })
-            .catch(function (err) {
-              log.error(err)
-            })
+              .catch(function (err) {
+                log.error(err)
+              })
           })
         } else if (msg === '//======异步提交投诉处理信息失败======//') {
           service.handledComplaint(that.handle, false).then(function () {
@@ -32,9 +32,9 @@ class ComplaintDetail {
               log.info('//======异步提交投诉处理信息失败，窗口已关闭======//')
               that.dispose()
             })
-            .catch(function (err) {
-              log.error(err)
-            })
+              .catch(function (err) {
+                log.error(err)
+              })
           })
         } else if (msg === '//======当前投诉处理已经经过处理======//') {
           service.handledComplaint(that.handle, true).then(function () {
@@ -42,9 +42,9 @@ class ComplaintDetail {
               log.info('//======当前投诉处理已经经过处理，窗口已关闭======//')
               that.dispose()
             })
-            .catch(function (err) {
-              log.error(err)
-            })
+              .catch(function (err) {
+                log.error(err)
+              })
           })
         }
       })
@@ -58,11 +58,18 @@ class ComplaintDetail {
                 that.dispose()
                 that.eventEmitter.emit('detail-login-expired', that)
               })
-              .catch(function (err) {
-                log.error(err)
-              })
+                .catch(function (err) {
+                  log.error(err)
+                })
             } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {
               that.exec()
+            } else if (url !== 'http://chong.qq.com/') {
+              that.nightmare.end().then(function () {
+                that.dispose()
+              })
+                .catch(function (err) {
+                  log.error(err)
+                })
             }
           })
           .catch(function (err) {
@@ -204,9 +211,9 @@ class ComplaintDetail {
             that.dispose()
           })
         })
-        .catch(function (err) {
-          log.error(err)
-        })
+          .catch(function (err) {
+            log.error(err)
+          })
       })
       .catch(function (err) {
         log.error(err)

@@ -48,7 +48,15 @@ class ExceptionOrder {
             .then(function (url) {
               log.info('//--------------------【异常订单统计数监控】URL---------------//')
               log.info(url)
-              if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0') > -1) {
+              if (url === 'http://chong.qq.com/') {
+                that.nightmare
+                  .cookies.set(cookies)
+                  .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
+                  .run(function () {
+                    log.info('已进入异常订单统计数监听页面')
+                    that.timeTick()
+                  })
+              } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0') > -1) {
                 that.monitor()
               } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
                 that.nightmare.end().run(function () {
@@ -59,6 +67,13 @@ class ExceptionOrder {
                   log.warn('//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
                   that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
                 })
+              } else {
+                log.warn('//--------------------【异常订单统计数监控】请求返回发生错误，重新发起----------------//')
+                that.nightmare
+                  .goto('http://chong.qq.com/')
+                  .run(function () {
+                    log.info('再次进入充值首页')
+                  })
               }
             })
             .catch(function (err) {
@@ -66,12 +81,8 @@ class ExceptionOrder {
             })
         })
         .goto('http://chong.qq.com/')
-        .cookies
-        .set(cookies)
-        .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
         .run(function () {
-          log.info('已进入异常订单统计数监听页面')
-          that.timeTick()
+          log.info('进入充值首页')
         })
     }
   }

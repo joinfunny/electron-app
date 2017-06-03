@@ -184,6 +184,9 @@
       },
       "worker": {
         "tickTime": 5000
+      },
+      "monitor": {
+        "tickTime": 120000
       }
     },
     "exceptionOrder": {

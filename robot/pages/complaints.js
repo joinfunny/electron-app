@@ -7,6 +7,7 @@ var async = require('async')
 var store = require('../store')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.complaints
+var email = require('../../runtime/email')
 
 /* eslint-disable no-unused-vars */
 var ComplaintDetail = require('./complaint-detail')
@@ -46,9 +47,7 @@ class Complaints {
                   that.exec()
                 } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
                   log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
-                  that.dispose(function () {
-                    that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
-                  })
+                  that.loginExpired()
                 } else {
                   log.warn('//--------------------【投诉订单监控】请求返回发生错误，重新发起----------------//')
                   that.nightmare
@@ -68,6 +67,27 @@ class Complaints {
         log.error('投诉订单监控中捕获到错误')
         log.error(err)
       })
+    that.serviceMonitor()
+  }
+  loginExpired () {
+    var that = this
+    that.dispose(function () {
+      that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
+    })
+  }
+  serviceMonitor () {
+    var that = this
+    that.serviceMonitorTimer = setInterval(function () {
+      if (!that.monitorTime)that.monitorTime = new Date()
+      that.monitorTimeSpan = new Date() * 1 - that.monitorTime * 1
+      if (that.monitorTimeSpan > config.monitor.tickTime) {
+        var msg = '投诉订单抓取服务已经很长时间没有抓取数据，当前服务将会重启...'
+        log.warn(msg)
+        email.send('投诉订单抓取服务异常', msg, '<b>' + msg + '</b>')
+        that.monitorTime = new Date()
+        that.loginExpired()
+      }
+    }, config.monitor.tickTime)
   }
   exec () {
     var that = this
@@ -93,6 +113,8 @@ class Complaints {
       })
       .then(function (links) {
         log.info('//========本次共获取到' + links.length + '条投诉订单========//')
+        that.monitorTime = new Date()
+        log.info('//========捕获时间：' + that.monitorTime + '========//')
         if (links && links.length > 0) {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)
@@ -186,6 +208,10 @@ class Complaints {
     if (that.timer) {
       clearInterval(that.timer)
       that.timer = null
+    }
+    if (that.serviceMonitorTimer) {
+      clearInterval(that.serviceMonitorTimer)
+      that.serviceMonitorTimer = null
     }
     that.nightmare
       .end()

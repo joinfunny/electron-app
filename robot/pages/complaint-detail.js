@@ -212,11 +212,19 @@ class ComplaintDetail {
           })
         })
           .catch(function (err) {
+            log.info('//======解析到的投诉订单在保存数据库时发生错误，窗口正在关闭======//')
             log.error(err)
+            that.nightmare.end().then(function () {
+              that.dispose()
+            })
           })
       })
       .catch(function (err) {
+        log.info('//======解析投诉订单过程中发生错误，窗口正在关闭======//')
         log.error(err)
+        that.nightmare.end().then(function () {
+          that.dispose()
+        })
       })
   }
 

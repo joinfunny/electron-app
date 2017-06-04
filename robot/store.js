@@ -158,7 +158,7 @@ let handle = {
       .then(function (result) {
         var returnValue = null
         // log.info('//======投诉数据移除检索【成功】======//')
-        // log.info(result[0][1])
+        log.info(result)
         returnValue = JSON.parse(result[0][1])
         return returnValue
       })

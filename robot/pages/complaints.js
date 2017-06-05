@@ -3,11 +3,10 @@
  */
 var Nightmare = require('nightmare')
 var Runtime = require('../../runtime')
-var async = require('async')
 var store = require('../store')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.complaints
-var email = require('../../runtime/email')
+var Monitor = require('../monitor')
 
 /* eslint-disable no-unused-vars */
 var ComplaintDetail = require('./complaint-detail')
@@ -19,6 +18,14 @@ class Complaints {
     that.eventEmitter = eventEmitter
     var curConfig = Object.assign({}, config.nightmare)
     that.nightmare = new Nightmare(curConfig)
+    that.monitor = new Monitor({
+      tickTime: config.monitor.tickTime,
+      title: '投诉订单抓取服务异常',
+      msg: '投诉订单抓取服务已经很长时间没有抓取数据，当前服务将会重启...',
+      callback: () => {
+        that.loginExpired()
+      }
+    })
     return this
   }
   run () {
@@ -67,27 +74,14 @@ class Complaints {
         log.error('投诉订单监控中捕获到错误')
         log.error(err)
       })
-    that.serviceMonitor()
+
+    that.monitor.monit()
   }
   loginExpired () {
     var that = this
     that.dispose(function () {
       that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
     })
-  }
-  serviceMonitor () {
-    var that = this
-    that.serviceMonitorTimer = setInterval(function () {
-      if (!that.monitorTime)that.monitorTime = new Date()
-      that.monitorTimeSpan = new Date() * 1 - that.monitorTime * 1
-      if (that.monitorTimeSpan > config.monitor.tickTime) {
-        var msg = '投诉订单抓取服务已经很长时间没有抓取数据，当前服务将会重启...'
-        log.warn(msg)
-        email.send('投诉订单抓取服务异常', msg, '<b>' + msg + '</b>')
-        that.monitorTime = new Date()
-        that.loginExpired()
-      }
-    }, config.monitor.tickTime)
   }
   exec () {
     var that = this
@@ -164,6 +158,10 @@ class Complaints {
    */
   next () {
     var that = this
+    if (!that.nightmare) {
+      log.warn('当前窗口已销毁')
+      return
+    }
     that.nightmare
       .evaluate(function () {
         var currentLink = document.querySelector('#frm>div:nth-child(7)>ul>li>a.on')
@@ -209,10 +207,9 @@ class Complaints {
       clearInterval(that.timer)
       that.timer = null
     }
-    if (that.serviceMonitorTimer) {
-      clearInterval(that.serviceMonitorTimer)
-      that.serviceMonitorTimer = null
-    }
+
+    that.monitor.dispose()
+
     that.nightmare
       .end()
       .then(function () {

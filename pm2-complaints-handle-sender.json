@@ -4,6 +4,7 @@
       "name": "robot-complaints-handle-sender",
       "script": "robot-complaints-handle-sender.js",
       "log_date_format": "YYYY-MM-DD HH",
+      "max_memory_restart": "500M",
       "error_file": "logs/robot-complaints-handle-sender-err.log",
       "pid_file": "logs/robot-complaints-handle-sender.pid",
       "exec_mode": "cluster",

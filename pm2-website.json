@@ -4,6 +4,7 @@
       "name": "robot-website",
       "script": "index.js",
       "log_date_format": "YYYY-MM-DD HH",
+      "max_memory_restart": "500M",
       "error_file": "logs/robot-website-err.log",
       "pid_file": "logs/robot-website.pid",
       "exec_mode": "cluster",

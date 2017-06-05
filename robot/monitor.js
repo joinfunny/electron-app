@@ -1,3 +1,6 @@
+/**
+ * Monitor监控模块，轮询服务时间，指定间隔内服务运行时间没有变动则会触发邮件发送
+ */
 var Runtime = require('../runtime')
 var log = Runtime.App.Log.helper
 var email = require('../runtime/email')

@@ -4,6 +4,7 @@
       "name": "robot-exceptionOrder-listener",
       "script": "robot-exceptionOrder-listener.js",
       "log_date_format": "YYYY-MM-DD HH",
+      "max_memory_restart": "500M",
       "error_file": "logs/robot-exceptionOrder-listener-err.log",
       "pid_file": "logs/robot-exceptionOrder-listener.pid",
       "exec_mode": "cluster",

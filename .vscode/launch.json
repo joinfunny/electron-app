@@ -29,14 +29,10 @@
       "program": "${workspaceRoot}/robot-complaints-handle-sender.js"
     },
     {
-      "name": "Launch",
-      "type": "phantomjs",
+      "type": "node",
+      "name": "test",
       "request": "launch",
-      "file": "${workspaceRoot}/webpage.js",
-      "webRoot": "${workspaceRoot}",
-      "runtimeExecutable": "/usr/local/bin/phantomjs",
-      "runtimeArgs": [],
-      "sourceMaps": true
+      "program": "${workspaceRoot}/test.js"
     }
   ]
 }

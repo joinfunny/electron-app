@@ -52,7 +52,7 @@ class ExceptionOrder {
                 that.nightmare
                   .cookies.set(cookies)
                   .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
-                  .run(function () {
+                  .then(function () {
                     log.info('已进入异常订单统计数监听页面')
                     that.timeTick()
                   })
@@ -69,6 +69,10 @@ class ExceptionOrder {
                 })
               } else {
                 log.warn('//--------------------【异常订单统计数监控】请求返回发生错误，重新发起----------------//')
+                if (that.timer) {
+                  clearInterval(that.timer)
+                  that.timer = null
+                }
                 that.nightmare
                   .goto('http://chong.qq.com/')
                   .run(function () {
@@ -91,8 +95,11 @@ class ExceptionOrder {
     that.timer = setInterval(function () {
       that.nightmare
         .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0&r=' + new Date() * 1)
-        .run(function () {
+        .then(function () {
           log.info('已刷新异常订单统计数监听页面')
+        })
+        .catch(function (err) {
+          log.err(err)
         })
     }, config.worker.tickTime)
   }

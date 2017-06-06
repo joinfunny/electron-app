@@ -27,7 +27,33 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
+nightmare
+  .goto('http://www.baidu.com')
+  .wait(3000)
+  .goto('http://www.sina.com')
+  .then(function (result) {
+    console.log(result)
+    nightmare
+      .goto('http://stream.ruixuesoft.com')
+      .then(function (result) {
+        console.log(result)
+      })
+      .catch(function (err) {
+        console.log(err)
+      })
+  })
 
+// run先执行
+nightmare
+  .run(function (result) {
+    console.log(result)
+  })
+
+// run先执行
+nightmare
+  .run(function (result) {
+    console.log(result)
+  })
 /* var eventEmitter = new events.EventEmitter()
 
 eventEmitter.on('firstEvent', function (target) {
@@ -73,7 +99,7 @@ eventEmitter.emit('firstEvent', {a: 1}) */
 
 }) */
 
-function complaintmd5 (complaint) {
+/* function complaintmd5 (complaint) {
   var docmentsNo = encodeURI(complaint.docmentsNo)
   var agentOrderNo = encodeURI(complaint.agentOrderNo)
   var feedback = encodeURI(complaint.feedback)
@@ -125,7 +151,7 @@ setInterval(function () {
   postHandles()
   index++
   // }
-}, 1000)
+}, 1000) */
 
 /* const crypto = require('crypto')
 
@@ -238,14 +264,14 @@ nightmare.goto('http://stream.ruixuesoft.com/login')
 //   console.log(body)
 // })
 
-var Redis = require('ioredis')
+/* var Redis = require('ioredis')
 var redis = new Redis()
 
 redis.hset('person', 'name', 'jiangfeng')
 redis.hset('person', 'sex', 'male')
 
 var promise1 = redis.hexists('person', 'name')
-var promise2 = redis.hexists('person', 'sex')
+var promise2 = redis.hexists('person', 'sex') */
 
 /* Promise
 .all([promise1, promise2])

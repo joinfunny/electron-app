@@ -107,8 +107,8 @@ class Complaints {
       })
       .then(function (links) {
         log.info('//========本次共获取到' + links.length + '条投诉订单========//')
-        that.monitorTime = new Date()
-        log.info('//========捕获时间：' + that.monitorTime + '========//')
+        that.monitor.update()
+        log.info('//========捕获时间：' + (that.monitorTime || new Date()) + '========//')
         if (links && links.length > 0) {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)
@@ -141,6 +141,7 @@ class Complaints {
             log.info(link)
             let complaintDetail = new ComplaintDetail(that.rootNightmare, link, that.eventEmitter)
             complaintDetail.run()
+            that.monitor.update()
           })
           .catch(function (err) {
             log.error(err)
@@ -195,7 +196,9 @@ class Complaints {
         log.info(JSON.stringify(filterResult))
         return that.nightmare
           .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList&filter=&reply=&path=' + filterResult.type + '&status=20&searchCnt=&searchBy=mobile&r=' + new Date() * 1)
-          .run(function () {})
+          .run(function () {
+            that.monitor.update()
+          })
       })
       .catch(function (err) {
         log.error(err)

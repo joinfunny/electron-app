@@ -23,6 +23,11 @@ monitor.prototype.monit = function () {
   }, that.options.tickTime)
 }
 
+monitor.prototype.update = function () {
+  var that = this
+  that.monitorTime = new Date()
+}
+
 monitor.prototype.dispose = function () {
   var that = this
   if (that.serviceMonitorTimer) {

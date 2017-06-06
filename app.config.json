@@ -194,6 +194,9 @@
       "worker": {
         "tickTime": 10000
       },
+      "monitor":{
+        "tickTime":12000
+      },
       "nightmare": {
         "width": 1024,
         "height": 768,

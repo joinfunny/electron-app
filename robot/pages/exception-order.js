@@ -4,7 +4,7 @@ var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.exceptionOrder
 var service = require('../service')
-var path = require('path')
+var Monitor = require('../monitor')
 
 function _queryString (query, url, undecode, isHash) {
   var search, index
@@ -18,10 +18,20 @@ function _queryString (query, url, undecode, isHash) {
     ? undecode ? RegExp.$1 : unescape(RegExp.$1)
     : null
 }
+
 class ExceptionOrder {
   constructor (nm, eventEmitter) {
-    this.rootNightmare = nm
-    this.eventEmitter = eventEmitter
+    var that = this
+    that.rootNightmare = nm
+    that.eventEmitter = eventEmitter
+    that.monitor = new Monitor({
+      tickTime: config.monitor.tickTime,
+      title: '已发货订单统计服务异常',
+      msg: '已发货订单统计已经很长时间没有抓取数据，当前服务将会重启...',
+      callback: () => {
+        that.loginExpired()
+      }
+    })
   }
   run () {
     var that = this
@@ -34,6 +44,7 @@ class ExceptionOrder {
       .catch(function (err) {
         log.error(err)
       })
+    that.monitor.monit()
   }
   init (cookies) {
     var that = this
@@ -57,27 +68,11 @@ class ExceptionOrder {
                     that.timeTick()
                   })
               } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getAbnormalDealList&dealid=&state=2&time_begin=&time_end=&dealType=0') > -1) {
-                that.monitor()
+                that.capture()
               } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-                that.nightmare.end().run(function () {
-                  if (that.timer) {
-                    clearInterval(that.timer)
-                    that.timer = null
-                  }
-                  log.warn('//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
-                  that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
-                })
+                that.loginExpired()
               } else {
-                log.warn('//--------------------【异常订单统计数监控】请求返回发生错误，重新发起----------------//')
-                if (that.timer) {
-                  clearInterval(that.timer)
-                  that.timer = null
-                }
-                that.nightmare
-                  .goto('http://chong.qq.com/')
-                  .run(function () {
-                    log.info('再次进入充值首页')
-                  })
+                that.errorReset()
               }
             })
             .catch(function (err) {
@@ -103,7 +98,7 @@ class ExceptionOrder {
         })
     }, config.worker.tickTime)
   }
-  monitor () {
+  capture () {
     var that = this
     that.nightmare
       .wait('.ui-page-cont')
@@ -120,11 +115,39 @@ class ExceptionOrder {
       .then(function (url) {
         log.info(url)
         if (!url) return
-        var countTotal = url !== 1 ? +_queryString('page', url) : 1
+        // 服务触发时间更新
+        that.monitor.update()
+        var countTotal = url !== 1 ? +_queryString('page', '' + url) : 1
         service.pushExceptionOrders(countTotal)
       })
       .catch(function (err) {
         log.error(err)
+      })
+  }
+  loginExpired () {
+    var that = this
+    that.nightmare.end().run(function () {
+      if (that.timer) {
+        clearInterval(that.timer)
+        that.timer = null
+      }
+      that.monitor.dispose()
+      log.warn('//--------------------【异常订单统计数监控】用户过期，需要重新登录----------------//')
+      that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
+    })
+  }
+  errorReset () {
+    var that = this
+    log.warn('//--------------------【异常订单统计数监控】请求返回发生错误，重新发起----------------//')
+    if (that.timer) {
+      clearInterval(that.timer)
+      that.timer = null
+    }
+    that.monitor.update()
+    that.nightmare
+      .goto('http://chong.qq.com/')
+      .run(function () {
+        log.info('再次进入充值首页')
       })
   }
 }

@@ -66,6 +66,9 @@ class Main {
               loginPage.run(that.nightmare, that.eventEmitter)
             }
           })
+          .catch(function (err) {
+            log.error(err)
+          })
       })
       .on('console', function (type, msg) {
         console[type](msg)

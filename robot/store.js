@@ -106,9 +106,9 @@ var complaints = {
           return ids.indexOf(item.docmentsNo) === -1
         })
         if (notExists && notExists.length > 0) {
-          log.warn('经比对，最终得到【' + notExists.length + '】条新的投诉订单')
+          log.info('经比对，最终得到【' + notExists.length + '】条新的投诉订单')
         } else {
-          log.warn('经比对，没有发现新的投诉订单')
+          log.info('经比对，没有发现新的投诉订单')
         }
         return notExists
       })

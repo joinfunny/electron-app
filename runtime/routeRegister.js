@@ -4,7 +4,7 @@
  * @desc 遍历对应文件夹下得所有文件，将其解析为对应的路由
  */
 let fs = require('fs')
-let ServiceDirector = require('./serviceDirector')
+let ServiceHandler = require('./serviceHandler')
 /**
  * 获取某个文件夹下的所有文件，输出为列表
  * @param {*String} path
@@ -44,7 +44,7 @@ function serviceRegister (app, appConfig) {
     serviceObject = Object.assign(serviceObject, service)
   })
 
-  app.use('/', ServiceDirector(serviceObject).router)
+  app.use('/', ServiceHandler(serviceObject).router)
 }
 
 /**

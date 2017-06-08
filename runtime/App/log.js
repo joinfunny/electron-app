@@ -17,14 +17,22 @@ function parse (logConfig) {
     var baseDir = logConfig['customBaseDir']
     var defaultAtt = logConfig['customDefaultAtt']
     var rootDir = path.resolve()
-    baseDir = path.join(rootDir, baseDir)
+
+    if (!defaultAtt.absolute) {
+      baseDir = path.join(rootDir, baseDir)
+    }
+
     for (var i = 0, j = logConfig.appenders.length; i < j; i++) {
       var item = logConfig.appenders[i]
-      if (item['type'] === 'console') { continue }
+      if (item['type'] === 'console') {
+        continue
+      }
 
       if (defaultAtt != null) {
         for (var att in defaultAtt) {
-          if (item[att] == null) { item[att] = defaultAtt[att] }
+          if (item[att] == null) {
+            item[att] = defaultAtt[att]
+          }
         }
       }
       if (baseDir != null) {
@@ -35,13 +43,17 @@ function parse (logConfig) {
         }
       }
       var fileName = item['filename']
-      if (fileName == null) { continue }
+      if (fileName == null) {
+        continue
+      }
       var pattern = item['pattern']
       if (pattern != null) {
         fileName += pattern
       }
       var category = item['category']
-      if (!path.isAbsolute(fileName)) { throw new Error('配置节' + category + '的路径不是绝对路径:' + fileName) }
+      if (!path.isAbsolute(fileName)) {
+        throw new Error('配置节' + category + '的路径不是绝对路径:' + fileName)
+      }
       var dir = path.dirname(fileName)
       checkAndCreateDir(dir)
     }
@@ -66,7 +78,9 @@ function parse (logConfig) {
     } else {
       msg = category
     }
-    if (msg == null) { msg = '' }
+    if (msg == null) {
+      msg = ''
+    }
     log.debug(msg)
   }
 
@@ -77,7 +91,9 @@ function parse (logConfig) {
     } else {
       msg = category
     }
-    if (msg == null) { msg = '' }
+    if (msg == null) {
+      msg = ''
+    }
     log.info(msg)
   }
 
@@ -88,7 +104,9 @@ function parse (logConfig) {
     } else {
       msg = category
     }
-    if (msg == null) { msg = '' }
+    if (msg == null) {
+      msg = ''
+    }
     log.warn(msg)
   }
 
@@ -99,7 +117,9 @@ function parse (logConfig) {
     } else {
       msg = category
     }
-    if (msg == null) { msg = '' }
+    if (msg == null) {
+      msg = ''
+    }
     log.error(msg)
   }
 
@@ -115,7 +135,7 @@ exports.use = function (app, appConfig) {
   而在开发环境中，我们可以需要打印非常 多的信息，帮助开发人员定位错误，调试代码。 */
   if (app) {
     app.use(log4js.connectLogger(logger, {
-    // 输出级别
+      // 输出级别
       level: log4js.levels.INFO
     }))
   }

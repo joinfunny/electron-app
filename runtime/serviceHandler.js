@@ -1,67 +1,168 @@
-﻿/**
- * @author jiangfeng
- * @summary 服务处理器
- */
 var express = require('express')
-var log = require('./App/log').helper
+let Validator = require('../runtime/App/validator')
+let async = require('async')
+let Mock = require('mockjs')
+let log = require('../runtime/App/log').helper
+let HttpClient = require('../runtime/App/httpClient')
+let _ = require('../runtime/App/Utils')._
 
-module.exports = {
-  defaultMethod: 'get',
-  router: null,
-  initRouter: function () {
+Mock.Random.extend('')
+
+let generator = {
+  router: express.Router()
+}
+
+class ServiceDirector {
+  constructor (router, service) {
+    this.router = router
+    this.options = service
+    this.defaultMethod = 'get'
+  }
+
+  execute () {
     let that = this
-    if (that.router === null) {
-      that.router = express.Router()
-    }
-  },
-  onMocking: function (reqPath, method, req, res) {
-    log.warn('正在执行mock service：' + reqPath, res)
-  },
-  /**
-   * 以回调的方式请求服务
-   * 常用在请求处理逻辑中不能同步返回数据的业务场景下调用
-   * @param  {string}     reqPath   请求地址
-   * @param  {string}     method    get/post
-   * @param  {Function}   exec      必须带有四个参数的函数体:req,res,next,callback
-   * @param  {Boolean}    mock      是否MOCK数据
-   * @return {Router}               当前注册完毕的Router对象
-   */
-  callback: function (reqPath, method, exec, mock) {
-    let that = this
-    that.initRouter()
-    method = method || 'get'
-    that.router[method](reqPath, function (req, res, next) {
-      res.setHeader('Content-Type', 'application/json;charset=utf-8')
-      var params = Array.prototype.slice.call(arguments, 0)
-      params.push(function (actionResult) {
+    let options = that.options
+    let callback = options.callback
+    that.method = options.method || that.defaultMethod
+    that.router[that.method](options.url, function (req, res, next) {
+      let valid = that.beforeExecute(req, res)
+      log.info('begin exec service')
+      if (!valid) return
+      /**
+       * mock验证规则
+       * 1.如果当前出于生产环境，则不进行Mock，否则：
+       * 2.url中包含mock query 则进行Mock
+       * 3.配置中如果Mock.on=true 则进行Mock
+       */
+      if (process.env.ENV !== 'production') {
+        if (typeof (req.query.mock) !== 'undefined' || (options.mock && options.mock.on)) {
+          that.onMocking(req, res, options.mock.dataRegular)
+          return that
+        }
+      }
+
+      callback.call(that, req, res, function (actionResult) {
+        that.afterExecute(req, res)
         res.json(actionResult)
         res.end()
       })
-      mock && that.onMocking(reqPath, method, req, res)
-      exec.apply(that, params)
-    })
-    return that
-  },
-  /**
-   * 直接返回的方式请求服务
-   * 常用在请求处理逻辑中能同步返回数据的业务场景下调用
-   * @param  {string}     reqPath 请求地址
-   * @param  {string}     method  get/post
-   * @param  {Function}   exec    必须带有三个参数的函数体:req,res,next
-   * @param  {mock}       mock    是否MOCK数据
-   * @return {Router}             当前注册完毕的Router对象
-   */
-  send: function (reqPath, method, exec, mock) {
-    var that = this
-    that.initRouter()
-    method = method || that.defaultMethod
-    that.router[method](reqPath, function (req, res, next) {
-      res.setHeader('Content-Type', 'application/json;charset=utf-8')
-      mock && that.onMocking(reqPath, method, req, res)
-      var actionResult = exec.apply(this, arguments)
-      res.json(actionResult)
-      res.end()
     })
     return that
   }
+  /**
+   * 执行前对请求体数据进行校验
+   */
+  beforeExecute (request, response) {
+    response.setHeader('Content-Type', 'application/json;charset=utf-8')
+    log.info('validate service params ....')
+    let validResult = {
+      valid: true,
+      message: ''
+    }
+
+    if (this.options.validate) {
+      let method = String.prototype.toLowerCase.call(this.options.method) || 'get'
+      let dataObj = method === 'get' ? request.query : request.body
+      this.options.validate.forEach((validater, index) => {
+        if (validResult.valid) {
+          validResult = new Validator(dataObj[validater.field], validater.options).validate().result
+        }
+      })
+    }
+    if (!validResult.valid) {
+      response.json({
+        success: false,
+        code: 100,
+        msg: validResult.message
+      })
+      response.end()
+    }
+    return validResult.valid
+  }
+  afterExecute (request, response) {
+    log.info('after execute service ....')
+  }
+  /**
+   * Mock数据
+   * @param {IncomingRequest} request
+   * @param {IncomingResponse} response
+   * @param {Object|Function} dataRegular Mock数据的规则，可以是函数，也可以是数据规则JSON，如果是函数需要最终返回数据规则JSON
+   */
+  onMocking (request, response, dataRegular) {
+    log.warn('正在Mock service："' + request.path + '" 数据...')
+    let data
+    if (_.isFunction(dataRegular)) {
+      data = dataRegular.call(this, request)
+    } else {
+      data = Mock.mock(dataRegular)
+    }
+    response.json({
+      success: true,
+      dataObject: data
+    })
+    response.end()
+  }
+  packaging (req, res, callbacks) {
+    if (_.isObject(callbacks)) {
+      // ['key',function(error,result){}]
+      // ['key',{url:'/api/test',method,'post',callback:function(error,result){}}]
+      let packagedCallbacks = {}
+      for (var key in callbacks) {
+        console.log(key)
+        var callback = callbacks[key]
+        if (_.isFunction(callback)) {
+          packagedCallbacks[key] = callback
+        } else if (_.isObject(callback)) {
+          packagedCallbacks[key] = (error, cb) => {
+            if (!error) {
+              packageHttpClient(callback)
+              return
+            }
+            cb({
+              success: true
+            })
+          }
+        } else if (_.isArray(callback)) {
+          let lastCallback = callback[callback.length - 1]
+          if (_.isObject(lastCallback)) {
+            packagedCallbacks[key] = callback.slice(0, callback.length - 1).concat([packageHttpClient(lastCallback)])
+          }
+        }
+      }
+      async.auto(packagedCallbacks, (err, result) => {
+        if (err) {
+          log.error(err)
+        } else {
+          console.log(result)
+        }
+      })
+    }
+
+    function packageHttpClient (options) {
+      return (error, cb) => {
+        if (!error) {
+          new HttpClient(Object.assign({
+            req: req,
+            res: res
+          }, options))[options.method]((responseData) => {
+            cb(responseData)
+          })
+          return
+        }
+        cb({
+          success: false
+        })
+      }
+    }
+  }
 }
+
+let service = (ServiceObject) => {
+  for (let url in ServiceObject) {
+    let service = ServiceObject[url]
+    service.url = url
+    new ServiceDirector(generator.router, service).execute()
+  }
+  return generator
+}
+module.exports = service

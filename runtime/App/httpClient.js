@@ -95,6 +95,10 @@ HttpClient.prototype = {
 
     var onResponse = function (error, response, body) {
       var dataObject
+      log.info('//===============[HttpClient] 服务请求返回结果 Begin==============//')
+      log.info(error)
+      log.info(JSON.stringify(response))
+      log.info('//===============[HttpClient] 服务请求返回结果 End===============//')
       if (!error && response && response.statusCode === 200) {
         dataObject = Utils.HttpClientResponseDataFormatter(response)
 
@@ -112,16 +116,17 @@ HttpClient.prototype = {
 
         that.dataObject = dataObject
       } else {
+        error = typeof error === 'object' ? JSON.stringify(error) : error
+
         dataObject = {}
         dataObject.success = false
         dataObject.msg = error || Utils.RuntimeCodes.FaildHttpRequest.toString()
         dataObject.statusCode = response && response.statusCode || ''
 
-        if (process.env.NODE_ENV === 'development') {
-          dataObject.url = url
-          dataObject.responseBody = response && response.body ? JSON.stringify(response.body) : ''
-          log.error(dataObject)
-        }
+        dataObject.url = url
+        dataObject.responseBody = response && response.body ? JSON.stringify(response.body) : ''
+        log.error(dataObject)
+
         if (options.onFiald) {
           options.onFiald.call(that, dataObject)
         }
@@ -132,12 +137,12 @@ HttpClient.prototype = {
         callback.call(that, that.dataObject)
       }
     }
-    if (process.env.NODE_ENV === 'development') {
-      log.info('method:' + options.method)
-      log.info('url:' + url)
-      log.info('queryParams:' + JSON.stringify(options.queryParams || {}, null, 2))
-      log.info('formData:' + JSON.stringify(options.formData || {}, null, 2))
-    }
+
+    log.info('method:' + options.method)
+    log.info('url:' + url)
+    log.info('queryParams:' + JSON.stringify(options.queryParams || {}, null, 2))
+    log.info('formData:' + JSON.stringify(options.formData || {}, null, 2))
+
     if (options.method === 'get') {
       request.get(url, onResponse)
     } else {

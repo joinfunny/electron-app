@@ -4,7 +4,7 @@
  */
 let session = require('express-session')
 let cookieParser = require('cookie-parser')
-let Store = require('./redisStore')
+let RedisStore = require('./redisStore')
 
 const SKEY = {
   '__USER_NAME__': '__USER_NAME__',
@@ -15,18 +15,23 @@ const SKEY = {
   '__USER_CODE__': '__USER_CODE__',
   '__CAAS_ACCESS_INFO__': '__CAAS_ACCESS_INFO__'
 }
+
 function use (app, appConfig) {
   app.use(cookieParser())
-  app.use(session({
+  var sessionStore = {
     secret: appConfig.runtime.session.secret,
     name: appConfig.runtime.session.name,
     cookie: {
       maxAge: appConfig.runtime.session.maxAge
     },
     resave: false,
-    saveUninitialized: true,
-    store: Store
-  }))
+    saveUninitialized: true
+  }
+
+  if (appConfig.runtime.session.store === 'redis') {
+    sessionStore.store = RedisStore.getInstance()
+  }
+  app.use(session(sessionStore))
 }
 
 function setUserName (req, value) {

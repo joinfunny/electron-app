@@ -7,25 +7,27 @@ let RedisStore = require('connect-redis')(session)
 let ioRedis = require('ioredis')
 let AppConfig = require('./App/AppConfig')
 
-let storeConfig = AppConfig.runtime[AppConfig.runtime.session.store]
-let sessionMode = AppConfig.runtime.session.mode
-let store
-if (sessionMode === 'cluster') {
-  store = new RedisStore({
-    logErrors: true,
-    prefix: AppConfig.runtime.session.prefix,
-    unset: 'destroy',
-    client: new ioRedis.Cluster(storeConfig.cluster)
-  })
-} else {
-  store = new RedisStore({
-    host: storeConfig.local.host,
-    port: storeConfig.local.port,
-    pass: storeConfig.local.pass,
-    logErrors: true,
-    prefix: AppConfig.runtime.session.prefix,
-    unset: 'destroy'
-  })
-}
+let redisMode = AppConfig.runtime.redis.mode
+let redisConfig = AppConfig.runtime.redis
 
-module.exports = store
+module.exports.getInstance = function () {
+  let store
+  if (redisMode === 'cluster') {
+    store = new RedisStore({
+      logErrors: true,
+      prefix: AppConfig.runtime.session.prefix,
+      unset: 'destroy',
+      client: new ioRedis.Cluster(redisConfig.cluster)
+    })
+  } else if (redisMode === 'local') {
+    store = new RedisStore({
+      host: redisConfig.local.host,
+      port: redisConfig.local.port,
+      pass: redisConfig.local.pass,
+      logErrors: true,
+      prefix: AppConfig.runtime.session.prefix,
+      unset: 'destroy'
+    })
+  }
+  return store
+}

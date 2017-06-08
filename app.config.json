@@ -52,9 +52,8 @@
       "errorUrl": "/#404"
     },
     "session": {
-      "mode": "local",
       "maxAge": 86400000,
-      "store": "redis",
+      "store": "memory",
       "prefix": "electron-robot:",
       "secret": "electron-robot",
       "name": "electron-robot"
@@ -97,6 +96,7 @@
       }
     },
     "redis": {
+      "mode": "local",
       "local": {
         "port": 6379,
         "host": "127.0.0.1",

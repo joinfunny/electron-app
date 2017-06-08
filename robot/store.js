@@ -2,8 +2,7 @@ let Runtime = require('../runtime')
 let Utils = Runtime.App.Utils
 let orm = Runtime.OrmMapping
 let log = Runtime.App.Log.helper
-let Redis = require('ioredis')
-let redis = new Redis()
+let redis = Runtime.RedisStore.getInstance().client
 
 let keys = {
   complaints: 'complaints',

@@ -94,7 +94,7 @@ class ExceptionOrder {
           log.info('已刷新异常订单统计数监听页面')
         })
         .catch(function (err) {
-          log.err(err)
+          log.error(err)
         })
     }, config.worker.tickTime)
   }

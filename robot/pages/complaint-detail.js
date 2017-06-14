@@ -56,26 +56,32 @@ class ComplaintDetail {
               log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
               if (that.handle) {
                 service.handledComplaint(that.handle, false).then(function () {
-                  that.nightmare.end().then(function () {
-                    log.info(that.handle)
-                    log.info('//======【投诉订单详情监控】用户过期，投诉处理信息已回补，窗口已关闭======//')
-                    that.dispose()
-                    that.eventEmitter.emit('detail-login-expired', that)
-                  })
-                  .catch(function (err) {
-                    log.error(err)
-                  })
+                  log.info(that.handle)
+                  log.info('//======【投诉订单处理监控】用户过期，投诉处理信息已回补，窗口已关闭======//')
                 })
               }
+              that.nightmare.end().then(function () {
+                that.dispose()
+                that.eventEmitter.emit('detail-login-expired', that)
+              })
+              .catch(function (err) {
+                log.error(err)
+              })
             } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {
               that.exec()
             } else if (url !== 'http://chong.qq.com/') {
+              if (that.handle) {
+                service.handledComplaint(that.handle, false).then(function () {
+                  log.info(that.handle)
+                  log.info('//======【投诉订单处理监控】请求发生异常，窗口已关闭======//')
+                })
+              }
               that.nightmare.end().then(function () {
                 that.dispose()
               })
-                .catch(function (err) {
-                  log.error(err)
-                })
+              .catch(function (err) {
+                log.error(err)
+              })
             }
           })
           .catch(function (err) {

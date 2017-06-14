@@ -54,13 +54,19 @@ class ComplaintDetail {
           .then(function (url) {
             if (url.indexOf('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
               log.warn('//--------------------【投诉订单详情监控】用户过期，需要重新登录----------------//')
-              that.nightmare.end().then(function () {
-                that.dispose()
-                that.eventEmitter.emit('detail-login-expired', that)
-              })
-                .catch(function (err) {
-                  log.error(err)
+              if (that.handle) {
+                service.handledComplaint(that.handle, false).then(function () {
+                  that.nightmare.end().then(function () {
+                    log.info(that.handle)
+                    log.info('//======【投诉订单详情监控】用户过期，投诉处理信息已回补，窗口已关闭======//')
+                    that.dispose()
+                    that.eventEmitter.emit('detail-login-expired', that)
+                  })
+                  .catch(function (err) {
+                    log.error(err)
+                  })
                 })
+              }
             } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {
               that.exec()
             } else if (url !== 'http://chong.qq.com/') {
@@ -162,7 +168,7 @@ class ComplaintDetail {
               }
             },
             error: function () {
-              console('系统繁忙，请稍后再试')
+              console.log('//======异步提交投诉处理信息失败======//')
             }
           })
         } else {
@@ -232,7 +238,6 @@ class ComplaintDetail {
     var that = this
     that.cookies = null
     that.nightmare = null
-    that.link = null
   }
 }
 

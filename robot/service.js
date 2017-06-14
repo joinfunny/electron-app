@@ -97,8 +97,7 @@ module.exports = {
   handledComplaint: (handle, result) => {
     if (!result) {
       log.info('处理投诉订单失败+1')
-      store.handle.push([handle])
-      return
+      return store.handle.push([handle])
     }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
     handle.type = 2

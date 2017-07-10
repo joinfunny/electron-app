@@ -14,5 +14,10 @@ export default {
   mydata: {
     'url': '/api/mydata',
     'type': 'get'
+  },
+  earliestData: {
+    'url': '/api/earliestData',
+    type: 'get'
   }
+
 }

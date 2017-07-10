@@ -40,7 +40,8 @@
         </div>
       </div>
       <div slot="sidebar">
-        <nav-bar class="stream-box stream-nav" />
+        <nav-bar class="stream-box stream-nav">
+        </nav-bar>
       </div>
       <div slot="content">
         <admin-pannel>

@@ -8,12 +8,12 @@ var reportCount = Waterline.Collection.extend({
   autoUpdatedAt: false,
   attributes: {
     startTime: {
-      type: 'string',
+      type: 'date',
       required: true,
       index: true
     },
     endTime: {
-      type: 'string',
+      type: 'date',
       required: true,
       index: true
     },

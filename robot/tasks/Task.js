@@ -16,7 +16,7 @@ function formatUnitTime (momentTime, unit) {
     case 'hours':
       formattedTime = momentTime.format('YYYY-MM-DD HH:00:00')
       break
-    case 'minites':
+    case 'minutes':
       formattedTime = momentTime.format('YYYY-MM-DD HH:mm:00')
       break
     case 'seconds':
@@ -39,7 +39,7 @@ function calcTimeTick (unit, timeSpan) {
     case 'hours':
       timeTick = timeSpan * 1000 * 60 * 60
       break
-    case 'minites':
+    case 'minutes':
       timeTick = timeSpan * 1000 * 60
       break
     case 'seconds':
@@ -58,19 +58,17 @@ class Task {
    * @param {PromiseFunction} promiseFunc
    * @memberof Task
    */
-  constructor (type, unit, timeSpan, promiseFunc) {
+  constructor (type, unit, timeSpan) {
     this.startTime = null
     this.lock = false
     this.type = type
     this.unit = unit
     this.timeSpan = timeSpan
-    this.promiseFunc = promiseFunc
     this.timeTick = calcTimeTick(unit, timeSpan)
   }
 
   run () {
     var that = this
-    var promiseFunc = that.promiseFunc || function () {}
       /**
        * 获取要统计的时间区间
        */
@@ -91,50 +89,13 @@ class Task {
     that.endTime = formatUnitTime(moment().subtract(that.timeSpan, that.unit), that.unit)
 
     that.lock = true
-    var promise = promiseFunc.call(that)
-    promise.always(function () {
+
+    that.promiseFunc().then(function () {
       that.startTime = that.endTime
       that.lock = true
     })
   }
 
 }
-
-/* function base ({type, unit, timeSpan, promiseFunc}) {
-  var timeTick = calcTimeTick(unit, timeSpan)
-  var task = {
-    startTime: null,
-    lock: false,
-    timeTick: timeTick,
-    run: function () {
-      var that = this
-
-      //获取要统计的时间区间
-      if (!that.startTime && !that.lock) {
-        store.complaints
-        .first(type)
-        .then(function (result) {
-          if (!result) {
-            that.startTime = moment('2017-01-01 00:00:00').format('YYYY-MM-DD HH:mm:ss')
-          } else {
-            that.startTime = moment(result.createdAt).format('YYYY-MM-DD HH:mm:ss')
-          }
-          that.endTime = formatUnitTime(moment().subtract(timeSpan, unit), unit)
-        })
-        return
-      }
-
-      that.endTime = formatUnitTime(moment().subtract(timeSpan, unit), unit)
-
-      that.lock = true
-      var promise = promiseFunc.call(that)
-      promise.always(function () {
-        that.startTime = that.endTime
-        that.lock = true
-      })
-    }
-  }
-  return task
-} */
 
 module.exports = Task

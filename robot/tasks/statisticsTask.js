@@ -1,16 +1,21 @@
 var Task = require('./Task')
 var store = require('../store')
 
-function statistics () {
-  var that = this
-  return store.complaints
+class StatisticsTask extends Task {
+  constructor (type, unit, timeSpan) {
+    super(type, unit, timeSpan)
+    console.log('统计任务已启动...')
+  }
+  promiseFunc () {
+    var that = this
+    return store.complaints
     .get(that.type, that.startTime, that.endTime)
     .then(function (complaints) {
       var count = complaints.length
       return store.reportCount
         .add({
-          startTime: that.startTime,
-          endTime: that.endTime,
+          startTime: new Date(that.startTime),
+          endTime: new Date(that.endTime),
           type: that.type,
           count: count
         })
@@ -24,12 +29,6 @@ function statistics () {
     .catch(function (ex) {
       console.log(ex)
     })
-}
-
-class StatisticsTask extends Task {
-  constructor (type, unit, timeSpan) {
-    super(type, unit, timeSpan)
-    this.statistics = statistics
   }
 }
 

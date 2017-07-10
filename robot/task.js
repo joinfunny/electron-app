@@ -3,9 +3,7 @@ var handles = require('./tasks/handles')
 var dataClean = require('./tasks/dataClean')
 var tasks = [complaints, handles, dataClean]
 function run (task) {
-  setInterval(function () {
-    task.run()
-  }, task.timeTick)
+  setInterval(task.run.bind(task), task.timeTick)
 }
 
 module.exports.run = function () {

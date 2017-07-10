@@ -1,6 +1,5 @@
 let Runtime = require('../runtime/index')
 let orm = Runtime.OrmMapping
-let Mock = require('mockjs')
 let moment = require('moment')
 module.exports = {
   '/api/complaints': {
@@ -153,6 +152,53 @@ module.exports = {
         responseData.dataObject.exceptionorders.total = results[6]
         responseData.dataObject.exceptionorders.today = results[7]
         responseData.dataObject.exceptionorders.latestTime = results[8].length > 0 ? new Date(results[8][0].createdAt) * 1 : 0
+        callback(responseData)
+      }).catch(function (err) {
+        console.log(err)
+      })
+    }
+  },
+  '/api/earliestData': {
+    method: 'get',
+    callback: function (req, res, callback) {
+      let endDate = new Date()
+      let startDate = new Date(moment(endDate * 1).subtract(1, 'days'))
+
+      let complaints = orm.models.reportcount.find({
+        type: '1',
+        endTime: {
+          '>': startDate,
+          '<': endDate
+        }
+      })
+      let handles = orm.models.reportcount.find({
+        type: '2',
+        endTime: {
+          '>': startDate,
+          '<': endDate
+        }
+      })
+
+      let responseData = {
+        success: true,
+        dataObject: {
+          startTime: startDate,
+          endTime: endDate,
+          complaints: [],
+          handles: []
+        }
+      }
+
+      Promise.all([
+        complaints,
+        handles
+      ]).then(function (results) {
+        responseData.dataObject.complaints = results[0].map(function (item) {
+          return [item.endTime, item.count, item.count]
+        })
+        responseData.dataObject.handles = results[1].map(function (item) {
+          return [item.endTime, item.count, item.count]
+        })
         callback(responseData)
       }).catch(function (err) {
         console.log(err)

@@ -97,8 +97,8 @@ var complaints = {
         '<': new Date(endTime)
       }
     }
-    return orm.models.complaints.destroy(condition).then(function (count) {
-      log.info(`类型：${typeName}，开始时间：${startTime}，结束时间：${endTime}，共删除${count}条投诉订单`)
+    return orm.models.complaints.destroy(condition).then(function (items) {
+      log.info(`类型：${typeName}，开始时间：${startTime}，结束时间：${endTime}，共删除${items.length}条投诉订单`)
       return true
     }).catch(function (err) {
       log.warn('删除投诉订单过程中捕获到错误')

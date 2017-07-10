@@ -16,18 +16,27 @@
 }
 
 .stream-chart {
+  //width: 500px;
+  height: 300px;
+}
+.chart-comp,.chart-warp{
   width: 100%;
-  height: 100px;
+  height: 100%;
+}
+.fn-hide{
+  display: none
 }
 </style>
 <script>
 /* eslint-disable no-unused-vars */
+import chartLine from '../../assets/charts/chart-line'
 import { AdminToast } from '../../assets/admin-ui'
 import utils from '../../assets/utils'
 import echarts from 'echarts'
 import moment from 'moment'
 export default {
   name: 'login-panel',
+  components: { chartLine },
   created () {
     this.getMydata()
   },
@@ -57,6 +66,28 @@ export default {
           latestTime: 0,
           chart: {}
         }
+      },
+      myChartData: {
+        title: '实时数据统计',
+        options: {
+          grid: {
+            x: 20,
+            y: 40,
+            x2: 20,
+            y2: 20
+          },
+          xAxis: [
+            {
+              type: 'time',
+              boundaryGap: false,
+              max: moment().add(1, 'days').format('YYYY-MM-DD 00:00:00'),
+              min: moment().format('YYYY-MM-DD 00:00:00'),
+              splitNumber: 24
+            }
+          ]
+        },
+        loading: false,
+        data: []
       }
     }
   },
@@ -65,15 +96,39 @@ export default {
   },
   mounted () {
     var that = this
+    that.getMydata()
+    that.getChartData()
+
     setInterval(() => {
       that.getMydata()
     }, 5000)
+
+    // 1分钟更新一次数据
+    setInterval(() => {
+      that.getChartData()
+    }, 60000)
   },
   methods: {
     getMydata () {
       var that = this
       that.api.mydata({ r: new Date() * 1 }).then(function (res) {
         that.mydata = res.dataObject
+      })
+    },
+    getChartData () {
+      var that = this
+      that.api.earliestData({ r: new Date() * 1 }).then(function (res) {
+        that.myChartData.data = [
+          {
+            name: '投诉订单',
+            list: res.dataObject.complaints
+          },
+          {
+            name: '投诉处理',
+            list: res.dataObject.handles
+          }
+        ]
+        console.log(that.myChartData)
       })
     },
     timestampFormmater (timestamp) {

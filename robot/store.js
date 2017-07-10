@@ -78,14 +78,27 @@ var complaints = {
   /**
    * 删除指定的投诉订单
    */
-  delete: (complaints) => {
-    let complaintIds = complaints.map((complaint) => {
-      return complaint.docmentsNo
-    })
-    return orm.models.complaints.destroy({
-      docmentsNo: complaintIds
-    }).then(function () {
-      log.info('删除【' + complaintIds.length + '】条投诉订单')
+  delete: (type, startTime, endTime) => {
+    var condition = {
+      type: type
+    }
+    var typeName = ''
+
+    if (type === '1') {
+      typeName = '投诉订单'
+      condition['createdAt'] = {
+        '>': new Date(startTime),
+        '<': new Date(endTime)
+      }
+    } else if (type === '2') {
+      typeName = '处理订单'
+      condition['updatedAt'] = {
+        '>': new Date(startTime),
+        '<': new Date(endTime)
+      }
+    }
+    return orm.models.complaints.destroy(condition).then(function (count) {
+      log.info(`类型：${typeName}，开始时间：${startTime}，结束时间：${endTime}，共删除${count}条投诉订单`)
       return true
     }).catch(function (err) {
       log.warn('删除投诉订单过程中捕获到错误')

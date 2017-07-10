@@ -1,6 +1,7 @@
 var complaints = require('./tasks/complaints')
 var handles = require('./tasks/handles')
-var tasks = [complaints, handles]
+var dataClean = require('./tasks/dataClean')
+var tasks = [complaints, handles, dataClean]
 function run (task) {
   setInterval(function () {
     task.run()

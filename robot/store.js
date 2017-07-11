@@ -99,7 +99,7 @@ var complaints = {
     }
     return orm.models.complaints.destroy(condition).then(function (items) {
       log.info(`类型：${typeName}，开始时间：${startTime}，结束时间：${endTime}，共删除${items.length}条投诉订单`)
-      return true
+      return items
     }).catch(function (err) {
       log.warn('删除投诉订单过程中捕获到错误')
       log.error(err)
@@ -250,6 +250,33 @@ let reportCount = {
   }
 }
 
+let logs = {
+  add: (item) => {
+    return orm.models.logs
+      .create(item)
+      .then(function (result) {
+        log.info('保存操作日志+1')
+        return result
+      }).catch(function (err) {
+        log.error(err)
+      })
+  },
+  update: (item) => {
+    return orm.models.logs
+    .update({type: item.type}, item)
+    .then(function (result) {
+      log.info('更新日志+1')
+      return result
+    })
+  },
+  get: (type) => {
+    return orm.models.logs.find({type: type}).then(function (items) {
+      log.info('获取到日志数量：' + items.length)
+      return items
+    })
+  }
+}
+
 module.exports = {
   keys: keys,
   redis: redis,
@@ -258,5 +285,6 @@ module.exports = {
   complaints: complaints,
   handle: handle,
   exceptionOrders: exceptionOrders,
-  reportCount: reportCount
+  reportCount: reportCount,
+  logs: logs
 }

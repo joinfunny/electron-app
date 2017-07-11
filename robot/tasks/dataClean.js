@@ -12,6 +12,12 @@ class DataCleanTask extends Task {
     var that = this
     return store.complaints
         .delete(that.type, that.startTime, that.endTime)
+        .then(function (items) {
+          return store.logs.add({
+            type: 'task-data-clean',
+            intInfo: items ? items.length : 0
+          })
+        })
         .catch(function (err) {
           console.log(err)
         })
@@ -20,4 +26,4 @@ class DataCleanTask extends Task {
 
 // 两天清理一次数据
 // 测试使用1分钟清理一次数据
-module.exports = new DataCleanTask('1', config.unit, config.timeSpan)
+module.exports = new DataCleanTask('2', config.unit, config.timeSpan)

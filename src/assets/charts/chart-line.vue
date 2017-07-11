@@ -6,9 +6,10 @@
 </template>
 <script>
   import echarts from 'echarts'
-
+  import mixins from './chart-resize-mixin'
   export default {
     name: 'chart-line',
+    mixins: [mixins],
     mounted () {
       this.chart = echarts.init(this.$refs.chart)
       this.renderChart()
@@ -83,6 +84,7 @@
             return {
               name: e.name,
               type: 'line',
+              smooth: true,
               showAllSymbol: true,
               symbolSize: function (value) {
                 return Math.round(value[2] / 10) + 2
@@ -91,6 +93,7 @@
             }
           })
         }, this.ecOptions)
+        console.log(this.ecOptions)
         if (!this.data || !this.data.length === 0) return
         this.chart.setOption(option)
         console.log(option)

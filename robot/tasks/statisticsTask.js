@@ -1,5 +1,6 @@
 var Task = require('./Task')
 var store = require('../store')
+var moment = require('moment')
 
 class StatisticsTask extends Task {
   constructor (type, unit, timeSpan) {
@@ -20,7 +21,10 @@ class StatisticsTask extends Task {
           count: count
         })
         .then(function () {
-
+          return store.logs.update({
+            type: 'task-data-statistics',
+            dateInfo: new Date(that.endTime)
+          })
         })
         .catch(function (err) {
           console.log(err)
@@ -29,6 +33,34 @@ class StatisticsTask extends Task {
     .catch(function (ex) {
       console.log(ex)
     })
+  }
+  initStartTimePromise () {
+    var that = this
+      /**
+       * 获取要统计的时间区间
+       */
+    if (!that.startTime && !that.lock) {
+      return store.logs.get('task-data-statistics')
+      .then(function (items) {
+        if (items.length > 0) {
+          return new Promise(function () {
+            that.startTime = moment(items[0]).format('YYYY-MM-DD HH:mm:ss')
+          })
+        } else {
+          return store.complaints
+            .first(that.type)
+            .then(function (result) {
+              if (!result) {
+                that.startTime = moment('2017-01-01 00:00:00').format('YYYY-MM-DD HH:mm:ss')
+              } else {
+                that.startTime = moment(result.createdAt).format('YYYY-MM-DD HH:mm:ss')
+              }
+            })
+        }
+      })
+    } else {
+      return new Promise(function (resolve) { resolve() })
+    }
   }
 }
 

@@ -16,7 +16,6 @@
 }
 
 .stream-chart {
-  //width: 500px;
   height: 300px;
 }
 .chart-comp,.chart-warp{
@@ -70,6 +69,21 @@ export default {
       myChartData: {
         title: '实时数据统计',
         options: {
+          tooltip: {
+            show: true,
+            trigger: 'axis',
+            formatter: function (params, ticket, cb) {
+              console.log(arguments)
+              var output = []
+              params.forEach((item, index) => {
+                if (index === 0) {
+                  output.push('当前时间：' + moment(item.data[0]).format('YYYY-MM-DD HH:mm:ss'))
+                }
+                output.push(item.seriesName + '：' + item.data[1])
+              })
+              return output.join('<br />')
+            }
+          },
           grid: {
             x: 20,
             y: 40,
@@ -111,13 +125,23 @@ export default {
   methods: {
     getMydata () {
       var that = this
-      that.api.mydata({ r: new Date() * 1 }).then(function (res) {
+      that.api.mydata({data: { r: new Date() * 1 }}).then(function (res) {
         that.mydata = res.dataObject
       })
     },
     getChartData () {
       var that = this
-      that.api.earliestData({ r: new Date() * 1 }).then(function (res) {
+      var endDate = new Date() * 1
+      var startDate = endDate - 1000 * 60 * 60 * 24
+      that.myChartData.options.xAxis[0].min = startDate
+      that.myChartData.options.xAxis[0].max = endDate
+      that.api.earliestData({
+        data: {
+          r: new Date() * 1,
+          startDate: endDate - 1000 * 60 * 60 * 24,
+          endDate: endDate
+        }
+      }).then(function (res) {
         that.myChartData.data = [
           {
             name: '投诉订单',
@@ -128,7 +152,6 @@ export default {
             list: res.dataObject.handles
           }
         ]
-        console.log(that.myChartData)
       })
     },
     timestampFormmater (timestamp) {

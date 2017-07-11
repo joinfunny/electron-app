@@ -69,11 +69,26 @@ class Task {
 
   run () {
     var that = this
+    that.initStartTimePromise()
+    .then(function () {
+      that.endTime = formatUnitTime(moment().subtract(that.timeSpan, that.unit), that.unit)
+
+      that.lock = true
+
+      return that.promiseFunc().then(function () {
+        that.startTime = that.endTime
+        that.lock = true
+      })
+    })
+  }
+
+  initStartTimePromise () {
+    var that = this
       /**
        * 获取要统计的时间区间
        */
     if (!that.startTime && !that.lock) {
-      store.complaints
+      return store.complaints
         .first(that.type)
         .then(function (result) {
           if (!result) {
@@ -81,19 +96,10 @@ class Task {
           } else {
             that.startTime = moment(result.createdAt).format('YYYY-MM-DD HH:mm:ss')
           }
-          that.endTime = formatUnitTime(moment().subtract(that.timeSpan, that.unit), that.unit)
         })
-      return
+    } else {
+      return new Promise(function (resolve) { resolve() })
     }
-
-    that.endTime = formatUnitTime(moment().subtract(that.timeSpan, that.unit), that.unit)
-
-    that.lock = true
-
-    that.promiseFunc().then(function () {
-      that.startTime = that.endTime
-      that.lock = true
-    })
   }
 
 }

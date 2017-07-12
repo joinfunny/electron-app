@@ -23,16 +23,24 @@ class StatisticsTask extends Task {
           count: count
         })
         .then(function () {
-          return store.logs.get('task-data-statistics')
+          return store.logs.get({
+            type: 'task-data-statistics',
+            intInfo: that.type
+          })
           .then(function (items) {
             if (items && items.length > 0) {
               return store.logs.update({
                 type: 'task-data-statistics',
+                intInfo: that.type
+              }, {
+                type: 'task-data-statistics',
+                intInfo: that.type,
                 dateInfo: new Date(that.endTime)
               })
             } else {
               return store.logs.add({
                 type: 'task-data-statistics',
+                intInfo: that.type,
                 dateInfo: new Date(that.endTime)
               })
             }
@@ -53,11 +61,14 @@ class StatisticsTask extends Task {
        */
     if (!that.startTime && !that.lock) {
       return store.logs
-        .get('task-data-statistics')
+        .get({
+          type: 'task-data-statistics',
+          intInfo: that.type
+        })
         .then(function (items) {
           if (items && items.length > 0) {
             return new Promise(function (resolve) {
-              that.startTime = moment(items[0]).format('YYYY-MM-DD HH:mm:ss')
+              that.startTime = moment(items[0].dateInfo).format('YYYY-MM-DD HH:mm:ss')
               resolve()
             })
           } else {

@@ -151,7 +151,11 @@ var complaints = {
     return orm.models.complaints
     .find(condition)
     .then(function (results) {
-      log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉订单`)
+      if (condition.type === '1') {
+        log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉订单`)
+      } else {
+        log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉处理`)
+      }
       return results || []
     })
     .catch(function (err) {
@@ -230,7 +234,11 @@ let exceptionOrders = {
     orm.models.exceptionorders
       .create(item)
       .then(function () {
-        log.info('保存异常订单数量+' + item.total)
+        if (item.type === '1') {
+          log.info('保存异常订单数量+' + item.total)
+        } else {
+          log.info('保存异常处理数量+' + item.total)
+        }
       }).catch(function (err) {
         log.error(err)
       })
@@ -242,7 +250,12 @@ let reportCount = {
     return orm.models.reportcount
       .create(item)
       .then(function () {
-        log.info('保存投诉订单统计+1')
+        if (item.type === '1') {
+          log.info('保存投诉订单统计+1')
+        } else {
+          log.info('保存投诉处理统计+1')
+        }
+
         return true
       }).catch(function (err) {
         log.error(err)
@@ -261,9 +274,9 @@ let logs = {
         log.error(err)
       })
   },
-  update: (item) => {
+  update: (condition, item) => {
     return orm.models.logs
-    .update({type: item.type}, item)
+    .update(condition, item)
     .then(function (result) {
       log.info('更新日志+1')
       return result
@@ -272,8 +285,8 @@ let logs = {
   /**
    * 根据日志类型获取日志
    */
-  get: (type) => {
-    return orm.models.logs.find({type: type}).then(function (items) {
+  get: (condition) => {
+    return orm.models.logs.find(condition).then(function (items) {
       log.info('获取到日志数量：' + items.length)
       return items
     })

@@ -26,6 +26,7 @@ monitor.prototype.monit = function () {
 monitor.prototype.update = function () {
   var that = this
   that.monitorTime = new Date()
+  return that.monitorTime
 }
 
 monitor.prototype.dispose = function () {

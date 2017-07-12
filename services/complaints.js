@@ -105,6 +105,11 @@ module.exports = {
       })
       let exceptionordersLatestTime = orm.models.exceptionorders.find().max('createdAt')
       let cleanedHandlesCount = orm.models.logs.find({type: 'task-data-clean'}).sum('intInfo')
+      let cleanedTodayHandlesCount = orm.models.logs.find({type: 'task-data-clean',
+        createdAt: {
+          '>': new Date(moment(date).format('YYYY-MM-DD') + ' 00:00:00'),
+          '<': new Date(moment(date).format('YYYY-MM-DD') + ' 23:59:59')
+        }}).sum('intInfo')
       let responseData = {
         success: true,
         dataObject: {
@@ -143,15 +148,17 @@ module.exports = {
         exceptionordersTotal, // 6
         exceptionordersToday, // 7
         exceptionordersLatestTime, // 8
-        cleanedHandlesCount// 9
+        cleanedHandlesCount, // 9
+        cleanedTodayHandlesCount // 10
       ]).then(function (results) {
         var cleanedHandlesSum = results[9] && results[9].length > 0 ? results[9][0].intInfo : 0
+        var cleanedTodayHandlesSum = results[10] && results[10].length > 0 ? results[10][0].intInfo : 0
         // 当前的投诉订单数量要加上数据清理定时服务的数据
         responseData.dataObject.complaints.total = results[0] + cleanedHandlesSum
-        responseData.dataObject.complaints.today = results[1]
+        responseData.dataObject.complaints.today = results[1] + cleanedTodayHandlesSum
         responseData.dataObject.complaints.latestTime = results[2].length > 0 ? new Date(results[2][0].createdAt) * 1 : 0
         responseData.dataObject.handles.total = results[3] + cleanedHandlesSum
-        responseData.dataObject.handles.today = results[4]
+        responseData.dataObject.handles.today = results[4] + cleanedTodayHandlesSum
         responseData.dataObject.handles.latestTime = results[5].length > 0 ? new Date(results[5][0].updatedAt) * 1 : 0
         responseData.dataObject.exceptionorders.total = results[6]
         responseData.dataObject.exceptionorders.today = results[7]

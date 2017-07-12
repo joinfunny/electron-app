@@ -2,11 +2,12 @@ var Runtime = require('../../runtime')
 var config = Runtime.App.AppConfig.tasks.dataClean
 var Task = require('./Task')
 var store = require('../store')
+var log = Runtime.App.Log.helper
 
 class DataCleanTask extends Task {
   constructor (type, unit, timeSpan) {
     super(type, unit, timeSpan)
-    console.log('数据清理定时任务已启动...')
+    log.info('数据清理定时任务已启动...')
   }
   promiseFunc () {
     var that = this
@@ -19,7 +20,7 @@ class DataCleanTask extends Task {
           })
         })
         .catch(function (err) {
-          console.log(err)
+          log.error(err)
         })
   }
 }

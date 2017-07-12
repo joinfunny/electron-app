@@ -75,10 +75,11 @@ class Task {
 
       that.lock = true
 
-      return that.promiseFunc().then(function () {
-        that.startTime = that.endTime
-        that.lock = true
-      })
+      return that.promiseFunc()
+        .then(function () {
+          that.startTime = that.endTime
+          that.lock = true
+        })
     })
   }
 

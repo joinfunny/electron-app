@@ -1,11 +1,13 @@
+var Runtime = require('../../runtime')
 var Task = require('./Task')
 var store = require('../store')
 var moment = require('moment')
+var log = Runtime.App.Log.helper
 
 class StatisticsTask extends Task {
   constructor (type, unit, timeSpan) {
     super(type, unit, timeSpan)
-    console.log('统计任务已启动...')
+    log.info('统计任务已启动...')
   }
   promiseFunc () {
     var that = this
@@ -21,17 +23,27 @@ class StatisticsTask extends Task {
           count: count
         })
         .then(function () {
-          return store.logs.update({
-            type: 'task-data-statistics',
-            dateInfo: new Date(that.endTime)
+          return store.logs.get('task-data-statistics')
+          .then(function (items) {
+            if (items && items.length > 0) {
+              return store.logs.update({
+                type: 'task-data-statistics',
+                dateInfo: new Date(that.endTime)
+              })
+            } else {
+              return store.logs.add({
+                type: 'task-data-statistics',
+                dateInfo: new Date(that.endTime)
+              })
+            }
           })
         })
         .catch(function (err) {
-          console.log(err)
+          log.error(err)
         })
     })
-    .catch(function (ex) {
-      console.log(ex)
+    .catch(function (err) {
+      log.error(err)
     })
   }
   initStartTimePromise () {
@@ -40,24 +52,26 @@ class StatisticsTask extends Task {
        * 获取要统计的时间区间
        */
     if (!that.startTime && !that.lock) {
-      return store.logs.get('task-data-statistics')
-      .then(function (items) {
-        if (items.length > 0) {
-          return new Promise(function () {
-            that.startTime = moment(items[0]).format('YYYY-MM-DD HH:mm:ss')
-          })
-        } else {
-          return store.complaints
-            .first(that.type)
-            .then(function (result) {
-              if (!result) {
-                that.startTime = moment('2017-01-01 00:00:00').format('YYYY-MM-DD HH:mm:ss')
-              } else {
-                that.startTime = moment(result.createdAt).format('YYYY-MM-DD HH:mm:ss')
-              }
+      return store.logs
+        .get('task-data-statistics')
+        .then(function (items) {
+          if (items && items.length > 0) {
+            return new Promise(function (resolve) {
+              that.startTime = moment(items[0]).format('YYYY-MM-DD HH:mm:ss')
+              resolve()
             })
-        }
-      })
+          } else {
+            return store.complaints
+              .first(that.type)
+              .then(function (result) {
+                if (!result) {
+                  that.startTime = moment('2017-01-01 00:00:00').format('YYYY-MM-DD HH:mm:ss')
+                } else {
+                  that.startTime = moment(result.createdAt).format('YYYY-MM-DD HH:mm:ss')
+                }
+              })
+          }
+        })
     } else {
       return new Promise(function (resolve) { resolve() })
     }

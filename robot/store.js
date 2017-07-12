@@ -269,6 +269,9 @@ let logs = {
       return result
     })
   },
+  /**
+   * 根据日志类型获取日志
+   */
   get: (type) => {
     return orm.models.logs.find({type: type}).then(function (items) {
       log.info('获取到日志数量：' + items.length)

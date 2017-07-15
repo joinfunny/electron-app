@@ -17,7 +17,7 @@ class ComplaintListener {
         clearInterval(that.timer)
         that.timer = null
       }
-      log.info('//======监听到投诉处理处理页面用户登录过期，已关闭======//')
+      log.info('//======监听到投诉处理页面用户登录过期，已关闭======//')
       that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
     })
   }
@@ -45,6 +45,7 @@ class ComplaintListener {
         complaintDetail.run()
       })
       .catch(function (err) {
+        log.error('打开投诉处理页面过程中发生异常：')
         log.error(err)
       })
     }, config.worker.tickTime)

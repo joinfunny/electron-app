@@ -114,6 +114,7 @@ class Complaints {
             that.loopComplaintDetail(notExistsLinks)
           })
             .catch(function (err) {
+              log.error('在检索投诉订单是否存在的过程中捕获到异常：')
               log.error(err)
             })
         } else {
@@ -144,6 +145,7 @@ class Complaints {
             that.monitor.update()
           })
           .catch(function (err) {
+            log.error('在打开投诉订单详情页面时捕获到异常：')
             log.error(err)
           })
       } else {
@@ -201,6 +203,7 @@ class Complaints {
           })
       })
       .catch(function (err) {
+        log.error('在打开投诉订单类别页面时捕获到异常：')
         log.error(err)
       })
   }
@@ -221,6 +224,7 @@ class Complaints {
         cb && cb()
       })
       .catch(function (err) {
+        log.error('在投诉订单服务销毁时捕获到异常：')
         log.error(err)
       })
   }

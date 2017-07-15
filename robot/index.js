@@ -67,6 +67,7 @@ class Main {
             }
           })
           .catch(function (err) {
+            log.error('服务启动过程中捕获到异常：')
             log.error(err)
           })
       })

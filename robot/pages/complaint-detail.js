@@ -185,6 +185,7 @@ class ComplaintDetail {
         log.info('//======处理投诉订单中...======//')
       })
       .catch(function (err) {
+        log.error('订单处理过程中捕获到异常：')
         log.error(err)
       })
   }

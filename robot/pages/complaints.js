@@ -2,6 +2,7 @@
  * 处理订单
  */
 var Nightmare = require('nightmare')
+var moment = require('moment')
 var Runtime = require('../../runtime')
 var store = require('../store')
 var log = Runtime.App.Log.helper
@@ -107,8 +108,8 @@ class Complaints {
       })
       .then(function (links) {
         log.info('//========本次共获取到' + links.length + '条投诉订单========//')
-        that.monitor.update()
-        log.info('//========捕获时间：' + (that.monitorTime || new Date()) + '========//')
+
+        log.info('//========捕获时间：' + moment(that.monitor.update() || new Date()).format('YYYY-MM-DD HH:mm:ss') + '========//')
         if (links && links.length > 0) {
           store.complaints.exists(links).then(function (notExistsLinks) {
             that.loopComplaintDetail(notExistsLinks)

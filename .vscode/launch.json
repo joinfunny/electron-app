@@ -30,6 +30,12 @@
     },
     {
       "type": "node",
+      "request": "launch",
+      "name": "启动定时任务",
+      "program": "${workspaceRoot}/robot-tasks.js"
+    },
+    {
+      "type": "node",
       "name": "test",
       "request": "launch",
       "program": "${workspaceRoot}/test.js"

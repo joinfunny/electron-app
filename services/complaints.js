@@ -1,6 +1,5 @@
 let Runtime = require('../runtime/index')
 let orm = Runtime.OrmMapping
-let Mock = require('mockjs')
 let moment = require('moment')
 module.exports = {
   '/api/complaints': {
@@ -105,6 +104,12 @@ module.exports = {
         }
       })
       let exceptionordersLatestTime = orm.models.exceptionorders.find().max('createdAt')
+      let cleanedHandlesCount = orm.models.logs.find({type: 'task-data-clean'}).sum('intInfo')
+      let cleanedTodayHandlesCount = orm.models.logs.find({type: 'task-data-clean',
+        createdAt: {
+          '>': new Date(moment(date).format('YYYY-MM-DD') + ' 00:00:00'),
+          '<': new Date(moment(date).format('YYYY-MM-DD') + ' 23:59:59')
+        }}).sum('intInfo')
       let responseData = {
         success: true,
         dataObject: {
@@ -134,25 +139,77 @@ module.exports = {
       }
 
       Promise.all([
-        complaintsTotal,
-        complaintsToday,
-        complaintsLatestTime,
-        handlesTotal,
-        handlesToday,
-        handlesLatestTime,
-        exceptionordersTotal,
-        exceptionordersToday,
-        exceptionordersLatestTime
+        complaintsTotal, // 0
+        complaintsToday, // 1
+        complaintsLatestTime, // 2
+        handlesTotal, // 3
+        handlesToday, // 4
+        handlesLatestTime, // 5
+        exceptionordersTotal, // 6
+        exceptionordersToday, // 7
+        exceptionordersLatestTime, // 8
+        cleanedHandlesCount, // 9
+        cleanedTodayHandlesCount // 10
       ]).then(function (results) {
-        responseData.dataObject.complaints.total = results[0]
-        responseData.dataObject.complaints.today = results[1]
+        var cleanedHandlesSum = results[9] && results[9].length > 0 ? results[9][0].intInfo : 0
+        var cleanedTodayHandlesSum = results[10] && results[10].length > 0 ? results[10][0].intInfo : 0
+        // 当前的投诉订单数量要加上数据清理定时服务的数据
+        responseData.dataObject.complaints.total = results[0] + cleanedHandlesSum
+        responseData.dataObject.complaints.today = results[1] + cleanedTodayHandlesSum
         responseData.dataObject.complaints.latestTime = results[2].length > 0 ? new Date(results[2][0].createdAt) * 1 : 0
-        responseData.dataObject.handles.total = results[3]
-        responseData.dataObject.handles.today = results[4]
+        responseData.dataObject.handles.total = results[3] + cleanedHandlesSum
+        responseData.dataObject.handles.today = results[4] + cleanedTodayHandlesSum
         responseData.dataObject.handles.latestTime = results[5].length > 0 ? new Date(results[5][0].updatedAt) * 1 : 0
         responseData.dataObject.exceptionorders.total = results[6]
         responseData.dataObject.exceptionorders.today = results[7]
         responseData.dataObject.exceptionorders.latestTime = results[8].length > 0 ? new Date(results[8][0].createdAt) * 1 : 0
+        callback(responseData)
+      }).catch(function (err) {
+        console.log(err)
+      })
+    }
+  },
+  '/api/earliestData': {
+    method: 'get',
+    callback: function (req, res, callback) {
+      let endDate = new Date(+req.query.endDate)
+      let startDate = new Date(+req.query.startDate)
+
+      let complaints = orm.models.reportcount.find({
+        type: '1',
+        endTime: {
+          '>': startDate,
+          '<': endDate
+        }
+      })
+      let handles = orm.models.reportcount.find({
+        type: '2',
+        endTime: {
+          '>': startDate,
+          '<': endDate
+        }
+      })
+
+      let responseData = {
+        success: true,
+        dataObject: {
+          startTime: startDate,
+          endTime: endDate,
+          complaints: [],
+          handles: []
+        }
+      }
+
+      Promise.all([
+        complaints,
+        handles
+      ]).then(function (results) {
+        responseData.dataObject.complaints = results[0].map(function (item) {
+          return [item.endTime, item.count, item.count]
+        })
+        responseData.dataObject.handles = results[1].map(function (item) {
+          return [item.endTime, item.count, item.count]
+        })
         callback(responseData)
       }).catch(function (err) {
         console.log(err)

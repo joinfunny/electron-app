@@ -119,5 +119,15 @@
         "exceptionorders": "/complaints/complaints_getCount.action"
       }
     }
+  },
+  "tasks": {
+    "dataClean": {
+      "unit": "days",
+      "timeSpan": 2
+    },
+    "statistics": {
+      "unit": "minutes",
+      "timeSpan": 1
+    }
   }
 }

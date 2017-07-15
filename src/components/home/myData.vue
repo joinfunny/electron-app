@@ -16,18 +16,26 @@
 }
 
 .stream-chart {
+  height: 300px;
+}
+.chart-comp,.chart-warp{
   width: 100%;
-  height: 100px;
+  height: 100%;
+}
+.fn-hide{
+  display: none
 }
 </style>
 <script>
 /* eslint-disable no-unused-vars */
+import chartLine from '../../assets/charts/chart-line'
 import { AdminToast } from '../../assets/admin-ui'
 import utils from '../../assets/utils'
 import echarts from 'echarts'
 import moment from 'moment'
 export default {
   name: 'login-panel',
+  components: { chartLine },
   created () {
     this.getMydata()
   },
@@ -57,6 +65,43 @@ export default {
           latestTime: 0,
           chart: {}
         }
+      },
+      myChartData: {
+        title: '实时数据统计',
+        options: {
+          tooltip: {
+            show: true,
+            trigger: 'axis',
+            formatter: function (params, ticket, cb) {
+              console.log(arguments)
+              var output = []
+              params.forEach((item, index) => {
+                if (index === 0) {
+                  output.push('当前时间：' + moment(item.data[0]).format('YYYY-MM-DD HH:mm:ss'))
+                }
+                output.push(item.seriesName + '：' + item.data[1])
+              })
+              return output.join('<br />')
+            }
+          },
+          grid: {
+            x: 20,
+            y: 40,
+            x2: 20,
+            y2: 20
+          },
+          xAxis: [
+            {
+              type: 'time',
+              boundaryGap: false,
+              max: moment().add(1, 'days').format('YYYY-MM-DD 00:00:00'),
+              min: moment().format('YYYY-MM-DD 00:00:00'),
+              splitNumber: 24
+            }
+          ]
+        },
+        loading: false,
+        data: []
       }
     }
   },
@@ -65,15 +110,48 @@ export default {
   },
   mounted () {
     var that = this
+    that.getMydata()
+    that.getChartData()
+
     setInterval(() => {
       that.getMydata()
     }, 5000)
+
+    // 1分钟更新一次数据
+    setInterval(() => {
+      that.getChartData()
+    }, 60000)
   },
   methods: {
     getMydata () {
       var that = this
-      that.api.mydata({ r: new Date() * 1 }).then(function (res) {
+      that.api.mydata({data: { r: new Date() * 1 }}).then(function (res) {
         that.mydata = res.dataObject
+      })
+    },
+    getChartData () {
+      var that = this
+      var endDate = new Date() * 1
+      var startDate = endDate - 1000 * 60 * 60 * 24
+      that.myChartData.options.xAxis[0].min = startDate
+      that.myChartData.options.xAxis[0].max = endDate
+      that.api.earliestData({
+        data: {
+          r: new Date() * 1,
+          startDate: endDate - 1000 * 60 * 60 * 24,
+          endDate: endDate
+        }
+      }).then(function (res) {
+        that.myChartData.data = [
+          {
+            name: '投诉订单',
+            list: res.dataObject.complaints
+          },
+          {
+            name: '投诉处理',
+            list: res.dataObject.handles
+          }
+        ]
       })
     },
     timestampFormmater (timestamp) {

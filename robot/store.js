@@ -19,6 +19,9 @@ let status = {
 }
 
 var complaints = {
+  /**
+   * 添加投诉订单，使用CreateEach
+   */
   adds: (items) => {
     return orm.models.complaints
       .createEach(items)
@@ -28,6 +31,10 @@ var complaints = {
         log.error(err)
       })
   },
+  /**
+   * 更新投诉订单
+   * state目前没有必要传递，没有任何处理
+   */
   updates: (items, state) => {
     let docmentsNos = items.map(function (complaint) {
       return complaint.docmentsNo
@@ -68,26 +75,34 @@ var complaints = {
         }
       })
   },
-  delete: (complaints) => {
-    let promise = orm.models.complaints
-    complaints.forEach((complaint) => {
-      promise.delete({
-        docmentsNo: complaint.docmentsNo
-      })
-    })
-    return promise.exec(function (err, result) {
-      let actionResult = true
-      if (err) {
-        log.error(err)
-      } else {
-        log.info(JSON.stringify(result))
-        result.forEach(function (rs, index) {
-          if (actionResult && rs !== 1) {
-            actionResult = false
-          }
-        })
+  /**
+   * 删除指定的投诉订单
+   */
+  delete: (type, startTime, endTime) => {
+    var condition = {
+      type: type
+    }
+    var typeName = ''
+
+    if (type === '1') {
+      typeName = '投诉订单'
+      condition['createdAt'] = {
+        '>': new Date(startTime),
+        '<': new Date(endTime)
       }
-      return actionResult
+    } else if (type === '2') {
+      typeName = '处理订单'
+      condition['updatedAt'] = {
+        '>': new Date(startTime),
+        '<': new Date(endTime)
+      }
+    }
+    return orm.models.complaints.destroy(condition).then(function (items) {
+      log.info(`类型：${typeName}，开始时间：${startTime}，结束时间：${endTime}，共删除${items.length}条投诉订单`)
+      return items
+    }).catch(function (err) {
+      log.warn('删除投诉订单过程中捕获到错误')
+      log.error(err)
     })
   },
   /**
@@ -115,6 +130,55 @@ var complaints = {
       .catch(function (err) {
         log.error(err)
       })
+  },
+  get: (type, startTime, endTime) => {
+    let condition = {}
+
+    if (type === '1') {
+      condition['createdAt'] = {
+        '>=': new Date(startTime),
+        '<': new Date(endTime)
+      }
+    } else if (type === '2') {
+      condition['updatedAt'] = {
+        '>=': new Date(startTime),
+        '<': new Date(endTime)
+      }
+    }
+
+    condition.type = type
+
+    return orm.models.complaints
+    .find(condition)
+    .then(function (results) {
+      if (condition.type === '1') {
+        log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉订单`)
+      } else {
+        log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉处理`)
+      }
+      return results || []
+    })
+    .catch(function (err) {
+      log.warn('查询投诉订单过程中捕获到错误')
+      log.error(err)
+    })
+  },
+  first: (type) => {
+    var condition = {}
+    if (type === '1') {
+      condition['sort'] = 'createdAt'
+    } else if (type === '2') {
+      condition['sort'] = 'updatedAt'
+    }
+    return orm.models.complaints
+    .find(condition)
+    .limit(1)
+    .then(function (result) {
+      return result.length > 0 ? result[0] : null
+    })
+    .catch(function (err) {
+      console.log(err)
+    })
   }
 }
 
@@ -170,10 +234,62 @@ let exceptionOrders = {
     orm.models.exceptionorders
       .create(item)
       .then(function () {
-        log.info('保存异常订单数量+' + item.total)
+        if (item.type === '1') {
+          log.info('保存异常订单数量+' + item.total)
+        } else {
+          log.info('保存异常处理数量+' + item.total)
+        }
       }).catch(function (err) {
         log.error(err)
       })
+  }
+}
+
+let reportCount = {
+  add: (item) => {
+    return orm.models.reportcount
+      .create(item)
+      .then(function () {
+        if (item.type === '1') {
+          log.info('保存投诉订单统计+1')
+        } else {
+          log.info('保存投诉处理统计+1')
+        }
+
+        return true
+      }).catch(function (err) {
+        log.error(err)
+      })
+  }
+}
+
+let logs = {
+  add: (item) => {
+    return orm.models.logs
+      .create(item)
+      .then(function (result) {
+        log.info('保存操作日志+1')
+        return result
+      }).catch(function (err) {
+        log.error(err)
+      })
+  },
+  update: (condition, item) => {
+    return orm.models.logs
+    .update(condition, item)
+    .then(function (result) {
+      log.info('更新日志+1')
+      return result
+    })
+  },
+  /**
+   * 根据日志类型获取日志
+   */
+  get: (condition) => {
+    return orm.models.logs.find(condition).then(function (items) {
+      log.info('获取到日志数量：' + items.length)
+      return items
+    })
   }
 }
 
@@ -184,5 +300,7 @@ module.exports = {
   // 记录投诉订单
   complaints: complaints,
   handle: handle,
-  exceptionOrders: exceptionOrders
+  exceptionOrders: exceptionOrders,
+  reportCount: reportCount,
+  logs: logs
 }

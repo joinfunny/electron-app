@@ -10,3 +10,15 @@ let task = require('./robot/task')
 log.info('----正在启动定时任务------')
 // 启动机器人
 task.run()
+
+process.on('uncaughtException', function (err) {
+  console.error('uncaughtException: %s', err.message)
+  var worker = require('cluster').worker
+  if (worker) {
+    process.send({
+      cmd: 'suicide',
+      crash: err.stack,
+      message: err.message
+    })
+  }
+})

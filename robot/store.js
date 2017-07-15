@@ -141,6 +141,9 @@ var complaints = {
         log.error(err)
       })
   },
+  /**
+   * 获取指定类型的指定时间区间的数据
+   */
   get: (type, startTime, endTime) => {
     let condition = {}
 
@@ -154,9 +157,8 @@ var complaints = {
         '>=': new Date(startTime),
         '<': new Date(endTime)
       }
+      condition.type = type
     }
-
-    condition.type = type
 
     return orm.models.complaints
     .find(condition)

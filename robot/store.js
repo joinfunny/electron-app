@@ -163,10 +163,10 @@ var complaints = {
     return orm.models.complaints
     .find(condition)
     .then(function (results) {
-      if (condition.type === '1') {
-        log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉订单`)
-      } else {
+      if (condition.type === '2') {
         log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉处理`)
+      } else {
+        log.info(`开始时间：${startTime} ，结束时间：${endTime}，获取到【${results.length}】条投诉订单`)
       }
       return results || []
     })

@@ -86,6 +86,10 @@ class Main {
 
           })
       })
+      .catch(function (err) {
+        log.error('启动登陆页面时捕获到异常：')
+        log.error(err)
+      })
   }
 
 }

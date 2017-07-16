@@ -36,6 +36,9 @@ function formatUnitTime (momentTime, unit) {
 function calcTimeTick (unit, timeSpan) {
   var timeTick
   switch (unit) {
+    case 'days':
+      timeTick = timeSpan * 1000 * 60 * 60 * 24
+      break
     case 'hours':
       timeTick = timeSpan * 1000 * 60 * 60
       break

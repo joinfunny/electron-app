@@ -23,6 +23,7 @@ class ComplaintDetail {
               that.dispose()
             })
               .catch(function (err) {
+                log.error('投诉处理成功后关闭窗口时捕获到异常：')
                 log.error(err)
               })
           })
@@ -33,6 +34,7 @@ class ComplaintDetail {
               that.dispose()
             })
               .catch(function (err) {
+                log.error('投诉处理失败后关闭窗口时捕获到异常：')
                 log.error(err)
               })
           })
@@ -43,6 +45,7 @@ class ComplaintDetail {
               that.dispose()
             })
               .catch(function (err) {
+                log.error('投诉处理已经经过处理后关闭窗口时捕获到异常：')
                 log.error(err)
               })
           })
@@ -65,6 +68,7 @@ class ComplaintDetail {
                 that.eventEmitter.emit('detail-login-expired', that)
               })
               .catch(function (err) {
+                log.error('【投诉订单详情监控】用户过期关闭窗口时捕获到异常：')
                 log.error(err)
               })
             } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseDetail') > -1) {
@@ -80,11 +84,13 @@ class ComplaintDetail {
                 that.dispose()
               })
               .catch(function (err) {
+                log.error('【投诉订单处理监控】请求发生异常关闭窗口时捕获到异常：')
                 log.error(err)
               })
             }
           })
           .catch(function (err) {
+            log.error('did-finish-load事件捕获到异常：')
             log.error(err)
           })
       })
@@ -105,10 +111,12 @@ class ComplaintDetail {
             log.info('//======正在打开投诉订单 ' + that.link.docmentsNo + '的处理窗口...======//')
           })
           .catch(function (err) {
+            log.error('打开投诉订单处理窗口时捕获到异常：')
             log.error(err)
           })
       })
       .catch(function (err) {
+        log.error('获取Cookie时捕获到异常：')
         log.error(err)
       })
   }
@@ -124,6 +132,7 @@ class ComplaintDetail {
         }
       })
       .catch(function (err) {
+        log.error('执行投诉订单逻辑时捕获到异常：')
         log.error(err)
       })
   }
@@ -185,7 +194,7 @@ class ComplaintDetail {
         log.info('//======处理投诉订单中...======//')
       })
       .catch(function (err) {
-        log.error('订单处理过程中捕获到异常：')
+        log.error('投诉订单处理过程中捕获到异常：')
         log.error(err)
       })
   }
@@ -225,7 +234,7 @@ class ComplaintDetail {
           })
         })
           .catch(function (err) {
-            log.info('//======解析到的投诉订单在保存数据库时发生错误，窗口正在关闭======//')
+            log.error('//======解析到的投诉订单在保存数据库时发生错误，窗口正在关闭======//')
             log.error(err)
             that.nightmare.end().then(function () {
               that.dispose()
@@ -233,7 +242,7 @@ class ComplaintDetail {
           })
       })
       .catch(function (err) {
-        log.info('//======解析投诉订单过程中发生错误，窗口正在关闭======//')
+        log.error('//======解析投诉订单过程中发生错误，窗口正在关闭======//')
         log.error(err)
         that.nightmare.end().then(function () {
           that.dispose()

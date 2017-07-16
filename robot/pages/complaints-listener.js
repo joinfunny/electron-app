@@ -45,7 +45,7 @@ class ComplaintListener {
         complaintDetail.run()
       })
       .catch(function (err) {
-        log.error('打开投诉处理页面过程中发生异常：')
+        log.error('【监听器】打开投诉处理页面过程中发生异常：')
         log.error(err)
       })
     }, config.worker.tickTime)

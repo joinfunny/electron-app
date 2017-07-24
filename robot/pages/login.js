@@ -63,6 +63,7 @@ module.exports = {
         log.info('//===========login ok==============//')
       })
       .catch(function (err) {
+        log.error('登陆过程中捕获到异常：')
         log.error(err)
       })
   },

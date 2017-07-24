@@ -94,6 +94,7 @@ class ExceptionOrder {
           log.info('已刷新异常订单统计数监听页面')
         })
         .catch(function (err) {
+          log.error('异常订单统计数监听时捕获到异常：')
           log.error(err)
         })
     }, config.worker.tickTime)
@@ -121,6 +122,7 @@ class ExceptionOrder {
         service.pushExceptionOrders(countTotal)
       })
       .catch(function (err) {
+        log.error('异常订单统计时捕获到错误：')
         log.error(err)
       })
   }

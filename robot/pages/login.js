@@ -6,7 +6,7 @@ var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.login
 var email = require('../../runtime/email')
-
+var loginIFrameSelector = '#ui_ptlogin'
 module.exports = {
   eventEmitter: null,
   nightmare: null,
@@ -30,7 +30,7 @@ module.exports = {
     this.nightmare = nightmare
     this.eventEmitter = eventEmitter
     return that.nightmare
-      .enterIFrame('#login_frame')
+      .enterIFrame(loginIFrameSelector)
       .wait('#switcher_plogin')
       .click('#switcher_plogin')
       .wait('#u')
@@ -108,7 +108,7 @@ module.exports = {
             return that.nightmare
               .exitIFrame()
               .evaluate(function () {
-                var rect = document.querySelector('#login_frame').getBoundingClientRect()
+                var rect = document.querySelector(loginIFrameSelector).getBoundingClientRect()
                 return {
                   x: Math.round(rect.left),
                   y: Math.round(rect.top)
@@ -133,7 +133,7 @@ module.exports = {
         var result = false
         if (result === false) {
           that.nightmare
-            .enterIFrame('#login_frame')
+            .enterIFrame(loginIFrameSelector)
             .enterIFrame('#newVcodeIframe>iframe')
             .then(function () {
               console.log(JSON.stringify(config.vcode))

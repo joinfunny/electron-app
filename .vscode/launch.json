@@ -1,6 +1,8 @@
 {
   "version": "0.2.0",
-  "configurations": [{
+  "configurations": [
+
+    {
       "type": "node",
       "request": "launch",
       "name": "启动投诉订单采集服务",
@@ -37,6 +39,12 @@
     {
       "type": "node",
       "name": "test",
+      "request": "launch",
+      "program": "${workspaceRoot}/test.js"
+    },
+    {
+      "type": "node",
+      "name": "PhantomJS",
       "request": "launch",
       "program": "${workspaceRoot}/test.js"
     }

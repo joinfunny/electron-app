@@ -20,40 +20,21 @@ var nightmare = Nightmare({
   width: 1024,
   height: 768,
   show: true,
-  // openDevTools: {
-  //   mode: 'detach'
-  // },
+  openDevTools: {
+    mode: 'detach'
+  },
   webPreferences: {
     webSecurity: false
   }
 })
-nightmare
-  .goto('http://www.baidu.com')
-  .wait(3000)
-  .goto('http://www.sina.com')
-  .then(function (result) {
-    console.log(result)
-    nightmare
-      .goto('http://stream.ruixuesoft.com')
-      .then(function (result) {
-        console.log(result)
-      })
-      .catch(function (err) {
-        console.log(err)
-      })
-  })
+// nightmare
+//   .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+//   .wait(3000)
+//   .refresh()
+//   .then(function (result) {
+//     console.log(result)
+//   })
 
-// run先执行
-nightmare
-  .run(function (result) {
-    console.log(result)
-  })
-
-// run先执行
-nightmare
-  .run(function (result) {
-    console.log(result)
-  })
 /* var eventEmitter = new events.EventEmitter()
 
 eventEmitter.on('firstEvent', function (target) {

@@ -9,6 +9,8 @@ var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.complaints
 var Monitor = require('../monitor')
 
+var loginIFrameSelector = '#ui_ptlogin'
+
 /* eslint-disable no-unused-vars */
 var ComplaintDetail = require('./complaint-detail')
 
@@ -36,37 +38,16 @@ class Complaints {
       .get()
       .then(function (cookies) {
         that.nightmare
-          .on('did-finish-load', function () {
-            log.info('did-finish-load')
-            log.info(arguments)
-            that.nightmare
-              .url()
-              .then(function (url) {
-                log.info('//--------------------【投诉订单抓取监控】URL---------------//')
-                log.info(url)
-                if (url === 'http://chong.qq.com/') {
-                  that.nightmare
-                    .cookies.set(cookies)
-                    .goto('http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseList')
-                    .run(function () {
-                      log.info('进入投诉订单查询页面')
-                    })
-                } else if (url.indexOf('php/index.php?d=seller&c=seller&m=getCaseList') > -1) {
-                  that.exec()
-                } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
-                  log.warn('//--------------------【投诉订单监控】用户过期，需要重新登录----------------//')
-                  that.loginExpired()
-                } else {
-                  log.warn('//--------------------【投诉订单监控】请求返回发生错误，重新发起----------------//')
-                  that.nightmare
-                    .goto('http://chong.qq.com/')
-                    .run(function () {
-                      log.info('再次进入充值首页')
-                    })
-                }
-              })
+          .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+          .wait(2000)
+          .exists(loginIFrameSelector)
+          .then((hasLogin) => {
+            if (hasLogin) {
+              that.exec()
+            } else {
+              that.loginExpired()
+            }
           })
-          .goto('http://chong.qq.com/')
           .run(function () {
             log.info('进入充值首页')
           })
@@ -86,6 +67,8 @@ class Complaints {
   }
   exec () {
     var that = this
+    console.log('execed .....')
+    if (!!0 === true) return
     if (!that.nightmare) return
     return that.nightmare
       .evaluate(function () {

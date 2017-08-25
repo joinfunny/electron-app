@@ -156,13 +156,13 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
       },
-      "userName": "2919415063",
-      "password": "shili8269",
+      "userName": "3161624341",
+      "password": "chen1234",
       "vcode": {
         "serviceUrl": "http://op.juhe.cn/vercode/index",
         "serviceKey": "ae6ed8d0322a8800a28f9de897d5934c",

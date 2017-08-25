@@ -37,11 +37,14 @@ class Main {
     var that = this
     this.nightmare = Nightmare(config.login.nightmare)
       .on('did-finish-load', function () {
-        that.nightmare.resetFrame().url()
-          .then(function (url) {
-            if (url.indexOf('&g_ty=lk') > -1) {
+        that.nightmare
+          .resetFrame()
+          .wait(5000)
+          .exists('#ui_ptlogin')
+          .then(function (hasLogin) {
+            // 登陆成功后进入主页面
+            if (hasLogin) {
               log.info('//--------------------正在进入主页面----------------//')
-              log.info(url)
               var timerMaxCount = 20
               var timerTick = 1000
               // 20秒内轮询可能漏掉的已经关掉的服务
@@ -62,7 +65,7 @@ class Main {
                   return
                 }
               }, timerTick)
-            } else if (url.indexOf('php/index.php?d=seller&c=sellerLogin&m=login') > -1) {
+            } else {
               loginPage.run(that.nightmare, that.eventEmitter)
             }
           })
@@ -81,7 +84,7 @@ class Main {
       .cookies
       .clearAll()
       .then(function () {
-        that.nightmare.goto('http://chong.qq.com/php/index.php?d=seller&c=sellerLogin&m=login')
+        that.nightmare.goto('http://chong.qq.com/pc/seller/index.html')
           .run(function () {
 
           })

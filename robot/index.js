@@ -40,7 +40,7 @@ class Main {
         that.nightmare
           .resetFrame()
           .wait(5000)
-          .exists('#ui_ptlogin')
+          .exists('#headLogin > a.func_nickname')
           .then(function (hasLogin) {
             // 登陆成功后进入主页面
             if (hasLogin) {
@@ -84,7 +84,7 @@ class Main {
       .cookies
       .clearAll()
       .then(function () {
-        that.nightmare.goto('http://chong.qq.com/pc/seller/index.html')
+        that.nightmare.goto('http://chong.qq.com')
           .run(function () {
 
           })

@@ -27,13 +27,13 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
-// nightmare
-//   .goto('http://chong.qq.com/pc/seller/index.html#/csList')
-//   .wait(3000)
-//   .refresh()
-//   .then(function (result) {
-//     console.log(result)
-//   })
+nightmare
+  .goto('http://chong.qq.com')
+  .wait(3000)
+  // .refresh()
+  .then(function (result) {
+    console.log(result)
+  })
 
 /* var eventEmitter = new events.EventEmitter()
 

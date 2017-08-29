@@ -9,7 +9,7 @@ var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.complaints
 var Monitor = require('../monitor')
 
-var loginIFrameSelector = '#ui_ptlogin'
+// var loginIFrameSelector = '#ui_ptlogin'
 
 /* eslint-disable no-unused-vars */
 var ComplaintDetail = require('./complaint-detail')
@@ -38,18 +38,19 @@ class Complaints {
       .get()
       .then(function (cookies) {
         that.nightmare
+          .goto('http://chong.qq.com/')
+          .wait(2000)
+          .cookies.set(cookies)
           .goto('http://chong.qq.com/pc/seller/index.html#/csList')
           .wait(2000)
-          .exists(loginIFrameSelector)
+          // .exists(loginIFrameSelector)
           .then((hasLogin) => {
-            if (hasLogin) {
-              that.exec()
-            } else {
-              that.loginExpired()
-            }
-          })
-          .run(function () {
-            log.info('进入充值首页')
+            that.exec()
+            // if (hasLogin) {
+            //   that.exec()
+            // } else {
+            //   that.loginExpired()
+            // }
           })
       })
       .catch(function (err) {

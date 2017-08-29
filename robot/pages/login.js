@@ -6,7 +6,7 @@ var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.login
 var email = require('../../runtime/email')
-var loginIFrameSelector = '#ui_ptlogin'
+var loginIFrameSelector = '#login_frame_1'
 module.exports = {
   eventEmitter: null,
   nightmare: null,
@@ -30,6 +30,8 @@ module.exports = {
     this.nightmare = nightmare
     this.eventEmitter = eventEmitter
     return that.nightmare
+      .click('#headLogin>a:first-child')
+      .wait(1000)
       .enterIFrame(loginIFrameSelector)
       .wait('#switcher_plogin')
       .click('#switcher_plogin')

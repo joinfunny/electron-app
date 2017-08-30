@@ -6,10 +6,10 @@ var config = Runtime.App.AppConfig.robot.complaints
 var service = require('../service')
 
 class ComplaintDetail {
-  constructor (nm, link, eventEmitter, handle) {
+  constructor (nm, order, eventEmitter, handle) {
     var that = this
     that.rootNightmare = nm
-    that.link = link
+    that.order = order
     that.handle = handle
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
@@ -98,7 +98,11 @@ class ComplaintDetail {
 
   run () {
     let that = this
-    let url = that.link.url
+    if (that.order) {
+      log.info('//======正在采集投诉订单 ' + that.order.docmentsNo + '的详细信息...======//')
+
+    }
+    let url = that.order.url
     that.rootNightmare
       .cookies
       .get()
@@ -108,7 +112,7 @@ class ComplaintDetail {
           .cookies.set(cookies)
           .goto(url)
           .then(function () {
-            log.info('//======正在打开投诉订单 ' + that.link.docmentsNo + '的处理窗口...======//')
+            log.info('//======正在打开投诉订单 ' + that.order.docmentsNo + '的处理窗口...======//')
           })
           .catch(function (err) {
             log.error('打开投诉订单处理窗口时捕获到异常：')

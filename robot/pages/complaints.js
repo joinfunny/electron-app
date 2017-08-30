@@ -8,6 +8,7 @@ var store = require('../store')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.complaints
 var Monitor = require('../monitor')
+var service = require('../service')
 
 // var loginIFrameSelector = '#ui_ptlogin'
 
@@ -43,6 +44,7 @@ class Complaints {
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
           .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+          .wait(1000)
           .then(function () {
             that.exec()
           })
@@ -57,7 +59,6 @@ class Complaints {
   exec () {
     var that = this
     that.nightmare
-      .wait(1000)
       .evaluate(function () {
         return new Promise((resolve, reject) => {
           var personalOrders = []
@@ -135,7 +136,7 @@ class Complaints {
         picUrl:"",
         remarks:"亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！",
         star:"0",
-        transInfo:"用户投诉; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号1992646281认领了工单; 客服工号1992646281归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂;",
+        transInfo:"用户投诉; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号3161624341认领了工单; 客服工号3161624341归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！＂; 客服工号1992646281认领了工单; 客服工号1992646281归档了工单,给用户触达＂亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的
         urgency:"0",
         userFeedback:"",
         userMobile:"15061389326",
@@ -146,19 +147,20 @@ class Complaints {
       */
       .then(function (personalOrders) {
         log.info('//========本次共获取到' + personalOrders.length + '条我的未处理投诉========//')
-        log.info('//========捕获时间：' + moment(that.monitor.update() || new Date()).format('YYYY-MM-DD HH:mm:ss') + '========//')
+        log.info('//========查询时间：' + moment(that.monitor.update() || new Date()).format('YYYY-MM-DD HH:mm:ss') + '========//')
         if (personalOrders && personalOrders.length > 0) {
-          let links = []
-          personalOrders.map(order => {
+          let convertedOrders = []
+          convertedOrders = personalOrders.map(order => {
             return {
               feedback: order.orderDesc,
               phoneNo: order.dealMobile,
               agentOrderNo: order.dealId,
-              docmentsNo: order.orderId
+              docmentsNo: order.orderId,
+              coustomerRequest: order.orderRequire
             }
           })
-          store.complaints.exists(links).then(function (notExistsLinks) {
-            that.loopComplaintDetail(notExistsLinks)
+          store.complaints.exists(convertedOrders).then(function (notExistsOrders) {
+            that.loopComplaintOrders(notExistsOrders)
           })
             .catch(function (err) {
               log.error('在检索投诉订单是否存在的过程中捕获到异常：')
@@ -170,6 +172,32 @@ class Complaints {
           }, config.worker.tickTime)
         }
       })
+  }
+  /**
+   * 轮询新的投诉订单，查询其明细信息
+   * @param {Array} orders 经过数据过滤后的新的投诉订单
+   */
+  loopComplaintOrders (orders) {
+    var that = this
+    // 定时器模拟打开新的投诉详情页面
+    that.timer = setInterval(function () {
+      if (orders && orders.length > 0) {
+        let entry = orders.splice(0, 1)[0]
+        log.info('//======解析到新的投诉订单======//')
+        log.info(entry)
+        entry.type = 1
+        service.pushComplaint(entry).then(function (result) {
+          log.info('//======解析到的投诉订单已经发送======//')
+        })
+          .catch(function (err) {
+            log.error('//======解析到的投诉订单在保存数据库时发生错误======//')
+            log.error(err)
+          })
+      } else {
+        clearInterval(that.timer)
+        that.exec()
+      }
+    }, config.worker.tickTime)
   }
   loginExpired () {
     var that = this

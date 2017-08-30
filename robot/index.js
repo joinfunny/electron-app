@@ -39,7 +39,6 @@ class Main {
       .on('did-finish-load', function () {
         that.nightmare
           .resetFrame()
-          .wait(5000)
           .exists('#headLogin > a.func_nickname')
           .then(function (hasLogin) {
             // 登陆成功后进入主页面

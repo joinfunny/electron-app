@@ -24,18 +24,17 @@ class ComplaintListener {
   run () {
     var that = this
 
-    that.timer = setInterval(function () {
-      // log.info('//======投诉订单监听执行======//')
+    that.timer = setTimeout(function () {
       store.handle.pop().then(function (handle) {
         if (!handle) {
-          // log.warn('队列中没有需要处理的投诉订单')
           return
         }
 
         let link = {
           docmentsNo: handle.docmentsNo,
-          url: 'http://chong.qq.com/php/index.php?d=seller&c=seller&m=getCaseDetail&id=' + handle.docmentsNo
+          url: `http://chong.qq.com/php/index.php?d=provider&c=main&dc=kf_data&a=getKfList&kfType=&orderType=&emergency=&orderDesc=&orderState=&personal=&searchStartTime=&searchEndTime=&searchIsp=&searchProvince=&searchSellerUin=&searchOrderId=${handle.docmentsNo}&searchDealId=&searchMobile=`
         }
+
         let complaintDetail = new ComplaintDetail(
             that.rootNightmare,
             link,

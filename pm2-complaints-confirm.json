@@ -1,0 +1,23 @@
+{
+  "apps": [
+    {
+      "name": "robot-complaints-confirm",
+      "script": "robot-complaints-confirm",
+      "log_date_format": "YYYY-MM-DD HH",
+      "max_memory_restart": "500M",
+      "error_file": "logs/robot-complaints-confirm-err.log",
+      "pid_file": "logs/robot-complaints-confirm.pid",
+      "exec_mode": "cluster",
+      "instances": 1,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_test": {
+        "NODE_ENV": "test"
+      },
+      "env_release": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

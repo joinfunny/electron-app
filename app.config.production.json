@@ -38,13 +38,6 @@
         "port": 7000,
         "host": "10.45.41.161"
       }]
-    },
-    "caas": {
-      "host": "caas-test.in.dataengine.com",
-      "port": 80,
-      "prefix": "/api/v1",
-      "appKey": "14dd555807e549bbb4b4f3889708ec77",
-      "appSecret": "6ca89616f12a41808b1c17b296bead8a"
     }
   },
   "robot": {
@@ -57,12 +50,6 @@
         "webPreferences": {
           "webSecurity": false
         }
-      },
-      "userName": "2919415063",
-      "password": "shili8269",
-      "vcode": {
-        "serviceKey": "ae6ed8d0322a8800a28f9de897d5934c",
-        "serviceCodeType": 8001
       }
     },
     "complaints": {
@@ -85,14 +72,15 @@
         "tickTime": 300000
       }
     },
-    "exceptionOrder": {
+    "complaintsConfirm": {
       "run": true,
       "worker": {
-        "tickTime": 60000
+        "tickTime": 10000
       },
       "monitor":{
         "tickTime":300000
       },
+      "maxConfirm": 5,
       "nightmare": {
         "width": 1024,
         "height": 768,

@@ -9,8 +9,8 @@ require('nightmare-iframe-manager')(Nightmare)
 var loginPage = require('./pages/login')
 // 投诉订单
 var Complaints = require('./pages/complaints')
-// 异常订单
-var ExceptionOrder = require('./pages/exception-order')
+// 认领投诉订单
+var ComplaintsConfirmer = require('./pages/complaints-confirm')
 
 var ComplaintListener = require('./pages/complaints-listener')
 
@@ -105,9 +105,9 @@ Main.services = {
     type: 'robotComplaintsHandler',
     service: ComplaintListener
   },
-  robotExceptionListener: {
-    type: 'robotExceptionListener',
-    service: ExceptionOrder
+  robotCompliantsConfirmer: {
+    type: 'robotCompliantsConfirm',
+    service: ComplaintsConfirmer
   }
 }
 

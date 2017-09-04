@@ -38,14 +38,6 @@
         "port": 7001,
         "host": "10.200.1.91"
       }]
-    },
-    "caas": {
-      "host": "caas-test.in.dataengine.com",
-      "port": 80,
-      "prefix": "/api/v1",
-      "appKey": "14dd555807e549bbb4b4f3889708ec77",
-      "appSecret": "6ca89616f12a41808b1c17b296bead8a",
-      "sslEnable":false
     }
   }
 }

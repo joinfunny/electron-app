@@ -14,9 +14,22 @@ function complaintmd5 (complaint) {
   var feedback = encodeURI(complaint.feedback)
   var phoneNo = encodeURI(complaint.phoneNo)
   var coustomerRequest = encodeURI(complaint.coustomerRequest)
+  var complaintSources = encodeURI(complaint.complaintSources)
+  var timeLength = encodeURI(complaint.timeLength)
+  var times = encodeURI(complaint.times)
   var type = encodeURI(complaint.type)
 
-  var source = docmentsNo + agentOrderNo + feedback + phoneNo + coustomerRequest + type + serviceConfig.md5
+  var source = docmentsNo +
+    agentOrderNo +
+    feedback +
+    phoneNo +
+    coustomerRequest +
+    complaintSources +
+    timeLength +
+    times +
+    type +
+    serviceConfig.md5
+
   const hash = crypto.createHash('md5')
   // 可任意多次调用update():
   hash.update(source)
@@ -44,7 +57,7 @@ module.exports = {
         notExistsComplaints[0].type = 1
         return request.post({
           url: serviceConfig.host + serviceConfig.api.complaints,
-          // json: true,
+            // json: true,
           form: complaintmd5(notExistsComplaints[0])
         })
           .then(function (result) {
@@ -103,7 +116,7 @@ module.exports = {
     handle.type = 2
     return request.post({
       url: serviceConfig.host + serviceConfig.api.complaints,
-      // json: true,
+        // json: true,
       form: complaintmd5(handle)
     })
       .then(function (result) {
@@ -138,8 +151,10 @@ module.exports = {
   pushExceptionOrders: (count) => {
     request.post({
       url: serviceConfig.host + serviceConfig.api.exceptionorders,
-      // json: true,
-      form: exceptionOrderCountmd5({countTatol: count})
+        // json: true,
+      form: exceptionOrderCountmd5({
+        countTatol: count
+      })
     }).then(function (result) {
       if (process.env.NODE_ENV !== 'production') {
         result = 'ok'
@@ -147,7 +162,9 @@ module.exports = {
       if (result === 'ok') {
         log.info('成功推送异常订单统计数')
         log.info('推送异常订单统计数+' + count)
-        store.exceptionOrders.add({total: count})
+        store.exceptionOrders.add({
+          total: count
+        })
       } else {
         log.warn('推送异常订单统计数失败')
         log.warn(result)

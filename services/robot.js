@@ -10,9 +10,21 @@ function complaintmd5 (complaint) {
   var feedback = decodeURI(complaint.feedback)
   var phoneNo = decodeURI(complaint.phoneNo)
   var coustomerRequest = decodeURI(complaint.coustomerRequest)
+  var complaintSources = encodeURI(complaint.complaintSources)
+  var timeLength = encodeURI(complaint.timeLength)
+  var times = encodeURI(complaint.times)
   var type = ''// decodeURI(complaint.type)
 
-  var source = docmentsNo + agentOrderNo + feedback + phoneNo + coustomerRequest + type + serviceConfig.md5
+  var source = docmentsNo +
+  agentOrderNo +
+  feedback +
+  phoneNo +
+  coustomerRequest +
+  complaintSources +
+  timeLength +
+  times +
+  type +
+  serviceConfig.md5
   const hash = crypto.createHash('md5')
   // 可任意多次调用update():
   hash.update(source)

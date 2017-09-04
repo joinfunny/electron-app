@@ -133,13 +133,6 @@
       "indent": "\t",
       "extension": ".js"
     },
-    "caas": {
-      "host": "caas-test.in.dataengine.com",
-      "port": 80,
-      "prefix": "/api/v1",
-      "appKey": "14dd555807e549bbb4b4f3889708ec77",
-      "appSecret": "6ca89616f12a41808b1c17b296bead8a"
-    },
     "email": {
       "service": "qq",
       "port": 465,
@@ -177,7 +170,7 @@
         "openDevTools": {
           "mode": "detach"
         },
-        "show": true,
+        "show": false,
         "webPreferences": {
           "webSecurity": false
         }
@@ -189,7 +182,7 @@
         "tickTime": 120000
       }
     },
-    "exceptionOrder": {
+    "complaintsConfirm": {
       "run": true,
       "worker": {
         "tickTime": 10000
@@ -197,6 +190,7 @@
       "monitor":{
         "tickTime":12000
       },
+      "maxConfirm": 5,
       "nightmare": {
         "width": 1024,
         "height": 768,

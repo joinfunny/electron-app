@@ -33,46 +33,46 @@ module.exports = {
   exec: function () {
     var that = this
     return that.nightmare
-    .click('#headLogin>a:first-child')
-    .wait(1000)
-    .enterIFrame(loginIFrameSelector)
-    .wait('#switcher_plogin')
-    .click('#switcher_plogin')
-    .wait('#u')
-    .type('#u', config.userName)
-    .type('#p', config.password)
-    .wait(1000)
-    .type('#p', '\u000d') // 回车
-    .wait(1000)
-    .exists('#newVcodeIframe>iframe')
-    .then(function (existsVcodeIFrame) {
-      // throw new Error('error')
-      log.info(existsVcodeIFrame)
-      if (existsVcodeIFrame) {
-        log.warn('//=======需要输入验证码========//')
-        return that.nightmare
-          .enterIFrame('#newVcodeIframe>iframe')
-          .wait(1000)
-          .wait('#capImg')
-          .then(function () {
-            return that.validateVcode()
-          })
-          .catch(function (err) {
-            log.error(err)
-          })
-      } else {
-        log.info('不需要输入验证码')
-        return that.nightmare.resetFrame()
-      }
-    })
-    .then(function () {
-      log.info('//===========login ok==============//')
-    })
-    .catch(function (err) {
-      log.error('登陆过程中捕获到异常：')
-      log.error(err)
-      that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
-    })
+      .click('#headLogin>a:first-child')
+      .wait(1000)
+      .enterIFrame(loginIFrameSelector)
+      .wait('#switcher_plogin')
+      .click('#switcher_plogin')
+      .wait('#u')
+      .type('#u', config.userName)
+      .type('#p', config.password)
+      .wait(1000)
+      .type('#p', '\u000d') // 回车
+      .wait(1000)
+      .exists('#newVcodeIframe>iframe')
+      .then(function (existsVcodeIFrame) {
+        // throw new Error('error')
+        log.info(existsVcodeIFrame)
+        if (existsVcodeIFrame) {
+          log.warn('//=======需要输入验证码========//')
+          return that.nightmare
+            .enterIFrame('#newVcodeIframe>iframe')
+            .wait(1000)
+            .wait('#capImg')
+            .then(function () {
+              return that.validateVcode()
+            })
+            .catch(function (err) {
+              log.error(err)
+            })
+        } else {
+          log.info('不需要输入验证码')
+          return that.nightmare.resetFrame()
+        }
+      })
+      .then(function () {
+        log.info('//===========login ok==============//')
+      })
+      .catch(function (err) {
+        log.error('登陆过程中捕获到异常：')
+        log.error(err)
+        that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
+      })
   },
   /**
    * 获取到了图片。
@@ -113,13 +113,13 @@ module.exports = {
           .then(function (newVcodeIframeRect) {
             return that.nightmare
               .exitIFrame()
-              .evaluate(function () {
+              .evaluate(function (loginIFrameSelector) {
                 var rect = document.querySelector(loginIFrameSelector).getBoundingClientRect()
                 return {
                   x: Math.round(rect.left),
                   y: Math.round(rect.top)
                 }
-              })
+              }, loginIFrameSelector)
               .then(function (loginFrameRect) {
                 var rectResult = {
                   x: loginFrameRect.x + newVcodeIframeRect.x + rect.x,
@@ -130,19 +130,18 @@ module.exports = {
                 console.log('//======获取到的验证码的最终坐标======//')
                 return that.nightmare
                   .screenshot(that.generateNewVcodePath(), rectResult)
-                  .wait(5000)
+                  .wait(5000).then(function () {})
               })
           })
       })
       .then(function () {
         console.log('//=====已经生成了验证码图片=======//')
-        var result = false
-        if (result === false) {
-          return that.nightmare
-            .enterIFrame(loginIFrameSelector)
-            .enterIFrame('#newVcodeIframe>iframe')
-            .then(function () {
-              console.log(JSON.stringify(config.vcode))
+        return that.nightmare
+          .enterIFrame(loginIFrameSelector)
+          .enterIFrame('#newVcodeIframe>iframe')
+          .then(function () {
+            console.log(JSON.stringify(config.vcode))
+            return Promise.resolve().then(function () {
               request.post({
                 url: config.vcode.serviceUrl,
                 json: true,
@@ -173,10 +172,10 @@ module.exports = {
                 }
               })
             })
-            .catch(function (err) {
-              log.error(err)
-            })
-        }
+          })
+          .catch(function (err) {
+            log.error(err)
+          })
       })
   },
   inputVcode: function (vcode) {
@@ -195,6 +194,8 @@ module.exports = {
             if (notValid) {
               email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
               return that.validateVcode()
+            } else {
+              return Promise.resolve()
             }
           })
           .catch(function (err) {

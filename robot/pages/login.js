@@ -55,7 +55,7 @@ module.exports = {
           .wait(1000)
           .wait('#capImg')
           .then(function () {
-            that.validateVcode()
+            return that.validateVcode()
           })
           .catch(function (err) {
             log.error(err)
@@ -85,11 +85,10 @@ module.exports = {
     if (that.vcodeRequestCount >= config.maxLoginCount) {
       log.warn('登录次数超过' + config.maxLoginCount + '次，页面将会重新刷新尝试登录')
       that.vcodeRequestCount = 0
-      that.nightmare.resetFrame()
+      return that.nightmare.resetFrame()
         .then(function () {
           that.run(that.nightmare, that.eventEmitter)
         })
-      return
     }
     that.nightmare
       .evaluate(function () {
@@ -139,7 +138,7 @@ module.exports = {
         console.log('//=====已经生成了验证码图片=======//')
         var result = false
         if (result === false) {
-          that.nightmare
+          return that.nightmare
             .enterIFrame(loginIFrameSelector)
             .enterIFrame('#newVcodeIframe>iframe')
             .then(function () {
@@ -163,11 +162,11 @@ module.exports = {
                   if (body.error_code === 0) {
                     log.info('获取到的验证码：' + body.result)
                     // 获取到验证码模拟输入提交
-                    that.inputVcode(body.result)
+                    return that.inputVcode(body.result)
                   } else {
                     // 获取验证码失败，重新发起请求获取验证码
                     log.warn('获取验证码失败：' + body.error_code + ',' + body.reason)
-                    that.validateVcode()
+                    return that.validateVcode()
                   }
                 } else {
                   log.error(err)
@@ -182,20 +181,20 @@ module.exports = {
   },
   inputVcode: function (vcode) {
     var that = this
-    that.nightmare
+    return that.nightmare
       .type('#capAns', vcode)
       .wait(2000)
       .click('#submit')
       .wait(8000)
       .run(function () {
-        that.nightmare
+        return that.nightmare
           .exists('#capAns')
           .then(function (notValid) {
             var msg = notValid ? '尝试输入验证码，但没有验证通过，将会再次重新请求验证服务' : '尝试输入验证码，并通过了验证，即将登录...'
             log.info(msg)
             if (notValid) {
               email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
-              that.validateVcode()
+              return that.validateVcode()
             }
           })
           .catch(function (err) {

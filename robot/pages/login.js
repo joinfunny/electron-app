@@ -141,7 +141,7 @@ module.exports = {
           .enterIFrame('#newVcodeIframe>iframe')
           .then(function () {
             console.log(JSON.stringify(config.vcode))
-            return Promise.resolve().then(function () {
+            return new Promise((resolve, reject) => {
               request.post({
                 url: config.vcode.serviceUrl,
                 json: true,
@@ -161,11 +161,11 @@ module.exports = {
                   if (body.error_code === 0) {
                     log.info('获取到的验证码：' + body.result)
                     // 获取到验证码模拟输入提交
-                    return that.inputVcode(body.result)
+                    resolve(that.inputVcode(body.result))
                   } else {
                     // 获取验证码失败，重新发起请求获取验证码
                     log.warn('获取验证码失败：' + body.error_code + ',' + body.reason)
-                    return that.validateVcode()
+                    resolve(that.validateVcode())
                   }
                 } else {
                   log.error(err)

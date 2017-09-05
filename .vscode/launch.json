@@ -15,8 +15,8 @@
     }, {
       "type": "node",
       "request": "launch",
-      "name": "启动发货订单监听服务",
-      "program": "${workspaceRoot}/robot-exceptionOrder-listener.js"
+      "name": "启动投诉订单认领服务",
+      "program": "${workspaceRoot}/robot-complaints-confirm.js"
     },
     {
       "type": "node",

@@ -26,48 +26,53 @@ module.exports = {
     return this._vcodePath
   },
   run: function (nightmare, eventEmitter) {
-    var that = this
     this.nightmare = nightmare
     this.eventEmitter = eventEmitter
+    return this.exec()
+  },
+  exec: function () {
+    var that = this
     return that.nightmare
-      .click('#headLogin>a:first-child')
-      .wait(1000)
-      .enterIFrame(loginIFrameSelector)
-      .wait('#switcher_plogin')
-      .click('#switcher_plogin')
-      .wait('#u')
-      .type('#u', config.userName)
-      .type('#p', config.password)
-      .wait(1000)
-      .type('#p', '\u000d') // 回车
-      .wait(1000)
-      .exists('#newVcodeIframe>iframe')
-      .then(function (existsVcodeIFrame) {
-        log.info(existsVcodeIFrame)
-        if (existsVcodeIFrame) {
-          log.warn('//=======需要输入验证码========//')
-          return that.nightmare
-            .enterIFrame('#newVcodeIframe>iframe')
-            .wait(1000)
-            .wait('#capImg')
-            .then(function () {
-              that.validateVcode()
-            })
-            .catch(function (err) {
-              log.error(err)
-            })
-        } else {
-          log.info('不需要输入验证码')
-          return that.nightmare.resetFrame()
-        }
-      })
-      .then(function () {
-        log.info('//===========login ok==============//')
-      })
-      .catch(function (err) {
-        log.error('登陆过程中捕获到异常：')
-        log.error(err)
-      })
+    .click('#headLogin>a:first-child')
+    .wait(1000)
+    .enterIFrame(loginIFrameSelector)
+    .wait('#switcher_plogin')
+    .click('#switcher_plogin')
+    .wait('#u')
+    .type('#u', config.userName)
+    .type('#p', config.password)
+    .wait(1000)
+    .type('#p', '\u000d') // 回车
+    .wait(1000)
+    .exists('#newVcodeIframe>iframe')
+    .then(function (existsVcodeIFrame) {
+      // throw new Error('error')
+      log.info(existsVcodeIFrame)
+      if (existsVcodeIFrame) {
+        log.warn('//=======需要输入验证码========//')
+        return that.nightmare
+          .enterIFrame('#newVcodeIframe>iframe')
+          .wait(1000)
+          .wait('#capImg')
+          .then(function () {
+            that.validateVcode()
+          })
+          .catch(function (err) {
+            log.error(err)
+          })
+      } else {
+        log.info('不需要输入验证码')
+        return that.nightmare.resetFrame()
+      }
+    })
+    .then(function () {
+      log.info('//===========login ok==============//')
+    })
+    .catch(function (err) {
+      log.error('登陆过程中捕获到异常：')
+      log.error(err)
+      that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
+    })
   },
   /**
    * 获取到了图片。

@@ -32,7 +32,7 @@ function postHandles () {
     '充值失败（重新充值）',
     '充值失败（可退款）',
     '充错号码（不可退款）',
-    '通用'
+    '通用（新增）'
   ]
   var rdm = Runtime.App.Utils._.random(5, 30)
   orm.models.complaints.find({

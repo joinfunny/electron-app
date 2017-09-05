@@ -127,6 +127,9 @@ class Complaints {
           var date = ''
           if (timePicker) {
             date = timePicker.value
+          } else {
+            var tmpDate = new Date(new Date() * 1 - 1000 * 60 * 60 * 24 * 7)
+            date = tmpDate.getFullYear() + '-' + (tmpDate.getMonth() + 1) + '-' + tmpDate.getDate()
           }
           console.log('本次查询时间：' + date)
           $.ajax({
@@ -169,9 +172,9 @@ class Complaints {
         let err = result[0]
         let personalOrders = result[1]
         if (err) {
-          log.error('查询投诉订单过程中发生异常：')
+          log.error('查询投诉订单过程中发生错误：')
           log.error(err)
-          that.delayExec()
+          that.loginExpired()
         } else {
           log.info('//========本次共获取到' + personalOrders.length + '条我的未处理投诉========//')
           log.info('//========查询时间：' + moment(that.monitor.update() || new Date()).format('YYYY-MM-DD HH:mm:ss') + '========//')

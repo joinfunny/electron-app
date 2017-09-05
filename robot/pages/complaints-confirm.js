@@ -5,7 +5,7 @@ var Nightmare = require('nightmare')
 var moment = require('moment')
 var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
-var config = Runtime.App.AppConfig.robot.complaintsConfim
+var config = Runtime.App.AppConfig.robot.complaintsConfirm
 var Monitor = require('../monitor')
 
 class ComplaintsConfirm {
@@ -15,6 +15,7 @@ class ComplaintsConfirm {
     that.eventEmitter = eventEmitter
     var curConfig = Object.assign({}, config.nightmare)
     that.nightmare = new Nightmare(curConfig).on('console', function (type, msg) {
+      console[type]('evalute log:')
       console[type](msg)
     })
     that.monitor = new Monitor({
@@ -48,9 +49,15 @@ class ComplaintsConfirm {
       })
 
     that.monitor.monit()
+    // setTimeout(function () {
+    //   that.nightmare.cookies.clear().then(() => {
+    //     log.info('投诉订单Cookie已清空')
+    //   })
+    // }, 10000)
   }
   exec () {
     var that = this
+    if (!that.nightmare) return
     that.nightmare
       .evaluate(function (maxConfirm, env) {
         return new Promise((resolve, reject) => {
@@ -100,7 +107,7 @@ class ComplaintsConfirm {
                     orders[i] = orders[i].orderId
                   }
                   // 开发环境直接返回待操作的数量，不真正执行
-                  if (env === 'development') {
+                  if (env !== 'production') {
                     resolve([null, orders.length])
                     return
                   }
@@ -125,8 +132,11 @@ class ComplaintsConfirm {
                   resolve([null, 0])
                 }
               } else {
-                resolve(null, 0)
+                resolve([null, 0])
               }
+            },
+            error: function (err) {
+              resolve([err])
             }
           })
         })
@@ -136,10 +146,13 @@ class ComplaintsConfirm {
         var result = data[1]
         log.info('认领时间：' + moment(that.monitor.update() || new Date()).format('YYYY-MM-DD HH:mm:ss'))
         if (!err && result > 0) {
-          log.info('本次共认领' + result.success + '条投诉订单')
+          log.info('本次共认领' + result + '条投诉订单')
         } else {
           if (err) {
             log.warn('认领过程中发生错误' + err)
+            // 一旦发生错误就重新登陆
+            that.loginExpired()
+            return
           }
           if (result && result === 0) {
             log.warn('没有需要认领的投诉订单')
@@ -166,13 +179,7 @@ class ComplaintsConfirm {
   }
   dispose (cb) {
     var that = this
-    if (that.timer) {
-      clearInterval(that.timer)
-      that.timer = null
-    }
-
     that.monitor.dispose()
-
     that.nightmare
       .end()
       .then(function () {

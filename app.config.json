@@ -185,10 +185,10 @@
     "complaintsConfirm": {
       "run": true,
       "worker": {
-        "tickTime": 10000
+        "tickTime": 5000
       },
       "monitor":{
-        "tickTime":12000
+        "tickTime":30000
       },
       "maxConfirm": 5,
       "nightmare": {

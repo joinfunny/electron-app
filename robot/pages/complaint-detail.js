@@ -106,20 +106,26 @@ class ComplaintDetail {
     var that = this
     service.handledComplaint(that.handle, true).then(function () {
       log.info(that.handle)
-      log.info('//======【投诉订单处理监控】请求发生异常，窗口已关闭======//')
-    })
-    that.nightmare.end().then(function () {
-      that.dispose()
+      that.nightmare.end().then(function () {
+        that.dispose()
+        log.info('//======异步提交投诉处理信息成功，窗口已关闭======//')
+      })
+    }).catch(function (err) {
+      log.error('投诉处理成功后关闭窗口时捕获到异常：')
+      log.error(err)
     })
   }
   handleFailure () {
     var that = this
     service.handledComplaint(that.handle, false).then(function () {
       log.info(that.handle)
-      log.info('//======【投诉订单处理监控】请求发生异常，窗口已关闭======//')
-    })
-    that.nightmare.end().then(function () {
-      that.dispose()
+      log.info('//======异步提交投诉处理信息失败，窗口已关闭======//')
+      that.nightmare.end().then(function () {
+        that.dispose()
+      }).catch(function (err) {
+        log.error('投诉处理失败后关闭窗口时捕获到异常：')
+        log.error(err)
+      })
     })
   }
   dispose () {

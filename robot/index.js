@@ -1,4 +1,14 @@
 let Nightmare = require('nightmare')
+/* Nightmare.action('clearCache', (name, options, parent, win, renderer, done) => {
+  parent.respondTo('clearCache', (done) => {
+    console.log('clearCache')
+    win.webContents.session.clearCache(done)
+  })
+  done()
+},
+  function (done) {
+    this.child.call('clearCache', done)
+  }) */
 let Runtime = require('../runtime')
 let config = Runtime.App.AppConfig.robot
 let log = Runtime.App.Log.helper
@@ -38,6 +48,7 @@ class Main {
   run () {
     var that = this
     that.nightmare
+      // .clearCache()
       .cookies
       .clearAll()
       .goto('http://chong.qq.com')
@@ -47,8 +58,7 @@ class Main {
           // .exists('#headLogin > a.func_nickname')
           .then(function (hasLogin) {
             // 登陆成功后进入主页面
-            if (hasLogin) {
-            } else {
+            if (hasLogin) {} else {
               loginPage.run(that.nightmare, that.eventEmitter)
                 .then(function () {
                   log.info('//--------------------正在进入主页面----------------//')
@@ -68,7 +78,9 @@ class Main {
       .catch(function (err) {
         log.error('启动登陆页面时捕获到异常：')
         log.error(err)
-        that.run()
+        return that.nightmare.resetFrame().then(function () {
+          return that.run()
+        })
       })
   }
 

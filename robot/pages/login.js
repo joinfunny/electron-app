@@ -62,6 +62,8 @@ module.exports = {
             })
         } else {
           log.info('不需要输入验证码')
+
+          // that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
           return that.nightmare.resetFrame()
         }
       })
@@ -82,14 +84,14 @@ module.exports = {
    */
   validateVcode: function () {
     var that = this
-    if (that.vcodeRequestCount >= config.maxLoginCount) {
+    /* if (that.vcodeRequestCount >= config.maxLoginCount) {
       log.warn('登录次数超过' + config.maxLoginCount + '次，页面将会重新刷新尝试登录')
       that.vcodeRequestCount = 0
       return that.nightmare.resetFrame()
         .then(function () {
-          that.run(that.nightmare, that.eventEmitter)
+          return that.run(that.nightmare, that.eventEmitter)
         })
-    }
+    } */
     return that.nightmare
       .evaluate(function () {
         var rect = document.querySelector('#capImg').getBoundingClientRect()
@@ -130,12 +132,11 @@ module.exports = {
                 console.log('//======获取到的验证码的最终坐标======//')
                 return that.nightmare
                   .screenshot(that.generateNewVcodePath(), rectResult)
-                  .wait(5000).then(function () {})
+                  .wait(5000).then(function () { console.log('//=====已经生成了验证码图片=======//') })
               })
           })
       })
       .then(function () {
-        console.log('//=====已经生成了验证码图片=======//')
         return that.nightmare
           .enterIFrame(loginIFrameSelector)
           .enterIFrame('#newVcodeIframe>iframe')

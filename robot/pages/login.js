@@ -90,7 +90,7 @@ module.exports = {
           that.run(that.nightmare, that.eventEmitter)
         })
     }
-    that.nightmare
+    return that.nightmare
       .evaluate(function () {
         var rect = document.querySelector('#capImg').getBoundingClientRect()
         return {

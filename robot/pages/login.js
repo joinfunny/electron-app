@@ -191,12 +191,14 @@ module.exports = {
           .then(function (notValid) {
             var msg = notValid ? '尝试输入验证码，但没有验证通过，将会再次重新请求验证服务' : '尝试输入验证码，并通过了验证，即将登录...'
             log.info(msg)
-            if (notValid) {
-              email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
-              return that.validateVcode()
-            } else {
-              return Promise.resolve()
-            }
+            return new Promise((resolve, reject) => {
+              if (notValid) {
+                email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
+                resolve(that.validateVcode())
+              } else {
+                resolve()
+              }
+            })
           })
           .catch(function (err) {
             log.error(err)

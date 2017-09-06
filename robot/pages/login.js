@@ -62,7 +62,6 @@ module.exports = {
             })
         } else {
           log.info('不需要输入验证码')
-
           // that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
           return that.nightmare.resetFrame()
         }
@@ -84,14 +83,6 @@ module.exports = {
    */
   validateVcode: function () {
     var that = this
-    /* if (that.vcodeRequestCount >= config.maxLoginCount) {
-      log.warn('登录次数超过' + config.maxLoginCount + '次，页面将会重新刷新尝试登录')
-      that.vcodeRequestCount = 0
-      return that.nightmare.resetFrame()
-        .then(function () {
-          return that.run(that.nightmare, that.eventEmitter)
-        })
-    } */
     return that.nightmare
       .evaluate(function () {
         var rect = document.querySelector('#capImg').getBoundingClientRect()
@@ -142,7 +133,7 @@ module.exports = {
           .enterIFrame('#newVcodeIframe>iframe')
           .then(function () {
             console.log(JSON.stringify(config.vcode))
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
               request.post({
                 url: config.vcode.serviceUrl,
                 json: true,
@@ -162,14 +153,21 @@ module.exports = {
                   if (body.error_code === 0) {
                     log.info('获取到的验证码：' + body.result)
                     // 获取到验证码模拟输入提交
-                    resolve(that.inputVcode(body.result))
+                    resolve(Promise.resolve().then(() => {
+                      return that.inputVcode(body.result)
+                    }))
                   } else {
                     // 获取验证码失败，重新发起请求获取验证码
                     log.warn('获取验证码失败：' + body.error_code + ',' + body.reason)
-                    resolve(that.validateVcode())
+                    resolve(Promise.resolve().then(() => {
+                      return that.validateVcode()
+                    }))
                   }
                 } else {
                   log.error(err)
+                  resolve(Promise.resolve().then(() => {
+                    return that.validateVcode()
+                  }))
                 }
               })
             })
@@ -192,14 +190,12 @@ module.exports = {
           .then(function (notValid) {
             var msg = notValid ? '尝试输入验证码，但没有验证通过，将会再次重新请求验证服务' : '尝试输入验证码，并通过了验证，即将登录...'
             log.info(msg)
-            return new Promise((resolve, reject) => {
-              if (notValid) {
-                email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
-                resolve(that.validateVcode())
-              } else {
-                resolve()
-              }
-            })
+            if (notValid) {
+              email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
+              return that.validateVcode()
+            } else {
+              return Promise.resolve()
+            }
           })
           .catch(function (err) {
             log.error(err)

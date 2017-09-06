@@ -19,7 +19,7 @@ var capturePlugin = require('nightmare-screenshot')
 var nightmare = Nightmare({
   width: 1024,
   height: 768,
-  show: true,
+  show: false,
   openDevTools: {
     mode: 'detach'
   },
@@ -33,7 +33,54 @@ nightmare
   // .refresh()
   .then(function (result) {
     console.log(result)
+    return nightmare.goto('http://www.baidu.com')
+    .then(function () {
+      return Promise.resolve()
+      .then(function () { return Promise.resolve('1') })
+      .then(function (result) {
+        console.log(result)
+        return new Promise(resolve => {
+          // if (true) {
+          //   throw new Error('error 1')
+          // }
+          setTimeout(function () {
+            resolve(new Promise(resolve => {
+              setTimeout(function () {
+                console.log(1231)
+                resolve(1111111)
+              }, 2000)
+            }))
+          }, 1000)
+        })
+        .catch(ex => {
+          console.error(ex)
+        })
+      })
+      .then(function (result) {
+        console.log(result)
+        return 2
+      })
+      .catch(ex => {
+        console.error(ex)
+      })
+    })
   })
+  .then(function (result) {
+    console.log(result)
+    process.exit(1)
+  })
+
+/* Promise.resolve().then(() => {
+  console.log(1)
+}).then(function () {
+  return new Promise(resolve => {
+    setTimeout(function () { resolve(2) }, 1000)
+  })
+})
+.then(function (result) {
+  console.log(result)
+  process.exit(1)
+}) */
 
 /* var eventEmitter = new events.EventEmitter()
 

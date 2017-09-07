@@ -49,11 +49,11 @@ class ComplaintsConfirm {
       })
 
     that.monitor.monit()
-    // setTimeout(function () {
-    //   that.nightmare.cookies.clear().then(() => {
-    //     log.info('投诉订单Cookie已清空')
-    //   })
-    // }, 10000)
+    /* setTimeout(function () {
+      that.nightmare.cookies.clear().then(() => {
+        log.info('投诉订单Cookie已清空')
+      })
+    }, 15000) */
   }
   exec () {
     var that = this

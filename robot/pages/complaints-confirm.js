@@ -49,11 +49,6 @@ class ComplaintsConfirm {
       })
 
     that.monitor.monit()
-    /* setTimeout(function () {
-      that.nightmare.cookies.clear().then(() => {
-        log.info('投诉订单Cookie已清空')
-      })
-    }, 15000) */
   }
   exec () {
     var that = this
@@ -107,17 +102,20 @@ class ComplaintsConfirm {
                     orders[i] = orders[i].orderId
                   }
                   // 开发环境直接返回待操作的数量，不真正执行
-                  if (env !== 'production') {
-                    resolve([null, orders.length])
-                    return
-                  }
+                  // if (env !== 'production') {
+                  //   resolve([null, orders.length])
+                  //   return
+                  // }
+                  var orderList = {orderList: orders.join('|')}
+                  console.log(orderList)
                   // 认领投诉订单
                   // 最终如果没有查询到任何待认领的投诉订单，则返回null
                   $.ajax({
                     url: 'http://chong.qq.com/php/index.php?d=provider&c=main&dc=kf_data&a=batchReceiveOrder',
                     method: 'post',
-                    data: {orderList: orders.join('|')},
+                    data: orderList,
                     dataType: 'json',
+                    contentType: 'application/json;charset=UTF-8',
                     success: function (data) {
                       console.log(data)
                       if (data && data.retCode === 0) {

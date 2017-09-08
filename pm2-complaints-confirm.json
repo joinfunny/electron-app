@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "robot-complaints-confirm",
-      "script": "robot-complaints-confirm",
+      "script": "robot-complaints-confirm.js",
       "log_date_format": "YYYY-MM-DD HH",
       "max_memory_restart": "500M",
       "error_file": "logs/robot-complaints-confirm-err.log",

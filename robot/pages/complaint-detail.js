@@ -61,20 +61,24 @@ class ComplaintDetail {
             resolve([null, {retMsg: {}}])
             return
           }
+          var data = {
+            d: 'provider',
+            c: 'main',
+            dc: 'kf_data',
+            a: 'commitKfOrder',
+            comment: handle.coustomerRequest || '',
+            remark: dealComment[handle.coustomerRequest] || '',
+            orderId: handle.orderId
+          }
+          console.log('待发送请求数据：')
+          console.log(data)
           $.ajax({
             method: 'get',
             url: 'http://chong.qq.com/php/index.php',
-            data: {
-              d: 'provider',
-              c: 'main',
-              dc: 'kf_data',
-              a: 'commitKfOrder',
-              comment: handle.coustomerRequest || '',
-              remark: dealComment[handle.coustomerRequest] || '',
-              orderId: handle.orderId
-            },
+            data: data,
             dataType: 'json',
             success: function (data) {
+              console.log('数据操作成功：')
               console.log(data)
               if (data.retCode === 0) {
                 resolve([null, data.retMsg])
@@ -83,12 +87,16 @@ class ComplaintDetail {
               }
             },
             error: function (data) {
+              console.log('数据操作失败：')
+              console.log(data)
               resolve([data])
             }
           })
         })
       }, that.link, that.handle, process.env.NODE_ENV)
       .then((result) => {
+        log.info('----result-----')
+        log.info(result)
         let error = result[0]
         // let data = result[1]
         if (!error) {

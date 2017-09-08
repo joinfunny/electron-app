@@ -57,15 +57,15 @@ class ComplaintDetail {
             '通用（新增）': '亲爱的用户您好，收到您的问题反馈，问题已记录我们会通过电话回复的方式尽快与您联系，感谢您对手机充值的支持！'
           }
 // 开发环境直接返回待操作的数量，不真正执行
-          var data = {
-            d: 'provider',
-            c: 'main',
-            dc: 'kf_data',
-            a: 'commitKfOrder',
-            comment: handle.coustomerRequest || '',
-            remark: dealComment[handle.coustomerRequest] || '',
-            orderId: handle.orderId
-          }
+          var data = []
+          data.push('d=provider')
+          data.push('c=main')
+          data.push('dc=kf_data')
+          data.push('a=commitKfOrder')
+          data.push('comment=' + encodeURIComponent(handle.coustomerRequest || ''))
+          data.push('remark=' + encodeURIComponent(dealComment[handle.coustomerRequest] || ''))
+          data.push('orderId=' + handle.orderId)
+
           console.log('待发送请求数据：')
           console.log(data)
 
@@ -76,8 +76,7 @@ class ComplaintDetail {
 
           $.ajax({
             method: 'get',
-            url: 'http://chong.qq.com/php/index.php',
-            data: data,
+            url: 'http://chong.qq.com/php/index.php?' + data.join('&'),
             dataType: 'json',
             success: function (data) {
               console.log('数据操作成功：')

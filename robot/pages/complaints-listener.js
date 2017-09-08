@@ -24,7 +24,7 @@ class ComplaintListener {
   run () {
     var that = this
 
-    that.timer = setTimeout(function () {
+    that.timer = setInterval(function () {
       store.handle.pop().then(function (handle) {
         if (!handle) {
           return

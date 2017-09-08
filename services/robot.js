@@ -52,6 +52,9 @@ module.exports = {
         '充错号码（不可退款）': 6,
         '通用（新增）': 7
       }
+      if (handle.coustomerRequest === '通用') {
+        handle.coustomerRequest = '通用（新增）'
+      }
       if (handle.coustomerRequest && requests[handle.coustomerRequest] !== undefined) {
         if (complaintmd5(handle).sign === handle.sign) {
           service.handleComplaint(handle)

@@ -19,15 +19,15 @@ function complaintmd5 (complaint) {
   var type = '' // encodeURI(complaint.type)
 
   var source = docmentsNo +
-  agentOrderNo +
-  feedback +
-  phoneNo +
-  coustomerRequest +
-  complaintSources +
-  timeLength +
-  times +
-  type +
-  serviceConfig.md5
+    agentOrderNo +
+    feedback +
+    phoneNo +
+    coustomerRequest +
+    complaintSources +
+    timeLength +
+    times +
+    type +
+    serviceConfig.md5
   const hash = crypto.createHash('md5')
   // 可任意多次调用update():
   hash.update(source)
@@ -58,17 +58,17 @@ function postHandles () {
           json: true,
           body: complaintmd5(complaint)
         })
-        .then(function (result) {
-          console.log(result)
-        })
-        .catch(function (err) {
-          console.log(err)
-        })
+          .then(function (result) {
+            console.log(result)
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
       })
     }
   })
 }
-var base = Runtime.App.Utils._.random(1, 20)
+/* var base = Runtime.App.Utils._.random(1, 20)
 var index = 0
 setInterval(function () {
   if (index > base) {
@@ -79,3 +79,19 @@ setInterval(function () {
     index++
   }
 }, 1000)
+ */
+
+var complaint = {
+  'sign': '985003e74c746864529aea6455ee59c5',
+  'phoneNo': '15319055711',
+  'feedback': '充值未到账',
+  'agentOrderNo': '3557000951201709070516465069',
+  'docmentsNo': '1649035',
+  'coustomerRequest': '充值已到账（月中）'
+}
+
+request.post({
+  url: 'http://localhost:9091/api/complaint/handling',
+  json: true,
+  body: complaintmd5(complaint)
+})

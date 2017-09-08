@@ -106,7 +106,7 @@ class ComplaintsConfirm {
                   //   resolve([null, orders.length])
                   //   return
                   // }
-                  var orderList = {orderList: orders.join('|')}
+                  var orderList = JSON.stringify({orderList: orders.join('|')})
                   console.log(orderList)
                   // 认领投诉订单
                   // 最终如果没有查询到任何待认领的投诉订单，则返回null

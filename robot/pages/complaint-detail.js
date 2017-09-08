@@ -75,7 +75,7 @@ class ComplaintDetail {
           }
 
           $.ajax({
-            method: 'get',
+            method: 'post',
             url: 'http://chong.qq.com/php/index.php',
             data: JSON.stringify(data),
             dataType: 'json',

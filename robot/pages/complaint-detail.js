@@ -75,11 +75,10 @@ class ComplaintDetail {
           }
 
           $.ajax({
-            method: 'post',
+            method: 'get',
             url: 'http://chong.qq.com/php/index.php',
-            data: JSON.stringify(data),
+            data: data,
             dataType: 'json',
-            contentType: 'application/json;charset=UTF-8',
             success: function (data) {
               console.log('数据操作成功：')
               console.log(data)

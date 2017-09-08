@@ -101,7 +101,7 @@
     },
     "service": {
       "host": "http://switchfour.zgslcx.com",
-      "md5": "1f3870be274f6c49b3e31a0c6728957f",
+      "md5": "2192dc67d8a0e90acbf0a7a61f1625ab",
       "api": {
         "complaints": "/complaints/complaints_getMessage.action",
         "exceptionorders": "/complaints/complaints_getCount.action"

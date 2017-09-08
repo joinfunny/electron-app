@@ -64,7 +64,7 @@ class ComplaintDetail {
           data.push('a=commitKfOrder')
           data.push('comment=' + encodeURIComponent(handle.coustomerRequest || ''))
           data.push('remark=' + encodeURIComponent(dealComment[handle.coustomerRequest] || ''))
-          data.push('orderId=' + handle.orderId)
+          data.push('orderId=' + handle.docmentsNo)
 
           console.log('待发送请求数据：')
           console.log(data)

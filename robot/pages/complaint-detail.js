@@ -14,8 +14,8 @@ class ComplaintDetail {
     that.eventEmitter = eventEmitter
     that.nightmare = new Nightmare(config.nightmare)
       .on('console', function (type, msg) {
-        log[type]('evaluate log :')
-        log[type][msg]
+        log.info('evaluate log :')
+        log.info[msg]
       })
   }
 

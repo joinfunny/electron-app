@@ -15,7 +15,7 @@ class ComplaintDetail {
     that.nightmare = new Nightmare(config.nightmare)
       .on('console', function (type, msg) {
         log.info('evaluate log :')
-        log.info[msg]
+        console.log(msg)
       })
   }
 
@@ -57,10 +57,6 @@ class ComplaintDetail {
             '通用（新增）': '亲爱的用户您好，收到您的问题反馈，问题已记录我们会通过电话回复的方式尽快与您联系，感谢您对手机充值的支持！'
           }
 // 开发环境直接返回待操作的数量，不真正执行
-          if (env !== 'production') {
-            resolve([null, {retMsg: {}}])
-            return
-          }
           var data = {
             d: 'provider',
             c: 'main',
@@ -72,6 +68,12 @@ class ComplaintDetail {
           }
           console.log('待发送请求数据：')
           console.log(data)
+
+          if (env !== 'production') {
+            resolve([null, {retMsg: {}}])
+            return
+          }
+
           $.ajax({
             method: 'get',
             url: 'http://chong.qq.com/php/index.php',

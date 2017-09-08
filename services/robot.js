@@ -50,7 +50,7 @@ module.exports = {
         '充值失败（重新充值）': 4,
         '充值失败（可退款）': 5,
         '充错号码（不可退款）': 6,
-        '通用': 7
+        '通用（新增）': 7
       }
       if (handle.coustomerRequest && requests[handle.coustomerRequest] !== undefined) {
         if (complaintmd5(handle).sign === handle.sign) {

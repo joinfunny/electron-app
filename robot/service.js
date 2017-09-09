@@ -114,6 +114,9 @@ module.exports = {
     }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
     handle.type = 2
+    if (handle.coustomerRequest === '通用（新增）') {
+      handle.coustomerRequest = '通用'
+    }
     return request.post({
       url: serviceConfig.host + serviceConfig.api.complaints,
         // json: true,

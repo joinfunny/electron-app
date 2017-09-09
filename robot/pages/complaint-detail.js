@@ -76,16 +76,33 @@ class ComplaintDetail {
 
           $.ajax({
             method: 'get',
-            url: 'http://chong.qq.com/php/index.php?' + data.join('&'),
+            url: link.url,
             dataType: 'json',
-            success: function (data) {
-              console.log('数据操作成功：')
-              console.log(data)
-              if (data.retCode === 0) {
-                resolve([null, data.retMsg])
-              } else {
-                resolve([data])
+            success: function (result) {
+              if (result.retCode !== 0) {
+                resolve([result])
+                return
               }
+              var orderDetail = result.retMsg[0]
+              $.ajax({
+                method: 'get',
+                url: 'http://chong.qq.com/php/index.php?' + data.join('&'),
+                dataType: 'json',
+                success: function (data) {
+                  console.log('数据操作成功：')
+                  console.log(data)
+                  if (data.retCode === 0) {
+                    resolve([null, orderDetail])
+                  } else {
+                    resolve([data])
+                  }
+                },
+                error: function (data) {
+                  console.log('数据操作失败：')
+                  console.log(data)
+                  resolve([data])
+                }
+              })
             },
             error: function (data) {
               console.log('数据操作失败：')
@@ -99,8 +116,13 @@ class ComplaintDetail {
         log.info('----result-----')
         log.info(result)
         let error = result[0]
-        // let data = result[1]
+        let order = result[1]
         if (!error) {
+          that.handle.complaintSources = order.orderFrom === 1 ? '用户' : '客服' // 投诉来源
+          that.handle.timeLength = parseInt((Date.now() / 1e3 - order.createTime) / 3600) + '小时' // 投诉时长
+          that.handle.times = order.orderCount // 投诉次数
+          that.handle.satisfaction = order.star + '星' // 满意度
+          that.handle.record = order.transInfo // 流转信息
           that.handleSuccess()
         } else {
           that.handleFailure()

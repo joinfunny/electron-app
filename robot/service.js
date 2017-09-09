@@ -62,13 +62,16 @@ module.exports = {
         })
           .then(function (result) {
             log.info('//======向实立发送投诉订单请求已返回消息======//')
-            log.info(result)
+            log.info('返回消息为：“' + result + '”')
             if (process.env.NODE_ENV !== 'production') {
               result = 'ok'
             }
             // 如果实立保存失败，则退出，不在执行记录Redis
             if (result !== 'ok') {
-              return
+              return Promise.resolve().then(function () {
+                log.info('实立返回消息不正确')
+                return false
+              })
             }
             return store.complaints.adds(notExistsComplaints)
           })

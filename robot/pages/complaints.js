@@ -242,7 +242,9 @@ class Complaints {
         log.info(entry)
         entry.type = 1
         service.pushComplaint(entry).then(function (result) {
-          log.info('//======解析到的投诉订单已经发送======//')
+          if (result) {
+            log.info('//======解析到的投诉订单已经发送======//')
+          }
         })
           .catch(function (err) {
             log.error('//======解析到的投诉订单在保存数据库时发生错误======//')

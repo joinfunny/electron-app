@@ -27,6 +27,10 @@ var complaints = {
       .createEach(items)
       .then(function () {
         log.info('抓取到投诉订单+' + items.length)
+      }, function (reason) {
+        log.warn('抓取到的投诉订单保存失败')
+        reason = typeof reason === 'object' ? JSON.stringify(reason, null, 2) : reason
+        log.warn(reason)
       }).catch(function (err) {
         log.error(err)
       })

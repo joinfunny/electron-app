@@ -26,6 +26,7 @@ monitor.prototype.monit = function () {
 monitor.prototype.update = function () {
   var that = this
   that.monitorTime = new Date()
+  log.info('current monitor time :' + that.monitorTime)
   return that.monitorTime
 }
 
@@ -34,6 +35,7 @@ monitor.prototype.dispose = function () {
   if (that.serviceMonitorTimer) {
     clearInterval(that.serviceMonitorTimer)
     that.serviceMonitorTimer = null
+    that.monitorTime = null
   }
 }
 

@@ -34,7 +34,7 @@ function complaintmd5 (complaint) {
   // 可任意多次调用update():
   hash.update(source)
   complaint.sign = hash.digest('hex')
-  console.log(complaint)
+  log.info(complaint)
   return complaint
 }
 

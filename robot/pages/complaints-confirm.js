@@ -181,7 +181,7 @@ class ComplaintsConfirm {
     that.nightmare
       .end()
       .then(function () {
-        log.info('//======投诉订单窗口已销毁======//')
+        log.info('//======投诉订单认领窗口已销毁======//')
         that.nightmare = null
         cb && cb()
       })

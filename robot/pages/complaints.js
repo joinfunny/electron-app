@@ -71,8 +71,12 @@ var utils = {
   transformTimestamp: function (dateTime) {
     var e = arguments.length > 1 && void 0 !== arguments[1] && arguments[1]
     var newDate = new Date(1e3 * dateTime)
-    return e ? newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate()
-      : newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getDate() + ' ' + newDate.getHours() + ':' + newDate.getMinutes() + ':' + newDate.getSeconds()
+    function two (str) {
+      str = '' + str
+      return str.length === 1 ? '0' + str : str
+    }
+    return e ? newDate.getFullYear() + '-' + two((newDate.getMonth() + 1)) + '-' + two(newDate.getDate())
+      : newDate.getFullYear() + '-' + two((newDate.getMonth() + 1)) + '-' + two(newDate.getDate()) + ' ' + two(newDate.getHours()) + ':' + two(newDate.getMinutes()) + ':' + two(newDate.getSeconds())
   }
 }
 
@@ -191,11 +195,12 @@ class Complaints {
                 timeLength: parseInt((Date.now() / 1e3 - order.createTime) / 3600) + '小时', // 投诉时长
                 times: order.orderCount, // 投诉次数
                 satisfaction: order.star + '星', // 满意度
-                record: order.transInfo // 流转信息
+                record: order.transInfo, // 流转信息
+                orderTime: utils.transformTimestamp(order.createTime) // 工单时间
                 // ------------------------//
                 /* orderId: order.orderId,
                 orderState: utils.orderStateMap(order.orderState), // 工单号
-                createTime: utils.transformTimestamp(order.createTime), // 工单时间
+
                 dealId: order.dealId, // 订单号
                 dealMobile: order.dealMobile, // 手机号
                 dealState: utils.dealStateMap[order.dealState], // 订单状态

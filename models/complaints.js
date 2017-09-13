@@ -10,9 +10,12 @@ var Complaints = Waterline.Collection.extend({
     docmentsNo: {
       type: 'string',
       required: true,
-      unique: true,
-      primaryKey: true,
+      unique: false,
+      primaryKey: false,
       index: true
+    },
+    orderTime: {
+      type: 'string'
     },
     agentOrderNo: {
       type: 'string'

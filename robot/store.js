@@ -122,15 +122,21 @@ var complaints = {
    */
   exists: (complaints) => {
     let docmentsNos = complaints.map(function (complaint) {
-      return complaint.docmentsNo
+      return {
+        docmentsNo: complaint.docmentsNo,
+        orderTime: complaint.orderTime
+      }
     })
-    return orm.models.complaints.findByDocmentsNoIn(docmentsNos)
+    return orm.models.complaints.find(docmentsNos)
       .then(function (results) {
-        var ids = results.map(function (result, index) {
-          return result.docmentsNo
-        })
-        var notExists = Utils._.filter(complaints, function (item) {
-          return ids.indexOf(item.docmentsNo) === -1
+        // var ids = results.map(function (result, index) {
+        //   return result.docmentsNo
+        // })
+        // var notExists = Utils._.filter(complaints, function (item) {
+        //   return ids.indexOf(item.docmentsNo) === -1
+        // })
+        var notExists = Utils._.xorWith(results, complaints, function (result, complaint) {
+          return result.docmentsNo === complaint.docmentsNo && result.orderTime === complaint.orderTime
         })
         if (notExists && notExists.length > 0) {
           log.info('经比对，最终得到【' + notExists.length + '】条新的投诉订单')

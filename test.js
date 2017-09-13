@@ -34,41 +34,99 @@ nightmare
   .then(function (result) {
     console.log(result)
     return nightmare.goto('http://www.baidu.com')
-    .then(function () {
-      return Promise.resolve()
-      .then(function () { return Promise.resolve('1') })
-      .then(function (result) {
-        console.log(result)
-        return new Promise(resolve => {
-          // if (true) {
-          //   throw new Error('error 1')
-          // }
-          setTimeout(function () {
-            resolve(new Promise(resolve => {
+      .then(function () {
+        return Promise.resolve()
+          .then(function () {
+            return Promise.resolve('1')
+          })
+          .then(function (result) {
+            console.log(result)
+            return new Promise(resolve => {
+                // if (true) {
+                //   throw new Error('error 1')
+                // }
               setTimeout(function () {
-                console.log(1231)
-                resolve(1111111)
-              }, 2000)
-            }))
-          }, 1000)
-        })
-        .catch(ex => {
-          console.error(ex)
-        })
+                resolve(new Promise(resolve => {
+                  setTimeout(function () {
+                    console.log(1231)
+                    resolve(1111111)
+                  }, 2000)
+                }))
+              }, 1000)
+            })
+              .catch(ex => {
+                console.error(ex)
+              })
+          })
+          .then(function (result) {
+            console.log(result)
+            return 2
+          })
+          .catch(ex => {
+            console.error(ex)
+          })
       })
-      .then(function (result) {
-        console.log(result)
-        return 2
-      })
-      .catch(ex => {
-        console.error(ex)
-      })
-    })
   })
   .then(function (result) {
     console.log(result)
     process.exit(1)
   })
+
+function complaintmd5 (complaint) {
+  var docmentsNo = encodeURIComponent(complaint.docmentsNo)
+  var agentOrderNo = encodeURIComponent(complaint.agentOrderNo)
+  var feedback = encodeURIComponent(complaint.feedback)
+  var phoneNo = encodeURIComponent(complaint.phoneNo)
+  var coustomerRequest = encodeURIComponent(complaint.coustomerRequest)
+  var complaintSources = encodeURIComponent(complaint.complaintSources)
+  var timeLength = encodeURIComponent(complaint.timeLength)
+  var times = encodeURIComponent(complaint.times)
+  var type = encodeURIComponent(complaint.type)
+  console.log()
+  console.log({
+    docmentsNo: encodeURIComponent(complaint.docmentsNo),
+    agentOrderNo: encodeURIComponent(complaint.agentOrderNo),
+    feedback: encodeURIComponent(complaint.feedback),
+    phoneNo: encodeURIComponent(complaint.phoneNo),
+    coustomerRequest: encodeURIComponent(complaint.coustomerRequest),
+    complaintSources: encodeURIComponent(complaint.complaintSources),
+    timeLength: encodeURIComponent(complaint.timeLength),
+    times: encodeURIComponent(complaint.times),
+    type: encodeURIComponent(complaint.type)
+  })
+  var source = docmentsNo +
+    agentOrderNo +
+    feedback +
+    phoneNo +
+    coustomerRequest +
+    complaintSources +
+    timeLength +
+    times +
+    type +
+    serviceConfig.md5
+
+  const hash = crypto.createHash('md5')
+  // 可任意多次调用update():
+  hash.update(source, 'utf8')
+  complaint.sign = hash.digest('hex')
+  return complaint
+}
+console.log({
+  'sign': 'cfab0571a232ed6bfb9ed0b70709c368'
+})
+console.log(complaintmd5({
+  'docmentsNo': '1744038',
+  'agentOrderNo': '3934002761201709130627842543',
+  'feedback': '充错号码',
+  'phoneNo': '18772903979',
+  'coustomerRequest': '充值到18674198650上、x20谢谢 0 5',
+  'complaintSources': '客服',
+  'timeLength': '1小时',
+  'times': '1',
+  'satisfaction': '0星',
+  'record': '用户投诉; 客服工号3161624341认领了工单;',
+  'type': 1
+}))
 
 /* Promise.resolve().then(() => {
   console.log(1)

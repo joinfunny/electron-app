@@ -120,6 +120,8 @@ class ComplaintsConfirm {
                       console.log(data)
                       if (data && data.retCode === 0) {
                         resolve([null, data.retMsg.success])
+                      } else {
+                        resolve([data])
                       }
                     },
                     error: function (err) {
@@ -130,7 +132,7 @@ class ComplaintsConfirm {
                   resolve([null, 0])
                 }
               } else {
-                resolve([null, 0])
+                resolve([data])
               }
             },
             error: function (err) {
@@ -148,6 +150,7 @@ class ComplaintsConfirm {
         } else {
           if (err) {
             log.warn('认领过程中发生错误' + err)
+            log.warn(err)
             // 一旦发生错误就重新登陆
             that.loginExpired()
             return

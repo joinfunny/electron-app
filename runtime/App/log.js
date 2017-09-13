@@ -81,7 +81,7 @@ function parse (logConfig) {
     if (msg == null) {
       msg = ''
     }
-    log.debug(msg)
+    log.debug(typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg)
   }
 
   helper.info = function (category, msg) {
@@ -94,7 +94,8 @@ function parse (logConfig) {
     if (msg == null) {
       msg = ''
     }
-    log.info(msg)
+
+    log.info(typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg)
   }
 
   helper.warn = function (category, msg) {
@@ -107,7 +108,7 @@ function parse (logConfig) {
     if (msg == null) {
       msg = ''
     }
-    log.warn(msg)
+    log.warn(typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg)
   }
 
   helper.error = function (category, msg) {
@@ -120,7 +121,7 @@ function parse (logConfig) {
     if (msg == null) {
       msg = ''
     }
-    log.error(msg)
+    log.error(typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg)
   }
 
   return logInfo

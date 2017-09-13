@@ -80,7 +80,7 @@
       "monitor":{
         "tickTime":300000
       },
-      "maxConfirm": 5,
+      "maxConfirm": 10,
       "nightmare": {
         "width": 1024,
         "height": 768,

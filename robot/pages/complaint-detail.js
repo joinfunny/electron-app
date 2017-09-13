@@ -15,7 +15,7 @@ class ComplaintDetail {
     that.nightmare = new Nightmare(config.nightmare)
       .on('console', function (type, msg) {
         log.info('evaluate log :')
-        console.log(msg)
+        log.info(msg)
       })
   }
 
@@ -79,7 +79,7 @@ class ComplaintDetail {
             url: link.url,
             dataType: 'json',
             success: function (result) {
-              if (result.retCode !== 0) {
+              if (result && result.retCode !== 0) {
                 resolve([result])
                 return
               }
@@ -125,7 +125,11 @@ class ComplaintDetail {
           that.handle.record = order.transInfo // 流转信息
           that.handleSuccess()
         } else {
-          that.handleFailure()
+          if (error && error.retCode === 1 && error.retMsg && error.retMsg.errCode === 1 && error.retMsg.msg === '登录校验失败') {
+            that.handleFailure(function () {
+              that.loginExpired()
+            })
+          }
         }
       })
       .catch(ex => {
@@ -147,18 +151,22 @@ class ComplaintDetail {
       log.error(err)
     })
   }
-  handleFailure () {
+  handleFailure (cb) {
     var that = this
     service.handledComplaint(that.handle, false).then(function () {
       log.info(that.handle)
       log.info('//======异步提交投诉处理信息失败，窗口已关闭======//')
       that.nightmare.end().then(function () {
         that.dispose()
+        cb && cb()
       }).catch(function (err) {
         log.error('投诉处理失败后关闭窗口时捕获到异常：')
         log.error(err)
       })
     })
+  }
+  loginExpired () {
+    this.eventEmitter.emit('detail-login-expired', this)
   }
   dispose () {
     var that = this

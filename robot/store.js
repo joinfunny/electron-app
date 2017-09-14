@@ -39,25 +39,55 @@ var complaints = {
    */
   updates: (items, state) => {
     let docmentsNos = items.map(function (complaint) {
-      return complaint.docmentsNo
+      return {
+        docmentsNo: complaint.docmentsNo,
+        orderTime: complaint.orderTime
+      }
     })
-    return orm.models.complaints.findByDocmentsNoIn(docmentsNos)
+    /* let sets = items.map(function (complaint) {
+      return {
+        '$set': {
+          type: complaint.type,
+          coustomerRequest: complaint.coustomerRequest
+        }
+      }
+    })
+    return orm.models.complaints.update(docmentsNos[0], items[0], {strict: false}).then(function (err, result) {
+      return true
+    })
+    .catch(ex => {
+      return false
+    }) */
+
+    return orm.models.complaints.find(docmentsNos)
       .then(function (result) {
         var thePromise = (items, item) => {
           return new Promise(function (resolve, reject) {
             var index = Utils._.findIndex(items, function (it) {
-              return it.docmentsNo === item.docmentsNo
+              return it.docmentsNo === item.docmentsNo && it.orderTime === item.orderTime
             })
+            // 更新时，如果发现没有保存的投诉订单，则直接保存进去
+            if (index === -1) {
+              return complaints.adds([item])
+            }
             var it = items[index]
             item.type = it.type
             item.coustomerRequest = it.coustomerRequest
-            item.save(function (err) {
-              if (err) {
-                log.error(err)
-                reject(err)
-              } else {
+            orm.models.complaints.update({
+              docmentsNo: item.docmentsNo,
+              orderTime: item.orderTime
+            }, item, {strict: false}).then(function (result) {
+              if (result && result.length > 0) {
                 resolve(true)
+              } else {
+                log.error(result)
+                reject(result)
               }
+            })
+            .catch(ex => {
+              log.error('更新投诉订单时发生异常：')
+              log.error(ex)
+              reject(ex)
             })
           })
         }

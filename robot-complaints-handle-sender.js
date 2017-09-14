@@ -44,7 +44,7 @@ function postHandles () {
     '充值失败（重新充值）',
     '充值失败（可退款）',
     '充错号码（不可退款）',
-    '通用（新增）'
+    '通用'
   ]
   var rdm = Runtime.App.Utils._.random(5, 30)
   orm.models.complaints.find({
@@ -68,30 +68,29 @@ function postHandles () {
     }
   })
 }
-/* var base = Runtime.App.Utils._.random(1, 20)
+var base = Runtime.App.Utils._.random(1, 5)
 var index = 0
 setInterval(function () {
   if (index > base) {
     postHandles()
     index = 0
-    base = Runtime.App.Utils._.random(1, 20)
+    base = Runtime.App.Utils._.random(1, 5)
   } else {
     index++
   }
 }, 1000)
- */
 
-var complaint = {
-  'sign': '985003e74c746864529aea6455ee59c5',
-  'phoneNo': '15319055711',
-  'feedback': '充值未到账',
-  'agentOrderNo': '3557000951201709070516465069',
-  'docmentsNo': '1649035',
-  'coustomerRequest': '充值已到账（月中）'
-}
+// var complaint = {
+//   'sign': '985003e74c746864529aea6455ee59c5',
+//   'phoneNo': '15319055711',
+//   'feedback': '充值未到账',
+//   'agentOrderNo': '3557000951201709070516465069',
+//   'docmentsNo': '1649035',
+//   'coustomerRequest': '充值已到账（月中）'
+// }
 
-request.post({
-  url: 'http://localhost:9091/api/complaint/handling',
-  json: true,
-  body: complaintmd5(complaint)
-})
+// request.post({
+//   url: 'http://localhost:9091/api/complaint/handling',
+//   json: true,
+//   body: complaintmd5(complaint)
+// })

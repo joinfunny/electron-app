@@ -69,21 +69,20 @@ class ComplaintDetail {
           console.log('待发送请求数据：')
           console.log(data)
 
-          if (env !== 'production') {
-            resolve([null, {retMsg: {}}])
-            return
-          }
-
           $.ajax({
             method: 'get',
             url: link.url,
             dataType: 'json',
             success: function (result) {
               if (result && result.retCode !== 0) {
-                resolve([result])
-                return
+                return resolve([result])
               }
               var orderDetail = result.retMsg[0]
+              // 如果是非生产环境，则直接返回操作成功的标记
+              if (env !== 'production') {
+                console.log('非生产环境，模拟操作成功')
+                return resolve([null, orderDetail])
+              }
               $.ajax({
                 method: 'get',
                 url: 'http://chong.qq.com/php/index.php?' + data.join('&'),
@@ -125,11 +124,9 @@ class ComplaintDetail {
           that.handle.record = order.transInfo // 流转信息
           that.handleSuccess()
         } else {
-          if (error && error.retCode === 1 && error.retMsg && error.retMsg.errCode === 1 && error.retMsg.msg === '登录校验失败') {
-            that.handleFailure(function () {
-              that.loginExpired()
-            })
-          }
+          that.handleFailure(function () {
+            that.loginExpired()
+          })
         }
       })
       .catch(ex => {

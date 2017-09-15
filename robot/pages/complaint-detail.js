@@ -84,6 +84,10 @@ class ComplaintDetail {
                 console.log('非生产环境，模拟操作成功')
                 return resolve([null, orderDetail])
               }
+              var state = +orderDetail.orderState
+              if (state > 2) {
+                return resolve([null, orderDetail])
+              }
               $.ajax({
                 method: 'get',
                 url: 'http://chong.qq.com/php/index.php?' + data.join('&'),

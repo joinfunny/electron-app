@@ -147,7 +147,7 @@ class ComplaintDetail {
       log.info(that.handle)
       that.nightmare.end().then(function () {
         that.dispose()
-        log.info('//======异步提交投诉处理信息成功，窗口已关闭======//')
+        log.info('//======异步提交投诉处理信息成功，资源已释放，窗口已关闭======//')
       })
     }).catch(function (err) {
       log.error('投诉处理成功后关闭窗口时捕获到异常：')

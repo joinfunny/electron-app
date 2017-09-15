@@ -43,6 +43,7 @@ module.exports = {
     callback: function (req, res, callback) {
       let handle = req.body
       log.info('//======接受到实立传输的已处理投诉订单=======//')
+      log.info(handle)
       var requests = {
         '充值已到账（月初）': 1,
         '充值已到账（月中）': 2,

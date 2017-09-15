@@ -95,13 +95,15 @@ module.exports = {
   /**
    * 接收到Redis中进行存储
    * 1.接收handles到Redis
-   * 2.更新status
    */
   handleComplaint: (handle) => {
-    return Promise
-      .all([store.handle.push([handle]), store.complaints.updates([handle], store.status.handled)])
-      .then(function () {
-        log.info('//======接收到的投诉订单处理已加入缓存队列，等待处理=======//')
+    return store.handle.push([handle])
+      .then(function (result) {
+        if (result) {
+          log.info('//======接收到的投诉订单处理已加入缓存队列，等待处理=======//')
+        } else {
+          log.warn('//======接收到的投诉订单处理加入缓存队列失败，请重新发送=======//')
+        }
       })
   },
   /**
@@ -109,6 +111,9 @@ module.exports = {
    * 处理完成后：
    * 1.更新投诉状态为completed
    * 2.删除投诉处理记录
+   * @param {Complaint} handle 待处理的投诉
+   * @param {Boolean} result 处理结果
+   * @return {Promise Object}
    */
   handledComplaint: (handle, result) => {
     if (!result) {
@@ -138,7 +143,7 @@ module.exports = {
           return
         }
         log.info('处理投诉订单成功+ 1')
-        store.complaints.updates([handle], store.status.completed).then(function (success) {
+        store.complaints.updates([handle]).then(function (success) {
           if (success) {
             log.info('//======Redis中【投诉订单状态】已更新为「completed」======//')
           } else {

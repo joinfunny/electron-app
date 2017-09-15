@@ -37,27 +37,13 @@ var complaints = {
    * 更新投诉订单
    * state目前没有必要传递，没有任何处理
    */
-  updates: (items, state) => {
+  updates: (items) => {
     let docmentsNos = items.map(function (complaint) {
       return {
         docmentsNo: complaint.docmentsNo,
         orderTime: complaint.orderTime
       }
     })
-    /* let sets = items.map(function (complaint) {
-      return {
-        '$set': {
-          type: complaint.type,
-          coustomerRequest: complaint.coustomerRequest
-        }
-      }
-    })
-    return orm.models.complaints.update(docmentsNos[0], items[0], {strict: false}).then(function (err, result) {
-      return true
-    })
-    .catch(ex => {
-      return false
-    }) */
 
     return orm.models.complaints.find(docmentsNos)
       .then(function (result) {

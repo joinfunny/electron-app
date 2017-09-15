@@ -68,13 +68,13 @@ function postHandles () {
     }
   })
 }
-var base = Runtime.App.Utils._.random(1, 5)
+var base = 1// Runtime.App.Utils._.random(1, 5)
 var index = 0
 setInterval(function () {
   if (index > base) {
     postHandles()
     index = 0
-    base = Runtime.App.Utils._.random(1, 5)
+    base = 1// Runtime.App.Utils._.random(1, 5)
   } else {
     index++
   }

@@ -36,6 +36,7 @@ class ComplaintDetail {
           .catch(function (err) {
             log.error('投诉订单处理时捕获到异常：')
             log.error(err)
+            that.handleFailure()
           })
       })
       .catch(function (err) {
@@ -67,8 +68,7 @@ class ComplaintDetail {
           data.push('remark=' + encodeURIComponent(dealComment[handle.coustomerRequest] || ''))
           data.push('orderId=' + handle.docmentsNo)
 
-          console.log('待发送请求数据：')
-          console.log(data)
+          console.log('待发送请求投诉订单：' + handle.docmentsNo + '，处理意见：' + handle.coustomerRequest)
 
           $.ajax({
             method: 'get',
@@ -86,6 +86,7 @@ class ComplaintDetail {
               }
               var state = +orderDetail.orderState
               if (state > 2) {
+                console.log('当前投诉订单‘' + handle.docmentsNo + '’状态不是处理中，为：' + orderDetail.orderState + '，自动判定不需要处理此订单')
                 return resolve([null, orderDetail])
               }
               $.ajax({
@@ -117,8 +118,8 @@ class ComplaintDetail {
         })
       }, that.link, that.handle, process.env.NODE_ENV)
       .then((result) => {
-        log.info('----result-----')
-        log.info(result)
+        // log.info('----result-----')
+        // log.info(result)
         let error = result[0]
         let order = result[1]
         if (!error) {

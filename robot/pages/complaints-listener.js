@@ -9,9 +9,15 @@ var ComplaintDetail = require('./complaint-detail')
 class ComplaintListener {
   constructor (nm, eventEmitter) {
     var that = this
+    that.instanceId = new Date() * 1
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
-    that.eventEmitter.once('detail-login-expired', function (target) {
+    that.eventEmitter.once('detail-login-expired', that.onDetailLoginExpired.bind(that))
+  }
+  onDetailLoginExpired (target) {
+    var that = this
+    var instanceId = target.instanceId
+    if (instanceId === that.instanceId) {
       target = null
       if (that.timer) {
         clearInterval(that.timer)
@@ -19,7 +25,10 @@ class ComplaintListener {
       }
       log.info('//======监听到投诉处理页面用户登录过期，已关闭======//')
       that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
-    })
+    } else {
+      log.info('//======上一会话中的登陆失败触发，再次注册登陆失败事件======//')
+      that.eventEmitter.once('detail-login-expired', that.onDetailLoginExpired.bind(that))
+    }
   }
   run () {
     var that = this
@@ -39,7 +48,7 @@ class ComplaintListener {
             that.rootNightmare,
             link,
             that.eventEmitter,
-            handle)
+            handle, that.instanceId)
 
         complaintDetail.run()
       })

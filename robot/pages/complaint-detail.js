@@ -6,8 +6,9 @@ var config = Runtime.App.AppConfig.robot.complaints
 var service = require('../service')
 
 class ComplaintDetail {
-  constructor (nm, link, eventEmitter, handle) {
+  constructor (nm, link, eventEmitter, handle, instanceId) {
     var that = this
+    that.instanceId = instanceId
     that.rootNightmare = nm
     that.link = link
     that.handle = handle
@@ -56,7 +57,7 @@ class ComplaintDetail {
             '充错号码（不可退款）': '亲爱的用户您好，非常抱歉，经核实，您的充值已经成功，由于是系统自动充值，已经充值成功的订单无法做回退处理，因此，请您在充值前仔细核对您要充值的号码，以防出错，不便之处请您见谅，感谢您对手机充值的支持。',
             '通用（新增）': '亲爱的用户您好，收到您的问题反馈，问题已记录我们会通过电话回复的方式尽快与您联系，感谢您对手机充值的支持！'
           }
-// 开发环境直接返回待操作的数量，不真正执行
+          // 开发环境直接返回待操作的数量，不真正执行
           var data = []
           data.push('d=provider')
           data.push('c=main')

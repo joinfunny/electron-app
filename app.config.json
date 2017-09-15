@@ -206,7 +206,7 @@
     "complaintListener": {
       "run": true,
       "worker": {
-        "tickTime": 6000
+        "tickTime": 800
       }
     },
     "service": {

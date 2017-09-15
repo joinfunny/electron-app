@@ -227,9 +227,8 @@ class Complaints {
       })
       .catch(ex => {
         log.error('投诉订单检索过程中捕获到异常：')
-        ex = Object.isObject(ex) ? JSON.stringify(ex, null, 2) : ex
-        log.error('投诉订单服务即将重启...')
         log.error(ex)
+        log.error('投诉订单服务即将重启...')
         that.loginExpired()
       })
   }

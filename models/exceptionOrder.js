@@ -2,7 +2,7 @@ var Waterline = require('waterline')
 var ExceptionOrders = Waterline.Collection.extend({
   tableName: 'exceptionorders',
   schema: true,
-  connection: 'robotConn',
+  connection: 'robot',
   autoPK: false,
   autoCreatedAt: true,
   autoUpdatedAt: true,

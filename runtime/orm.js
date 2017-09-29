@@ -16,11 +16,6 @@ var ormMappings = {
       adapters: {
         'default': mongoAdapter,
         'mongo': mongoAdapter
-      },
-      connections: {
-        robotConn: {
-          adapter: 'mongo'
-        }
       }
     }), function (err, models) {
       if (err) throw err

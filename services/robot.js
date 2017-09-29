@@ -1,38 +1,7 @@
-var crypto = require('crypto')
 let Runtime = require('../runtime/index')
 let log = Runtime.App.Log.helper
 let service = require('../robot/service')
-var serviceConfig = Runtime.App.AppConfig.robot.service
-
-function complaintmd5 (complaint) {
-  var docmentsNo = decodeURI(complaint.docmentsNo)
-  var agentOrderNo = decodeURI(complaint.agentOrderNo)
-  var feedback = decodeURI(complaint.feedback)
-  var phoneNo = decodeURI(complaint.phoneNo)
-  var coustomerRequest = decodeURI(complaint.coustomerRequest)
-  var complaintSources = encodeURI(complaint.complaintSources)
-  var timeLength = encodeURI(complaint.timeLength)
-  var times = encodeURI(complaint.times)
-  var type = ''// decodeURI(complaint.type)
-
-  var source = docmentsNo +
-  agentOrderNo +
-  feedback +
-  phoneNo +
-  coustomerRequest +
-  complaintSources +
-  timeLength +
-  times +
-  type +
-  serviceConfig.md5
-  const hash = crypto.createHash('md5')
-  // 可任意多次调用update():
-  hash.update(source)
-  complaint.sign = hash.digest('hex')
-  console.log(complaint)
-  return complaint
-}
-
+let utils = require('../robot/utils')
 module.exports = {
   /**
    * 处理投诉--提供给实立的接口
@@ -57,7 +26,7 @@ module.exports = {
         handle.coustomerRequest = '通用（新增）'
       }
       if (handle.coustomerRequest && requests[handle.coustomerRequest] !== undefined) {
-        if (complaintmd5(handle).sign === handle.sign) {
+        if (utils.complaintmd5(handle).sign === handle.sign) {
           service.handleComplaint(handle)
         .then(function () {
           callback({

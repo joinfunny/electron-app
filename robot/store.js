@@ -115,7 +115,7 @@ var complaints = {
         '<': new Date(endTime)
       }
     }
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV.indexOf('production') === -1) {
       return orm.models.complaints.find(condition).then(function (items) {
         log.info('当前环境非生产环境，不能删除数据')
         log.info(`类型：${typeName}，开始时间：${startTime}，结束时间：${endTime}，共查询到${items.length}条投诉订单`)

@@ -17,6 +17,9 @@
       },
       "env_release": {
         "NODE_ENV": "production"
+      },
+      "env_wenlu": {
+        "NODE_ENV": "wenlu"
       }
     }
   ]

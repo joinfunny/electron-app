@@ -158,7 +158,11 @@ function mkdirsSync (dirpath) {
       if (pathtmp) {
         pathtmp = path.join(pathtmp, dirname)
       } else {
-        pathtmp = dirname
+        if (dirname === '') {
+          pathtmp = '/'
+        } else {
+          pathtmp = dirname
+        }
       }
       if (pathtmp.length > 0 && !fs.existsSync(pathtmp)) {
         if (!fs.mkdirSync(pathtmp)) {

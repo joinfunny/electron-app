@@ -2,7 +2,7 @@ var Waterline = require('waterline')
 var logs = Waterline.Collection.extend({
   tableName: 'logs',
   schema: true,
-  connection: 'robotConn',
+  connection: 'robot',
   autoPK: true,
   autoCreatedAt: true,
   autoUpdatedAt: false,

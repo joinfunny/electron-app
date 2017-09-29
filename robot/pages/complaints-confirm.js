@@ -101,11 +101,7 @@ class ComplaintsConfirm {
                   for (var i = 0; i < orders.length; i++) {
                     orders[i] = orders[i].orderId
                   }
-                  // 开发环境直接返回待操作的数量，不真正执行
-                  // if (env !== 'production') {
-                  //   resolve([null, orders.length])
-                  //   return
-                  // }
+
                   var orderList = JSON.stringify({orderList: orders.join('|')})
                   console.log(orderList)
                   // 认领投诉订单

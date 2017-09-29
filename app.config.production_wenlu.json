@@ -1,0 +1,138 @@
+{
+  "app": {
+    "remoteHost": "'http://10.26.27.107:8081",
+    "staticSrc": "./dist/src",
+    "renderView": "./dist/view",
+    "serviceDirectory": "./services",
+    "routeDirectory": "./routes"
+  },
+  "runtime": {
+    "listenPort": "9091",
+    "session": {
+      "maxAge": 86400000,
+      "store": "redis"
+    },
+    "log": "log4js",
+    "redis": {
+      "mode": "local",
+      "local": {
+        "port": 6379,
+        "host": "127.0.0.1"
+      },
+      "cluster": [{
+        "port": 7000,
+        "host": "10.26.24.22"
+      }, {
+        "port": 7000,
+        "host": "10.26.26.203"
+      }, {
+        "port": 7000,
+        "host": "10.26.24.16"
+      }, {
+        "port": 7000,
+        "host": "10.26.24.44"
+      }, {
+        "port": 7000,
+        "host": "10.47.213.253"
+      }, {
+        "port": 7000,
+        "host": "10.45.41.161"
+      }]
+    }
+  },
+  "robot": {
+    "login": {
+      "maxLoginCount": 3,
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "userName": "2931145479",
+      "password": "123456bb"
+    },
+    "complaints": {
+      "run": true,
+      "nightmare": {
+        "width": 800,
+        "height": 600,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      },
+      "worker": {
+        "tickTime": 3000
+      },
+      "monitor": {
+        "tickTime": 300000
+      }
+    },
+    "complaintsConfirm": {
+      "run": true,
+      "worker": {
+        "tickTime": 5000
+      },
+      "monitor":{
+        "tickTime":300000
+      },
+      "maxConfirm": 10,
+      "nightmare": {
+        "width": 1024,
+        "height": 768,
+        "openDevTools": {
+          "mode": "detach"
+        },
+        "show": false,
+        "webPreferences": {
+          "webSecurity": false
+        }
+      }
+    },
+    "complaintListener": {
+      "run": true,
+       "worker": {
+        "tickTime": 1000
+      }
+    },
+    "service": {
+      "host": "http://wenlu.zgslcx.com",
+      "md5": "2192dc67d8a0e90acbf0a7a61f1625ab",
+      "api": {
+        "complaints": "/complaints/complaints_getMessage.action",
+        "exceptionorders": "/complaints/complaints_getCount.action"
+      }
+    }
+  },
+  "tasks": {
+    "dataClean": {
+      "unit": "days",
+      "timeSpan": 2
+    },
+    "statistics": {
+      "unit": "minutes",
+      "timeSpan": 1
+    }
+  },
+  "orm": {
+    "connections": {
+      "robot": {
+        "adapter": "mongo",
+        "hostname": "localhost",
+        "port": 27017,
+        "user": "jiangfeng",
+        "password": "Aaa12345!!",
+        "database": "sails"
+      }
+    },
+    "defaults": {
+      "migrate": "safe"
+    }
+  }
+}

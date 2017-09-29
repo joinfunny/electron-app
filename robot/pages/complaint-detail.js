@@ -80,7 +80,7 @@ class ComplaintDetail {
               }
               var orderDetail = result.retMsg[0]
               // 如果是非生产环境，则直接返回操作成功的标记
-              if (env !== 'production') {
+              if (env.indexOf('production') === -1) {
                 console.log('非生产环境，模拟操作成功')
                 return resolve([null, orderDetail])
               }

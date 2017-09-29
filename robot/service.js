@@ -1,42 +1,11 @@
 var Runtime = require('../runtime')
+var utils = require('./utils')
 var log = Runtime.App.Log.helper
 var request = require('request-promise')
-
-// var promise = require('bluebird')
 var crypto = require('crypto')
 var store = require('./store')
 var serviceConfig = Runtime.App.AppConfig.robot.service
 // promise.promisifyAll(request)
-
-function complaintmd5 (complaint) {
-  var docmentsNo = encodeURI(complaint.docmentsNo)
-  var agentOrderNo = encodeURI(complaint.agentOrderNo)
-  var feedback = encodeURI(complaint.feedback)
-  var phoneNo = encodeURI(complaint.phoneNo)
-  var coustomerRequest = encodeURI(complaint.coustomerRequest)
-  var complaintSources = encodeURI(complaint.complaintSources)
-  var timeLength = encodeURI(complaint.timeLength)
-  var times = encodeURI(complaint.times)
-  var type = encodeURI(complaint.type)
-
-  var source = docmentsNo +
-    agentOrderNo +
-    feedback +
-    phoneNo +
-    coustomerRequest +
-    complaintSources +
-    timeLength +
-    times +
-    type +
-    serviceConfig.md5
-
-  const hash = crypto.createHash('md5')
-  // 可任意多次调用update():
-  hash.update(source)
-  complaint.sign = hash.digest('hex')
-  log.info(complaint)
-  return complaint
-}
 
 function exceptionOrderCountmd5 (order) {
   var countTatol = encodeURI(order.countTatol)
@@ -58,12 +27,12 @@ module.exports = {
         return request.post({
           url: serviceConfig.host + serviceConfig.api.complaints,
             // json: true,
-          form: complaintmd5(notExistsComplaints[0])
+          form: utils.complaintmd5(notExistsComplaints[0])
         })
           .then(function (result) {
             log.info('//======向实立发送投诉订单请求已返回消息======//')
             log.info('返回消息为：“' + result + '”')
-            if (process.env.NODE_ENV !== 'production') {
+            if (process.env.NODE_ENV.indexOf('production') === -1) {
               result = 'ok'
             }
             // 如果实立保存失败，则退出，不在执行记录Redis
@@ -128,12 +97,12 @@ module.exports = {
     return request.post({
       url: serviceConfig.host + serviceConfig.api.complaints,
         // json: true,
-      form: complaintmd5(handle)
+      form: utils.complaintmd5(handle)
     })
       .then(function (result) {
         log.info('//======向实立发送【投诉订单已处理】请求已返回消息======//')
         log.info(result)
-        if (process.env.NODE_ENV !== 'production') {
+        if (process.env.NODE_ENV.indexOf('production') === -1) {
           result = 'ok'
         }
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
@@ -167,7 +136,7 @@ module.exports = {
         countTatol: count
       })
     }).then(function (result) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV.indexOf('production') === -1) {
         result = 'ok'
       }
       if (result === 'ok') {

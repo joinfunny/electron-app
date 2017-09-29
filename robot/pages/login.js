@@ -181,10 +181,10 @@ module.exports = {
     var that = this
     return that.nightmare
       .type('#capAns', vcode)
-      .wait(2000)
+      .wait(200)
       .click('#submit')
       .wait(8000)
-      .run(function () {
+      .then(function () {
         return that.nightmare
           .exists('#capAns')
           .then(function (notValid) {
@@ -194,7 +194,9 @@ module.exports = {
               email.send('登录验证码自动输入验证失败', msg, '<b>' + msg + '</b>')
               return that.validateVcode()
             } else {
-              return Promise.resolve()
+              return that.nightmare.wait(5000).then(function () {
+                log.info('已经登陆，正在跳转中。。。')
+              })
             }
           })
           .catch(function (err) {

@@ -34,7 +34,7 @@ class ServiceDirector {
        * 2.url中包含mock query 则进行Mock
        * 3.配置中如果Mock.on=true 则进行Mock
        */
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV.indexOf('production') === -1) {
         if (typeof (req.query.mock) !== 'undefined' || (options.mock && options.mock.on)) {
           that.onMocking(req, res, options.mock.dataRegular)
           return that

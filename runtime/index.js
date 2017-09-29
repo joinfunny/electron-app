@@ -6,7 +6,6 @@ module.exports = {
   Router: require('./routeRegister'),
   SessionStore: require('./sessionStore'),
   ViewParser: require('./viewParser'),
-  WeChat: require('./wechat'),
   Internationalization: require('./i18n'),
   Mock: require('mockjs'),
   OrmMapping: require('./orm')

@@ -149,7 +149,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -170,7 +170,7 @@
         "openDevTools": {
           "mode": "detach"
         },
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -306,11 +306,11 @@
     "connections": {
       "robot": {
         "adapter": "mongo",
-        "host": "localhost",
+        "hostname": "localhost",
         "port": 27017,
-        "user": "",
-        "password": "",
-        "database": "robot"
+        "user": "jiangfeng",
+        "password": "Aaa12345!!",
+        "database": "sails"
       }
     },
     "defaults": {

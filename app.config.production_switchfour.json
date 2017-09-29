@@ -50,7 +50,9 @@
         "webPreferences": {
           "webSecurity": false
         }
-      }
+      },
+      "userName": "3161624341",
+      "password": "chen1234"
     },
     "complaints": {
       "run": true,
@@ -116,6 +118,21 @@
     "statistics": {
       "unit": "minutes",
       "timeSpan": 1
+    }
+  },
+  "orm": {
+    "connections": {
+      "robot": {
+        "adapter": "mongo",
+        "hostname": "localhost",
+        "port": 27017,
+        "user": "jiangfeng",
+        "password": "Aaa12345!!",
+        "database": "sails"
+      }
+    },
+    "defaults": {
+      "migrate": "safe"
     }
   }
 }

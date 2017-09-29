@@ -15,11 +15,11 @@
       "env_test": {
         "NODE_ENV": "test"
       },
-      "env_release": {
-        "NODE_ENV": "production"
+      "env_switchfour": {
+        "NODE_ENV": "production_switchfour"
       },
       "env_wenlu": {
-        "NODE_ENV": "wenlu"
+        "NODE_ENV": "production_wenlu"
       }
     }
   ]

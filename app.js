@@ -1,6 +1,6 @@
 ﻿let express = require('express')
 let Runtime = require('./runtime')
-
+let envCheck = require('./envcheck')
 // let wechat = require("./runtime/wechat")
 global.AppStartTimestamp = new Date() * 1
 var app = express()
@@ -14,7 +14,10 @@ let logger = Runtime.App.Log.helper
 // 注册国际化
 Runtime.Internationalization.use(app, Runtime.App.AppConfig)
 
-Runtime.OrmMapping.use(Runtime.App.AppConfig)
+Runtime.OrmMapping.use(Runtime.App.AppConfig, function () {
+  envCheck.mongo()
+  envCheck.redis()
+})
 
 // 全局跨域设置
 app.use(function (req, res, next) {

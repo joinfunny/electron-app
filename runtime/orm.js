@@ -11,7 +11,7 @@ orm.loadCollection(ExceptionOrders)
 orm.loadCollection(ReportCount)
 orm.loadCollection(Logs)
 var ormMappings = {
-  use: (config) => {
+  use: (config, cb) => {
     orm.initialize(Object.assign({}, config.orm, {
       adapters: {
         'default': mongoAdapter,
@@ -20,6 +20,7 @@ var ormMappings = {
     }), function (err, models) {
       if (err) throw err
       ormMappings.models = models.collections
+      cb && cb()
     })
   },
   models: {}

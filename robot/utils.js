@@ -4,15 +4,15 @@ var serviceConfig = Runtime.App.AppConfig.robot.service
 var log = Runtime.App.Log.helper
 module.exports = {
   complaintmd5 (complaint) {
-    var docmentsNo = encodeURI(complaint.docmentsNo)
-    var agentOrderNo = encodeURI(complaint.agentOrderNo)
-    var feedback = encodeURI(complaint.feedback)
-    var phoneNo = encodeURI(complaint.phoneNo)
+    var docmentsNo = encodeURIComponent(complaint.docmentsNo)
+    var agentOrderNo = encodeURIComponent(complaint.agentOrderNo)
+    var feedback = encodeURIComponent(complaint.feedback)
+    var phoneNo = encodeURIComponent(complaint.phoneNo)
     // var coustomerRequest = encodeURI(complaint.coustomerRequest)
-    var complaintSources = encodeURI(complaint.complaintSources)
-    var timeLength = encodeURI(complaint.timeLength)
-    var times = encodeURI(complaint.times)
-    var type = '' // encodeURI(complaint.type)
+    var complaintSources = encodeURIComponent(complaint.complaintSources)
+    var timeLength = encodeURIComponent(complaint.timeLength)
+    var times = encodeURIComponent(complaint.times)
+    var type = encodeURIComponent(complaint.type)
 
     var source = docmentsNo +
       agentOrderNo +

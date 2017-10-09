@@ -77,12 +77,11 @@ function complaintmd5 (complaint) {
   var agentOrderNo = encodeURIComponent(complaint.agentOrderNo)
   var feedback = encodeURIComponent(complaint.feedback)
   var phoneNo = encodeURIComponent(complaint.phoneNo)
-  var coustomerRequest = encodeURIComponent(complaint.coustomerRequest)
+  // var coustomerRequest = encodeURIComponent(complaint.coustomerRequest)
   var complaintSources = encodeURIComponent(complaint.complaintSources)
   var timeLength = encodeURIComponent(complaint.timeLength)
   var times = encodeURIComponent(complaint.times)
   var type = encodeURIComponent(complaint.type)
-  console.log()
   console.log({
     docmentsNo: encodeURIComponent(complaint.docmentsNo),
     agentOrderNo: encodeURIComponent(complaint.agentOrderNo),
@@ -98,7 +97,7 @@ function complaintmd5 (complaint) {
     agentOrderNo +
     feedback +
     phoneNo +
-    coustomerRequest +
+    // coustomerRequest +
     complaintSources +
     timeLength +
     times +

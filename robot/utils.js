@@ -1,6 +1,7 @@
 var crypto = require('crypto')
 var Runtime = require('../runtime')
 var serviceConfig = Runtime.App.AppConfig.robot.service
+var log = Runtime.App.Log.helper
 module.exports = {
   complaintmd5 (complaint) {
     var docmentsNo = encodeURI(complaint.docmentsNo)
@@ -27,7 +28,7 @@ module.exports = {
     // 可任意多次调用update():
     hash.update(source)
     complaint.sign = hash.digest('hex')
-    console.log(complaint)
+    log.info(complaint)
     return complaint
   }
 }

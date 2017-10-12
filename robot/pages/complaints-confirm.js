@@ -60,7 +60,8 @@ class ComplaintsConfirm {
           var date = ''
           if (timePicker) {
             date = timePicker.value
-          } else {
+          }
+          if (!date) {
             var tmpDate = new Date(new Date() * 1 - 1000 * 60 * 60 * 24 * 7)
             date = tmpDate.getFullYear() + '-' + (tmpDate.getMonth() + 1) + '-' + tmpDate.getDate()
           }

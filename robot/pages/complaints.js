@@ -71,6 +71,7 @@ var utils = {
   transformTimestamp: function (dateTime) {
     var e = arguments.length > 1 && void 0 !== arguments[1] && arguments[1]
     var newDate = new Date(1e3 * dateTime)
+
     function two (str) {
       str = '' + str
       return str.length === 1 ? '0' + str : str
@@ -85,6 +86,7 @@ class Complaints {
     var that = this
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
+    that.gotoMainPageCount = 0
     var curConfig = Object.assign({}, config.nightmare)
     that.nightmare = new Nightmare(curConfig).on('console', function (type, msg) {
       console[type](msg)
@@ -105,14 +107,7 @@ class Complaints {
       .cookies
       .get()
       .then(function (cookies) {
-        that.nightmare
-          .goto('http://chong.qq.com/')
-          .cookies.set(cookies)
-          .goto('http://chong.qq.com/pc/seller/index.html#/csList')
-          .wait(1000)
-          .then(function () {
-            that.exec()
-          })
+        that.gotoMainPage(cookies)
       })
       .catch(function (err) {
         log.error('投诉订单监控中捕获到错误')
@@ -120,6 +115,27 @@ class Complaints {
       })
 
     that.monitor.monit()
+  }
+  gotoMainPage (cookies) {
+    let that = this
+    return that.nightmare
+      .goto('http://chong.qq.com/')
+      .cookies.set(cookies)
+      .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+      .wait(1000)
+      .then(function () {
+        that.exec()
+      })
+      .catch(function (err) {
+        log.error('进入投诉订单监控页面时捕获到错误')
+        log.error(err)
+        log.error('重新进入投诉订单监控页面')
+
+        that.gotoMainPageCount += 1
+        if (that.gotoMainPageCount < 5) {
+          return that.gotoMainPage(cookies)
+        }
+      })
   }
   exec () {
     var that = this
@@ -131,7 +147,9 @@ class Complaints {
           var date = ''
           if (timePicker) {
             date = timePicker.value
-          } else {
+          }
+          if (!date) {
+            console.log('时间控件没有加载完毕，自动补充查询时间：')
             var tmpDate = new Date(new Date() * 1 - 1000 * 60 * 60 * 24 * 7)
             date = tmpDate.getFullYear() + '-' + (tmpDate.getMonth() + 1) + '-' + tmpDate.getDate()
           }

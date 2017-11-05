@@ -121,7 +121,7 @@ class Complaints {
     return that.nightmare
       .goto('http://chong.qq.com/')
       .cookies.set(cookies)
-      .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+      .goto('http://chong.qq.com/pc/seller/v2/index.html#/csList')
       .wait(1000)
       .then(function () {
         that.exec()
@@ -140,44 +140,54 @@ class Complaints {
   exec () {
     var that = this
     that.nightmare
+      .inject('js', 'robot/inject/jquery.js')
       .evaluate(function () {
         return new Promise((resolve, reject) => {
+          function two (time) {
+            time = '' + time
+            if (time.length === 1) {
+              time = '0' + time
+            }
+            return time
+          }
+          var curDate = new Date()
+          var endDate = new Date(curDate * 1 + 1000 * 60 * 60 * 24 * 1)
+          endDate = endDate.getFullYear() + '-' + two((endDate.getMonth() + 1)) + '-' + two(endDate.getDate())
+          var startDate = new Date(curDate * 1 - 1000 * 60 * 60 * 24 * 7)
+          startDate = startDate.getFullYear() + '-' + two((startDate.getMonth() + 1)) + '-' + two(startDate.getDate())
+          console.log('本次查询时间：' + startDate + ' 至 ' + endDate)
+
           var personalOrders = []
-          var timePicker = document.querySelector('#timepicker')
-          var date = ''
-          if (timePicker) {
-            date = timePicker.value
+          let data = {
+            d: 'providerV3',
+            c: 'main',
+            dc: 'kf_data',
+            a: 'getKfList',
+            kfType: '',
+            orderType: '',
+            emergency: '',
+            orderDesc: '',
+            orderState: 2,
+            personal: '',
+            searchStartTime: startDate,
+            searchEndTime: endDate,
+            searchIsp: '',
+            searchProvince: '',
+            searchSellerUin: '',
+            searchOrderId: '',
+            searchDealId: '',
+            searchMobile: ''
           }
-          if (!date) {
-            console.log('时间控件没有加载完毕，自动补充查询时间：')
-            var tmpDate = new Date(new Date() * 1 - 1000 * 60 * 60 * 24 * 7)
-            date = tmpDate.getFullYear() + '-' + (tmpDate.getMonth() + 1) + '-' + tmpDate.getDate()
+          var dataArr = []
+          for (var pro in data) {
+            dataArr.push(pro + '=' + data[pro])
           }
-          console.log('本次查询时间：' + date)
+          var url = 'http://chong.qq.com/php/index.php?' + dataArr.join('&')
+          console.log(url)
           $.ajax({
             method: 'get',
-            url: 'http://chong.qq.com/php/index.php',
+            url: url,
             dataType: 'json',
-            data: {
-              d: 'provider',
-              c: 'main',
-              dc: 'kf_data',
-              a: 'getKfList',
-              kfType: '',
-              orderType: '',
-              emergency: '',
-              orderDesc: '',
-              orderState: '',
-              personal: 0,
-              searchStartTime: date,
-              searchEndTime: '',
-              searchIsp: '',
-              searchProvince: '',
-              searchSellerUin: '',
-              searchOrderId: '',
-              searchDealId: '',
-              searchMobile: ''
-            },
             success: function (data) {
               if (data.retCode === 0) {
                 personalOrders = data.retMsg
@@ -215,20 +225,6 @@ class Complaints {
                 satisfaction: order.star + '星', // 满意度
                 record: order.transInfo, // 流转信息
                 orderTime: utils.transformTimestamp(order.createTime) // 工单时间
-                // ------------------------//
-                /* orderId: order.orderId,
-                orderState: utils.orderStateMap(order.orderState), // 工单号
-
-                dealId: order.dealId, // 订单号
-                dealMobile: order.dealMobile, // 手机号
-                dealState: utils.dealStateMap[order.dealState], // 订单状态
-                dealName: order.dealName, // 商品名称
-                dealPaytime: order.dealPaytime, // 订单时间
-                dealSelleruin: order.dealSelleruin, // 供应商
-                orderType: utils.orderTypeMap[order.orderType], // 业务类型
-                orderDesc: order.orderDesc, // 问题类型
-                userMobile: order.userMobile, // 联系方式
-                orderRequire: order.orderRequire // 需求说明 */
               }
             })
             store.complaints.exists(convertedOrders).then(function (notExistsOrders) {

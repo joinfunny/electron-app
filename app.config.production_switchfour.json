@@ -77,12 +77,12 @@
     "complaintsConfirm": {
       "run": true,
       "worker": {
-        "tickTime": 5000
+        "tickTime": 2000
       },
       "monitor":{
         "tickTime":300000
       },
-      "maxConfirm": 10,
+      "maxConfirm": 1,
       "nightmare": {
         "width": 1024,
         "height": 768,

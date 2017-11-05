@@ -41,7 +41,7 @@ class ComplaintListener {
 
         let link = {
           docmentsNo: handle.docmentsNo,
-          url: `http://chong.qq.com/php/index.php?d=provider&c=main&dc=kf_data&a=getKfList&kfType=&orderType=&emergency=&orderDesc=&orderState=&personal=&searchStartTime=&searchEndTime=&searchIsp=&searchProvince=&searchSellerUin=&searchOrderId=${handle.docmentsNo}&searchDealId=&searchMobile=`
+          url: `http://chong.qq.com/php/index.php?d=providerV3&c=main&dc=kf_data&a=getKfList&kfType=&orderType=&emergency=&orderDesc=&orderState=&personal=&searchStartTime=&searchEndTime=&searchIsp=&searchProvince=&searchSellerUin=&searchOrderId=${handle.docmentsNo}&searchDealId=&searchMobile=`
         }
 
         let complaintDetail = new ComplaintDetail(

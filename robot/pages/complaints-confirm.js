@@ -7,6 +7,7 @@ var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.complaintsConfirm
 var Monitor = require('../monitor')
+var path = require('path')
 
 class ComplaintsConfirm {
   constructor (nm, eventEmitter) {
@@ -37,10 +38,12 @@ class ComplaintsConfirm {
         that.nightmare
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
-          .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+          .goto('http://chong.qq.com/pc/seller/v2/index.html#/csList')
           .wait(1000)
           .then(function () {
-            that.exec()
+            that.waitPageLoaded().then(function () {
+              that.exec()
+            })
           })
       })
       .catch(function (err) {
@@ -50,29 +53,42 @@ class ComplaintsConfirm {
 
     that.monitor.monit()
   }
+  waitPageLoaded () {
+    var that = this
+    return that.nightmare.wait(2000).wait('#header div.uc-name').then(function () {
+      log.info('进入页面...')
+    }).catch(ex => {
+      log.warn('正在等待进入页面...')
+      return that.waitPageLoaded()
+    })
+  }
   exec () {
     var that = this
     if (!that.nightmare) return
     that.nightmare
+      .inject('js', 'robot/inject/jquery.js')
       .evaluate(function (maxConfirm, env) {
         return new Promise((resolve, reject) => {
-          var timePicker = document.querySelector('#timepicker')
-          var date = ''
-          if (timePicker) {
-            date = timePicker.value
+          function two (time) {
+            time = '' + time
+            if (time.length === 1) {
+              time = '0' + time
+            }
+            return time
           }
-          if (!date) {
-            var tmpDate = new Date(new Date() * 1 - 1000 * 60 * 60 * 24 * 7)
-            date = tmpDate.getFullYear() + '-' + (tmpDate.getMonth() + 1) + '-' + tmpDate.getDate()
-          }
-          console.log('本次查询时间：' + date)
-          // 获取订单状态为未认领的投诉订单集合
+          var curDate = new Date()
+          var endDate = new Date(curDate * 1 + 1000 * 60 * 60 * 24 * 1)
+          endDate = endDate.getFullYear() + '-' + two((endDate.getMonth() + 1)) + '-' + two(endDate.getDate())
+          var startDate = new Date(curDate * 1 - 1000 * 60 * 60 * 24 * 7)
+          startDate = startDate.getFullYear() + '-' + two((startDate.getMonth() + 1)) + '-' + two(startDate.getDate())
+          console.log('本次查询时间：' + startDate + ' 至 ' + endDate)
+
           $.ajax({
             method: 'get',
             url: 'http://chong.qq.com/php/index.php',
             dataType: 'json',
             data: {
-              d: 'provider',
+              d: 'providerV3',
               c: 'main',
               dc: 'kf_data',
               a: 'getKfList',
@@ -82,8 +98,8 @@ class ComplaintsConfirm {
               orderDesc: '',
               orderState: 1,
               personal: '',
-              searchStartTime: date,
-              searchEndTime: '',
+              searchStartTime: startDate,
+              searchEndTime: endDate,
               searchIsp: '',
               searchProvince: '',
               searchSellerUin: '',
@@ -92,6 +108,7 @@ class ComplaintsConfirm {
               searchMobile: ''
             },
             success: function (data) {
+              console.log(data)
               // 不管获取成功与否，都resolve出去信息
               if (data.retCode === 0) {
                 var orders = data.retMsg
@@ -103,12 +120,19 @@ class ComplaintsConfirm {
                     orders[i] = orders[i].orderId
                   }
 
-                  var orderList = JSON.stringify({orderList: orders.join('|')})
+                  var orderList = JSON.stringify({
+                    orderList: orders.join('|')
+                  })
                   console.log(orderList)
+                  if (env.indexOf('production') == -1) {
+                    console.log('当前出于非生产环境，不可认领，模拟返回为已认领')
+                    resolve([null, 1])
+                    return
+                  }
                   // 认领投诉订单
                   // 最终如果没有查询到任何待认领的投诉订单，则返回null
                   $.ajax({
-                    url: 'http://chong.qq.com/php/index.php?d=provider&c=main&dc=kf_data&a=batchReceiveOrder',
+                    url: 'http://chong.qq.com/php/index.php?d=providerV3&c=main&dc=kf_data&a=batchReceiveOrder',
                     method: 'post',
                     data: orderList,
                     dataType: 'json',

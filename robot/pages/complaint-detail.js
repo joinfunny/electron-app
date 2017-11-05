@@ -29,7 +29,7 @@ class ComplaintDetail {
         that.nightmare
           .goto('http://chong.qq.com/')
           .cookies.set(cookies)
-          .goto('http://chong.qq.com/pc/seller/index.html#/csList')
+          .goto('http://chong.qq.com/pc/seller/v2/index.html#/csList')
           .then(function () {
             that.exec()
           })
@@ -47,6 +47,7 @@ class ComplaintDetail {
   exec () {
     var that = this
     that.nightmare
+      .inject('js', 'robot/inject/jquery.js')
       .evaluate(function (link, handle, env) {
         return new Promise((resolve, reject) => {
           var dealComment = {
@@ -60,7 +61,7 @@ class ComplaintDetail {
           }
           // 开发环境直接返回待操作的数量，不真正执行
           var data = []
-          data.push('d=provider')
+          data.push('d=providerV3')
           data.push('c=main')
           data.push('dc=kf_data')
           data.push('a=commitKfOrder')

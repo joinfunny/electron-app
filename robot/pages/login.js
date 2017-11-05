@@ -34,7 +34,7 @@ module.exports = {
     var that = this
     return that.nightmare
       .click('#headLogin>a:first-child')
-      .wait(1000)
+      .wait(5000)
       .enterIFrame(loginIFrameSelector)
       .wait('#switcher_plogin')
       .click('#switcher_plogin')
@@ -49,17 +49,18 @@ module.exports = {
         // throw new Error('error')
         log.info(existsVcodeIFrame)
         if (existsVcodeIFrame) {
-          log.warn('//=======需要输入验证码========//')
-          return that.nightmare
-            .enterIFrame('#newVcodeIframe>iframe')
-            .wait(1000)
-            .wait('#capImg')
-            .then(function () {
-              return that.validateVcode()
-            })
-            .catch(function (err) {
-              log.error(err)
-            })
+          log.warn('//=======需要输入验证码，等待人工输入========//')
+          return that.waitHandInput()
+          // return that.nightmare
+          //   .enterIFrame('#newVcodeIframe>iframe')
+          //   .wait(1000)
+          //   .wait('#capImg')
+          //   .then(function () {
+          //     return that.validateVcode()
+          //   })
+          //   .catch(function (err) {
+          //     log.error(err)
+          //   })
         } else {
           log.info('不需要输入验证码')
           // that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
@@ -74,6 +75,19 @@ module.exports = {
         log.error(err)
         that.eventEmitter.emit('login-expired', process.env.NODE_SERVICE)
       })
+  },
+  waitHandInput: function () {
+    var that = this
+    return that.nightmare.resetFrame()
+    .wait(10000)
+    .wait('#headLogin a.func_nickname')
+    .then(function () {
+      log.info('用户成功登录...')
+    })
+    .catch(ex => {
+      log.warn('等待人工输入...')
+      return that.waitHandInput()
+    })
   },
   /**
    * 获取到了图片。

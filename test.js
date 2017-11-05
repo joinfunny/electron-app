@@ -19,7 +19,7 @@ var capturePlugin = require('nightmare-screenshot')
 var nightmare = Nightmare({
   width: 1024,
   height: 768,
-  show: false,
+  show: true,
   openDevTools: {
     mode: 'detach'
   },
@@ -27,6 +27,13 @@ var nightmare = Nightmare({
     webSecurity: false
   }
 })
+nightmare.goto('http://www.baidu.com')
+.inject('js', 'robot/inject/ajax.js')
+.evaluate(function () {
+  console.log(minAjax)
+})
+.then(function () {})
+return
 nightmare
   .goto('http://chong.qq.com')
   .wait(3000)
@@ -34,6 +41,10 @@ nightmare
   .then(function (result) {
     console.log(result)
     return nightmare.goto('http://www.baidu.com')
+    .inject('js', 'robot/inject/ajax.js')
+    .evaluate(function () {
+      console.log(minAjax)
+    })
       .then(function () {
         return Promise.resolve()
           .then(function () {
@@ -71,7 +82,7 @@ nightmare
     console.log(result)
     process.exit(1)
   })
-
+return
 function complaintmd5 (complaint) {
   var docmentsNo = encodeURIComponent(complaint.docmentsNo)
   var agentOrderNo = encodeURIComponent(complaint.agentOrderNo)

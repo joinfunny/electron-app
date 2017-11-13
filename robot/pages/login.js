@@ -49,7 +49,9 @@ module.exports = {
         // throw new Error('error')
         log.info(existsVcodeIFrame)
         if (existsVcodeIFrame) {
+          let msg = '需要输入验证码，等待人工输入'
           log.warn('//=======需要输入验证码，等待人工输入========//')
+          email.send(process.env.NODE_ENV + msg, msg, '<b>' + msg + '</b>')
           return that.waitHandInput()
           // return that.nightmare
           //   .enterIFrame('#newVcodeIframe>iframe')

@@ -320,7 +320,7 @@
   "tasks": {
     "dataClean": {
       "unit": "minutes",
-      "timeSpan": 5
+      "timeSpan": 1
     },
     "statistics": {
       "unit": "minutes",

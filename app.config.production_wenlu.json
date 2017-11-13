@@ -46,7 +46,7 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "show": false,
+        "show": true,
         "webPreferences": {
           "webSecurity": false
         }
@@ -59,9 +59,6 @@
       "nightmare": {
         "width": 800,
         "height": 600,
-        "openDevTools": {
-          "mode": "detach"
-        },
         "show": false,
         "webPreferences": {
           "webSecurity": false
@@ -86,9 +83,6 @@
       "nightmare": {
         "width": 1024,
         "height": 768,
-        "openDevTools": {
-          "mode": "detach"
-        },
         "show": false,
         "webPreferences": {
           "webSecurity": false
@@ -117,7 +111,7 @@
     },
     "statistics": {
       "unit": "minutes",
-      "timeSpan": 1
+      "timeSpan": 30
     }
   },
   "orm": {

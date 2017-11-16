@@ -14,11 +14,13 @@ class ComplaintsConfirm {
     var that = this
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
+    that.waitLoadedCount = 0
     var curConfig = Object.assign({}, config.nightmare)
     that.nightmare = new Nightmare(curConfig).on('console', function (type, msg) {
       console[type]('evalute log:')
       console[type](msg)
     })
+
     that.monitor = new Monitor({
       tickTime: config.monitor.tickTime,
       title: '投诉订单认领服务异常',
@@ -55,11 +57,16 @@ class ComplaintsConfirm {
   }
   waitPageLoaded () {
     var that = this
+    that.waitLoadedCount += 1
     return that.nightmare.wait(2000).wait('#header div.uc-name').then(function () {
       log.info('进入页面...')
     }).catch(ex => {
-      log.warn('正在等待进入页面...')
-      return that.waitPageLoaded()
+      log.warn('认领投诉订单--正在等待进入页面...')
+      if (that.waitLoadedCount < 5) {
+        return that.waitPageLoaded()
+      } else {
+        that.loginExpired()
+      }
     })
   }
   exec () {

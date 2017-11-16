@@ -108,7 +108,7 @@ class ComplaintsConfirm {
               searchMobile: ''
             },
             success: function (data) {
-              console.log(data)
+              // console.log(data)
               // 不管获取成功与否，都resolve出去信息
               if (data.retCode === 0) {
                 var orders = data.retMsg
@@ -138,7 +138,7 @@ class ComplaintsConfirm {
                     dataType: 'json',
                     contentType: 'application/json;charset=UTF-8',
                     success: function (data) {
-                      console.log(data)
+                      // console.log(data)
                       if (data && data.retCode === 0) {
                         resolve([null, data.retMsg.success])
                       } else {

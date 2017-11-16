@@ -23,7 +23,7 @@ class ComplaintsConfirm {
 
     that.monitor = new Monitor({
       tickTime: config.monitor.tickTime,
-      title: '投诉订单认领服务异常',
+      title: '投诉订单认领服务异常' + process.env.NODE_ENV,
       msg: '投诉订单认领服务已经很长时间没有抓取数据，当前服务将会重启...',
       callback: () => {
         that.loginExpired()

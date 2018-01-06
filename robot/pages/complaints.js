@@ -228,6 +228,7 @@ class Complaints {
               }
             })
             store.complaints.exists(convertedOrders).then(function (notExistsOrders) {
+              log.info('//======本次将循环入库' + notExistsOrders.length + '条投诉订单======//')
               that.loopComplaintOrders(notExistsOrders)
             })
               .catch(function (err) {

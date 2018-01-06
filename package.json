@@ -34,6 +34,7 @@
     "nightmare": "^2.10.0",
     "nightmare-iframe-manager": "^0.0.4",
     "nightmare-screenshot": "^1.0.0",
+    "nightmare-webrequest-addon": "^1.0.0",
     "node-form-validator": "^1.4.0",
     "nodemailer": "^4.0.1",
     "request-promise": "^4.2.1",

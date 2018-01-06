@@ -1,7 +1,12 @@
 {
   "version": "0.2.0",
   "configurations": [
-
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "测试1",
+      "program": "${workspaceRoot}/test1.js"
+    },
     {
       "type": "node",
       "request": "launch",

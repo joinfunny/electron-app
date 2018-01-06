@@ -1,3 +1,4 @@
+// process.env.NODE_ENV = 'production_switchfour'
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 var Runtime = require('./runtime')
 process.env.NODE_SERVICE = 'robotCompliantsConfirmer'

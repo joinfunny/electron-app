@@ -65,7 +65,7 @@
         }
       },
       "worker": {
-        "tickTime": 3000
+        "tickTime": 6000
       },
       "monitor": {
         "tickTime": 300000
@@ -74,12 +74,12 @@
     "complaintsConfirm": {
       "run": true,
       "worker": {
-        "tickTime": 2000
+        "tickTime": 10000
       },
       "monitor":{
         "tickTime":300000
       },
-      "maxConfirm": 1,
+      "maxConfirm": 10,
       "nightmare": {
         "width": 1024,
         "height": 768,
@@ -92,7 +92,7 @@
     "complaintListener": {
       "run": true,
        "worker": {
-        "tickTime": 1000
+        "tickTime": 5000
       }
     },
     "service": {

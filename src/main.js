@@ -1,4 +1,3 @@
-/* global $:true */
 import Vue from 'vue'
 import Router from 'vue-router'
 import routes from './routes'
@@ -20,9 +19,10 @@ function ajaxManager(models, commonOpts) {
     contentType: 'application/json',
     dataType: 'json'
   }
-  Object.keys(models).map(key => {
+  let apis = {}
+  Object.keys(models).forEach(key => {
     let model = models[key]
-    return opts => {
+    apis[key] = opts => {
       let options = $.extend({}, model, defaultOptions, commonOpts, opts)
       if (options.__apiRoot) {
         options.url = options.__apiRoot + options.url
@@ -30,6 +30,7 @@ function ajaxManager(models, commonOpts) {
       return $.ajax(options)
     }
   })
+  return apis
 }
 
 // 全局组件

@@ -8,14 +8,17 @@ export default [
       {
         path: 'complaints',
         name: 'complaints',
-        redirect: '/complaints',
         component: resolve => require(['../../views/application/src/complaints/index.vue'], resolve)
       },
       {
-        path: 'hanldes',
-        name: 'hanldes',
-        redirect: '/hanlders',
+        path: 'handles',
+        name: 'handles',
         component: resolve => require(['../../views/application/src/handles/index.vue'], resolve)
+      },
+      {
+        path: 'settings',
+        name: 'settings',
+        component: resolve => require(['../../views/application/src/settings/index.vue'], resolve)
       }
     ]
   }

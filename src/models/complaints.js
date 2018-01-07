@@ -1,22 +1,22 @@
 export default {
   complaints: {
-    'url': '/api/complaints',
+    'url': '/complaints',
     'type': 'get'
   },
   handles: {
-    'url': '/api/handles',
+    'url': '/handles',
     'type': 'get'
   },
   exceptionOrders: {
-    'url': '/api/exceptionOrders',
+    'url': '/exceptionOrders',
     'type': 'get'
   },
   mydata: {
-    'url': '/api/mydata',
+    'url': '/mydata',
     'type': 'get'
   },
   earliestData: {
-    'url': '/api/earliestData',
+    'url': '/earliestData',
     type: 'get'
   }
 

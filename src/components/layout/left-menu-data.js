@@ -15,22 +15,22 @@ export default {
     {
       name: '仪表盘',
       iconName: 'ion-ios-speedometer',
-      pathName: 'dashboard'
+      pathName: 'application'
     },
     {
       name: '投诉订单',
       iconName: 'ion-android-compass',
-      pathName: 'transaction'
+      pathName: 'complaints'
     },
     {
       name: '投诉处理',
       iconName: 'ion-social-buffer',
-      pathName: 'tier'
+      pathName: 'handles'
     },
     {
       name: '系统设置',
-      iconName: 'ion-ios-box',
-      pathName: 'database'
+      iconName: 'ion-gear-b',
+      pathName: 'settings'
     }
   ]
 }

@@ -114,8 +114,9 @@
         <a href="javascript:;"
            @mouseenter="showLogout=true"
         >
-          <au-icon type="user-circle" class="alarm-btn theme-font-color-normal-1"
-                   style="font-size:18px;vertical-align: middle;"></au-icon>
+
+          <el-icon type="user-circle" class="alarm-btn theme-font-color-normal-1"
+                   style="font-size:18px;vertical-align: middle;"></el-icon>
         </a>
         <ul class="user-unlist"  v-show="showLogout" >
           <li @click="logOut"> 退出 </li>
@@ -126,14 +127,15 @@
 </template>
 
 <script>
-import { Button, Dropdown, DropdownMenu, DropdownItem } from 'element-ui'
+import { Button, Dropdown, DropdownMenu, DropdownItem, Icon } from 'element-ui'
 export default {
   name: 'app-header',
   components: {
     'el-button': Button,
     'el-dropdown': Dropdown,
     'el-dropdown-menu': DropdownMenu,
-    'el-dropdown-item': DropdownItem
+    'el-dropdown-item': DropdownItem,
+    'el-icon': Icon
   },
   data() {
     return {
@@ -144,11 +146,7 @@ export default {
     }
   },
   mounted() {
-    let vm = this
-    vm.api.config().then(function(responseData) {
-      vm.alarmUrl =
-        responseData.data.alarmHost + '?token=' + responseData.data.token
-    })
+
   },
   methods: {
     login() {

@@ -1,5 +1,5 @@
 export default {
-  data () {
+  data() {
     return {
       needReload: false
     }
@@ -11,7 +11,7 @@ export default {
   watch: {
     condition: {
       deep: true,
-      handler (v) {
+      handler(v) {
         this.needReload = true
         if (this.selected) {
           this._reload()
@@ -20,7 +20,7 @@ export default {
     },
     selected: {
       deep: true,
-      handler (v) {
+      handler(v) {
         if (v) {
           this._reload()
         }
@@ -28,7 +28,7 @@ export default {
     }
   },
   methods: {
-    _reload () {
+    _reload() {
       if (this.needReload) {
         this.reload()
         this.needReload = false

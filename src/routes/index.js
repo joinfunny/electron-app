@@ -5,7 +5,6 @@ let mainRoutes = [].concat(application)
 var routes = [
   {
     path: '/',
-    redirect: '/overview',
     component: resolve => require(['../views/home.vue'], resolve),
     children: mainRoutes
   },

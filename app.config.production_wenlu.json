@@ -65,7 +65,7 @@
         }
       },
       "worker": {
-        "tickTime": 6000
+        "tickTime": 4000
       },
       "monitor": {
         "tickTime": 300000
@@ -92,7 +92,7 @@
     "complaintListener": {
       "run": true,
        "worker": {
-        "tickTime": 5000
+        "tickTime": 3000
       }
     },
     "service": {

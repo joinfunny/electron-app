@@ -8,15 +8,16 @@ export default {
   components: {
     DataGrid
   },
-  data () {
+  data() {
     let that = this
     let columns = [
-      { code: 'id',
+      {
+        code: 'id',
         text: '序号',
         styler: {
           textAlign: 'left'
         },
-        formatter: function (value, rowData, index) {
+        formatter: function(value, rowData, index) {
           console.log(that.currentPage)
           return that.pageSize * (that.currentPage - 1) + index + 1
         }
@@ -28,14 +29,14 @@ export default {
       {
         code: 'createdAt',
         text: '添加时间',
-        formatter: function (value, rowData, index) {
+        formatter: function(value, rowData, index) {
           return moment(value).format('YYYY-MM-DD HH:mm:ss')
         }
       },
       {
         code: 'updatedAt',
         text: '更新时间',
-        formatter: function (value, rowData, index) {
+        formatter: function(value, rowData, index) {
           return moment(value).format('YYYY-MM-DD HH:mm:ss')
         }
       }
@@ -52,20 +53,19 @@ export default {
       date: moment(new Date()).format('YYYY-MM-DD')
     }
   },
-  created () {
+  created() {
     this.fetchData()
   },
-  computed: {
-  },
+  computed: {},
   methods: {
-    queryData () {
+    queryData() {
       this.currentPage = 1
       this.fetchData()
     },
     /**
      * 查询列表数据
      * */
-    fetchData (pageNum) {
+    fetchData(pageNum) {
       let that = this
       that.currentPage = pageNum || 1
       let data = {
@@ -75,8 +75,7 @@ export default {
         dateTime: that.date,
         type: 1
       }
-      this.api.complaints({data, ajaxStart () {}}, false)
-      .then(function (res) {
+      this.api.complaints({ data, ajaxStart() {} }, false).then(function(res) {
         if (res.success) {
           that.dataList = res.dataObject.complaints
           that.totalCount = res.dataObject.totalNum

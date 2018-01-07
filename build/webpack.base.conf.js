@@ -9,7 +9,7 @@ function resolve(dir) {
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: ["babel-polyfill", "./src/main.js"],
   },
   output: {
     path: config.build.assetsRoot,
@@ -24,8 +24,11 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
-      'vars': resolve('src/assets/admin-ui/style/vars.scss')
-      //'jquery': path.resolve(__dirname, './src/assets/js/jquery-1.9.1.min.js')
+      '_components': resolve('src/components'),
+      '_charts': resolve('src/components/charts'),
+      '_dashboard': resolve('src/components/dashboard'),
+      'vars': resolve('src/assets/vars.scss'),
+      '_util': resolve('src/util.js')
     }
   },
   module: {
@@ -34,7 +37,7 @@ module.exports = {
         test: /\.(js|vue)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [resolve('src'), resolve('test')],
+        include: [resolve('src')],
         options: {
           formatter: require('eslint-friendly-formatter')
         }
@@ -47,7 +50,7 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        include: [resolve('src')]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

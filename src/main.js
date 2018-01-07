@@ -1,41 +1,68 @@
+/* global $:true */
 import Vue from 'vue'
-import App from './App.vue'
 import Router from 'vue-router'
-import routerMap from './router'
-import AdminUI from './assets/admin-ui'
-import api from './assets/ajax-api'
-import Models from './models'
-/* Vue.config.productionTip = false */
-/* eslint-disable no-new */
+import routes from './routes'
 
+import App from './App'
+import store from './store.js'
+import models from './models/index'
+import { Loading } from 'element-ui'
+import './assets/css/element-variables.scss'
+// Vue.use(Loading.directive)
+
+Vue.prototype.$loading = Loading.service
 Vue.use(Router)
-var router = new Router({routes: routerMap})
-/**
- * 全局注册admin-ui
- */
-Vue.use(AdminUI)
-var apis = api(Models)
-Object.defineProperty(Vue.prototype, 'api', {value: apis})
-router.beforeEach(routerBefore)
-new Vue({
-  el: '#app',
-  router: router,
-  template: '<App />',
-  components: {
-    App
+
+function ajaxManager(models, commonOpts) {
+  let defaultOptions = {
+    __apiRoot: '/api',
+    method: 'get',
+    contentType: 'application/json',
+    dataType: 'json'
   }
+  Object.keys(models).map(key => {
+    let model = models[key]
+    return opts => {
+      let options = $.extend({}, model, defaultOptions, commonOpts, opts)
+      if (options.__apiRoot) {
+        options.url = options.__apiRoot + options.url
+      }
+      return $.ajax(options)
+    }
+  })
+}
+
+// 全局组件
+const globalComponents = [
+  require('./components/layout/top-bar.vue'),
+  require('./components/filter-bar/filter-bar-complex.vue')
+]
+
+globalComponents.map(m => {
+  Vue.component(m.name, m)
 })
 
-function routerBefore (to, from, next) {
-  if (to.path !== '/' && to.path !== '/login') {
-    apis.isLogin().then(function (res) {
-      if (res.success) {
-        next()
-      } else {
-        next({path: '/'})
+Vue.config.productionTip = false
+
+let router = new Router({ routes })
+Object.defineProperty(
+  Vue.prototype,
+  'api',
+  {
+    value: ajaxManager(models, {
+      error(xhr, textStatus, err) {
+      },
+      success(res) {
+
       }
     })
-  } else {
-    next()
   }
-}
+)
+
+const eventBus = new Vue(store)
+new Vue({
+  router,
+  template: '<App/>',
+  components: { App },
+  data: { eventBus }
+}).$mount('#app')

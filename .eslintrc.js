@@ -8,11 +8,18 @@ module.exports = {
   },
   env: {
     browser: true,
+    node: true,
+    jquery: true
   },
-  // https://github.com/feross/standard/blob/master/RULES.md#javascript-standard-style
+  globals: {
+    '$': true,
+    '_': true
+  },
+  // https://github.com/standard/standard/blob/master/docs/RULES-en.md
   extends: 'standard',
   // required to lint *.vue files
   plugins: [
+    'vue',
     'html'
   ],
   // add your custom rules here
@@ -21,6 +28,7 @@ module.exports = {
     'arrow-parens': 0,
     // allow async-await
     'generator-star-spacing': 0,
+    'space-before-function-paren':["error", "never"],
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }

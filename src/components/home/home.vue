@@ -1,33 +1,34 @@
 <style lang="scss" scoped>
-  @import '~vars';
-  @import '../../assets/admin-ui/style/style.scss';
-  .stream-admin {
-    height: 100%;
-  }
-  .logo, .admin {
-    height: 30px;
-    line-height: 30px;
-  }
-  .logo {
-    display: inline-block;
-  }
+@import "~vars";
+@import "../../assets/admin-ui/style/style.scss";
+.stream-admin {
+  height: 100%;
+}
+.logo,
+.admin {
+  height: 30px;
+  line-height: 30px;
+}
+.logo {
+  display: inline-block;
+}
 
-  .admin {
-    float: right;
+.admin {
+  float: right;
+}
+.login {
+  height: 30px;
+  line-height: 30px;
+  vertical-align: middle;
+  a {
+    color: #fff;
+    cursor: pointer;
   }
-  .login{
-    height:30px;
-    line-height:30px;
-    vertical-align:middle;
-    a{
-      color:#fff;
-      cursor: pointer;
-    }
-  }
-  .admin-icon{
-    vertical-align:middle;
-    margin:0px 4px;
-  }
+}
+.admin-icon {
+  vertical-align: middle;
+  margin: 0px 4px;
+}
 </style>
 <template>
   <div class="stream-admin">
@@ -53,33 +54,32 @@
 </template>
 
 <script>
-  import NavBar from '../nav'
-  import utils from '../../assets/utils'
-  export default {
-    name: 'home',
-    data () {
-      return {
-        username: utils.getStorage('username') || '',
-        lastLoginTime: ''
-      }
-    },
-    methods: {
-      logout () {
-        let that = this
-        let data = {}
-        that.api.logout({data, ajaxStart () {}}, false)
-        .then(function (res) {
-          if (res.code === 0) {
-            that.username = ''
-            utils.delStorage('username')
-            that.$router.push('/')
-          }
-        })
-      }
-    },
-    components: {
-      NavBar
+import NavBar from '../nav'
+import utils from '../../assets/utils'
+export default {
+  name: 'home',
+  data() {
+    return {
+      username: utils.getStorage('username') || '',
+      lastLoginTime: ''
     }
+  },
+  methods: {
+    logout() {
+      let that = this
+      let data = {}
+      that.api.logout({ data, ajaxStart() {} }, false).then(function(res) {
+        if (res.code === 0) {
+          that.username = ''
+          utils.delStorage('username')
+          that.$router.push('/')
+        }
+      })
+    }
+  },
+  components: {
+    NavBar
   }
+}
 </script>
 

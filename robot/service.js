@@ -2,21 +2,9 @@ var Runtime = require('../runtime')
 var utils = require('./utils')
 var log = Runtime.App.Log.helper
 var request = require('request-promise')
-var crypto = require('crypto')
 var store = require('./store')
 var serviceConfig = Runtime.App.AppConfig.robot.service
 // promise.promisifyAll(request)
-
-function exceptionOrderCountmd5 (order) {
-  var countTatol = encodeURI(order.countTatol)
-  var source = countTatol + serviceConfig.md5
-  const hash = crypto.createHash('md5')
-  // 可任意多次调用update():
-  hash.update(source)
-  order.sign = hash.digest('hex')
-  console.log(order)
-  return order
-}
 
 module.exports = {
   pushComplaint: (complaint) => {
@@ -86,7 +74,7 @@ module.exports = {
    */
   handledComplaint: (handle, result) => {
     if (!result) {
-      log.info('处理投诉订单失败+1')
+      log.info('1.处理投诉订单失败+1')
       return store.handle.push([handle])
     }
     log.info('//======向实立发送【投诉订单已处理】请求======//')
@@ -108,7 +96,7 @@ module.exports = {
         // 如果实立返回失败，则将投诉信息再次加入队列。等待下次执行
         if (!result === 'ok') {
           store.handle.push([handle])
-          log.warn('处理投诉订单失败+1')
+          log.info('2.处理投诉订单失败+1')
           return
         }
         log.info('处理投诉订单成功+ 1')
@@ -125,36 +113,7 @@ module.exports = {
         log.error(err)
         log.warn('//======重新将投诉处理加入队列======//')
         store.handle.push([handle])
-        log.info('处理投诉订单失败+1')
-      })
-  },
-  pushExceptionOrders: (count) => {
-    request.post({
-      url: serviceConfig.host + serviceConfig.api.exceptionorders,
-        // json: true,
-      form: exceptionOrderCountmd5({
-        countTatol: count
-      })
-    }).then(function (result) {
-      if (process.env.NODE_ENV.indexOf('production') === -1) {
-        result = 'ok'
-      }
-      if (result === 'ok') {
-        log.info('成功推送异常订单统计数')
-        log.info('推送异常订单统计数+' + count)
-        store.exceptionOrders.add({
-          total: count
-        })
-      } else {
-        log.warn('推送异常订单统计数失败')
-        log.warn(result)
-      }
-    })
-      .catch(function (err) {
-        if (err) {
-          log.error('//======向实立推送异常订单统计数失败======//')
-          log.error(err)
-        }
+        log.info('3.处理投诉订单失败+1')
       })
   }
 }

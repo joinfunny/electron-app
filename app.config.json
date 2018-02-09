@@ -176,7 +176,7 @@
         }
       },
       "worker": {
-        "tickTime": 5000
+        "tickTime": 1000
       },
       "monitor": {
         "tickTime": 120000

@@ -41,31 +41,38 @@ var utils = {
   dealComment: {
     1: {
       comment: '充值已到账（月初）',
-      remark: '亲爱的用户您好！经核实，您的充值已经成功。由于月初/末高峰时期，到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！'
+      remark:
+        '亲爱的用户您好！经核实，您的充值已经成功。由于月初/末高峰时期，到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！'
     },
     2: {
       comment: '充值已到账（月中）',
-      remark: '亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！'
+      remark:
+        '亲爱的用户您好，经核实，您的充值已经成功。到账短信有延迟或者漏发的情况，建议您可拨打运营商人工客服或者登陆网上营业厅核实您的缴费记录，感谢您对手机充值的支持！'
     },
     3: {
       comment: '充值部分到账',
-      remark: '亲爱的用户您好！经核实，您的充值已经成功。受充值面值影响存在分次到账，充值总金额与您提交的充值金额一致。若有疑问，可以与对应号码归属运营商客服核实缴费记录，感谢您对手机充值的支持！'
+      remark:
+        '亲爱的用户您好！经核实，您的充值已经成功。受充值面值影响存在分次到账，充值总金额与您提交的充值金额一致。若有疑问，可以与对应号码归属运营商客服核实缴费记录，感谢您对手机充值的支持！'
     },
     4: {
       comment: '充值失败（重新充值）',
-      remark: '亲爱的用户您好，经核实，您的充值因运营商系统问题入账失败，现已经为您重新入账，短信有延迟或者漏发的情况，请您稍后拨打人工客服核实您的缴费记录，感谢您对手机充值的支持！'
+      remark:
+        '亲爱的用户您好，经核实，您的充值因运营商系统问题入账失败，现已经为您重新入账，短信有延迟或者漏发的情况，请您稍后拨打人工客服核实您的缴费记录，感谢您对手机充值的支持！'
     },
     5: {
       comment: '充值失败（可退款）',
-      remark: '亲爱的用户您好，经核实，您的充值未成功，系统已为您转入退款，借记卡或钱包支付6小时内退款到微信-钱包，信用卡支付2-5个工作日退款到信用卡。微信版本5.3以下用户，建议您升级最新微信版本，以便退款尽快到帐，感谢您对手机充值的支持。 '
+      remark:
+        '亲爱的用户您好，经核实，您的充值未成功，系统已为您转入退款，借记卡或钱包支付6小时内退款到微信-钱包，信用卡支付2-5个工作日退款到信用卡。微信版本5.3以下用户，建议您升级最新微信版本，以便退款尽快到帐，感谢您对手机充值的支持。 '
     },
     6: {
       comment: '充错号码（不可退款）',
-      remark: '亲爱的用户您好，非常抱歉，经核实，您的充值已经成功，由于是系统自动充值，已经充值成功的订单无法做回退处理，因此，请您在充值前仔细核对您要充值的号码，以防出错，不便之处请您见谅，感谢您对手机充值的支持。'
+      remark:
+        '亲爱的用户您好，非常抱歉，经核实，您的充值已经成功，由于是系统自动充值，已经充值成功的订单无法做回退处理，因此，请您在充值前仔细核对您要充值的号码，以防出错，不便之处请您见谅，感谢您对手机充值的支持。'
     },
     7: {
       comment: '通用（新增）',
-      remark: '亲爱的用户您好，收到您的问题反馈，问题已记录我们会通过电话回复的方式尽快与您联系，感谢您对手机充值的支持！'
+      remark:
+        '亲爱的用户您好，收到您的问题反馈，问题已记录我们会通过电话回复的方式尽快与您联系，感谢您对手机充值的支持！'
     }
   },
   transformTimestamp: function (dateTime) {
@@ -76,8 +83,23 @@ var utils = {
       str = '' + str
       return str.length === 1 ? '0' + str : str
     }
-    return e ? newDate.getFullYear() + '-' + two((newDate.getMonth() + 1)) + '-' + two(newDate.getDate())
-      : newDate.getFullYear() + '-' + two((newDate.getMonth() + 1)) + '-' + two(newDate.getDate()) + ' ' + two(newDate.getHours()) + ':' + two(newDate.getMinutes()) + ':' + two(newDate.getSeconds())
+    return e
+      ? newDate.getFullYear() +
+          '-' +
+          two(newDate.getMonth() + 1) +
+          '-' +
+          two(newDate.getDate())
+      : newDate.getFullYear() +
+          '-' +
+          two(newDate.getMonth() + 1) +
+          '-' +
+          two(newDate.getDate()) +
+          ' ' +
+          two(newDate.getHours()) +
+          ':' +
+          two(newDate.getMinutes()) +
+          ':' +
+          two(newDate.getSeconds())
   }
 }
 
@@ -87,8 +109,12 @@ class Complaints {
     that.rootNightmare = nm
     that.eventEmitter = eventEmitter
     that.gotoMainPageCount = 0
+    that.dealListPage = 0
     var curConfig = Object.assign({}, config.nightmare)
-    that.nightmare = new Nightmare(curConfig).on('console', function (type, msg) {
+    that.nightmare = new Nightmare(curConfig).on('console', function (
+      type,
+      msg
+    ) {
       console[type](msg)
     })
     that.monitor = new Monitor({
@@ -103,8 +129,7 @@ class Complaints {
   }
   run () {
     var that = this
-    that.rootNightmare
-      .cookies
+    that.rootNightmare.cookies
       .get()
       .then(function (cookies) {
         that.gotoMainPage(cookies)
@@ -141,7 +166,7 @@ class Complaints {
     var that = this
     that.nightmare
       .inject('js', 'robot/inject/jquery.js')
-      .evaluate(function () {
+      .evaluate(function (dealListPage) {
         return new Promise((resolve, reject) => {
           function two (time) {
             time = '' + time
@@ -150,56 +175,74 @@ class Complaints {
             }
             return time
           }
-          var curDate = new Date()
-          var endDate = new Date(curDate * 1 + 1000 * 60 * 60 * 24 * 1)
-          endDate = endDate.getFullYear() + '-' + two((endDate.getMonth() + 1)) + '-' + two(endDate.getDate())
-          var startDate = new Date(curDate * 1 - 1000 * 60 * 60 * 24 * 7)
-          startDate = startDate.getFullYear() + '-' + two((startDate.getMonth() + 1)) + '-' + two(startDate.getDate())
-          console.log('本次查询时间：' + startDate + ' 至 ' + endDate)
+          // 拼装URL
+          function getUrl (a, pageSize, curPage) {
+            var curDate = new Date()
+            var endDate = new Date(curDate * 1 + 1000 * 60 * 60 * 24 * 1)
+            endDate =
+              endDate.getFullYear() +
+              '-' +
+              two(endDate.getMonth() + 1) +
+              '-' +
+              two(endDate.getDate())
+            var startDate = new Date(curDate * 1 - 1000 * 60 * 60 * 24 * 7)
+            startDate =
+              startDate.getFullYear() +
+              '-' +
+              two(startDate.getMonth() + 1) +
+              '-' +
+              two(startDate.getDate())
+            console.log('本次查询时间：' + startDate + ' 至 ' + endDate)
 
-          var personalOrders = []
-          let data = {
-            d: 'providerV3',
-            c: 'main',
-            dc: 'kf_data',
-            a: 'getKfList',
-            kfType: '',
-            orderType: '',
-            emergency: '',
-            orderDesc: '',
-            orderState: 2,
-            personal: '',
-            searchStartTime: startDate,
-            searchEndTime: endDate,
-            searchIsp: '',
-            searchProvince: '',
-            searchSellerUin: '',
-            searchOrderId: '',
-            searchDealId: '',
-            searchMobile: ''
-          }
-          var dataArr = []
-          for (var pro in data) {
-            dataArr.push(pro + '=' + data[pro])
-          }
-          var url = 'http://chong.qq.com/php/index.php?' + dataArr.join('&')
-          console.log(url)
-          $.ajax({
-            method: 'get',
-            url: url,
-            dataType: 'json',
-            success: function (data) {
-              if (data.retCode === 0) {
-                personalOrders = data.retMsg
-                resolve([null, personalOrders])
-              }
-            },
-            error: function (err) {
-              resolve([err])
+            let data = {
+              d: 'providerV3',
+              c: 'main',
+              dc: 'kf_data',
+              a: a,
+              kfType: '',
+              orderType: '',
+              emergency: '',
+              orderDesc: '',
+              orderState: 2,
+              personal: '',
+              searchStartTime: startDate,
+              searchEndTime: endDate,
+              searchIsp: '',
+              searchProvince: '',
+              searchSellerUin: '',
+              searchOrderId: '',
+              searchDealId: '',
+              searchMobile: '',
+              pageSize: pageSize || 50,
+              curPage: curPage || 1
             }
-          })
+            var dataArr = []
+            for (var pro in data) {
+              dataArr.push(pro + '=' + data[pro])
+            }
+            var url = 'http://chong.qq.com/php/index.php?' + dataArr.join('&')
+            return url
+          }
+          function getDeals (page) {
+            var url = getUrl('getKfList', 100, page)
+            $.ajax({
+              method: 'get',
+              url: url,
+              dataType: 'json',
+              success: function (data) {
+                if (data.retCode === 0) {
+                  var personalOrders = data.retMsg
+                  resolve([null, personalOrders])
+                }
+              },
+              error: function (err) {
+                resolve([err])
+              }
+            })
+          }
+          getDeals(dealListPage + 1)
         })
-      })
+      }, that.dealListPage)
       .then(function (result) {
         let err = result[0]
         let personalOrders = result[1]
@@ -208,9 +251,20 @@ class Complaints {
           log.error(err)
           that.loginExpired()
         } else {
-          log.info('//========本次共获取到' + personalOrders.length + '条我的未处理投诉========//')
-          log.info('//========查询时间：' + moment(that.monitor.update() || new Date()).format('YYYY-MM-DD HH:mm:ss') + '========//')
+          log.info(
+            '//========本次共获取到' +
+              personalOrders.length +
+              '条我的未处理投诉========//'
+          )
+          log.info(
+            '//========查询时间：' +
+              moment(that.monitor.update() || new Date()).format(
+                'YYYY-MM-DD HH:mm:ss'
+              ) +
+              '========//'
+          )
           if (personalOrders && personalOrders.length > 0) {
+            that.dealListPage += 1
             let convertedOrders = []
             convertedOrders = personalOrders.map(order => {
               return {
@@ -220,22 +274,31 @@ class Complaints {
                 phoneNo: order.dealMobile, // 联系方式
                 coustomerRequest: order.orderRequire, // 处理方式（客户要求）
                 complaintSources: order.orderFrom === 1 ? '用户' : '客服', // 投诉来源
-                timeLength: parseInt((Date.now() / 1e3 - order.createTime) / 3600) + '小时', // 投诉时长
+                timeLength:
+                  parseInt((Date.now() / 1e3 - order.createTime) / 3600) +
+                  '小时', // 投诉时长
                 times: order.orderCount, // 投诉次数
                 satisfaction: order.star + '星', // 满意度
                 record: order.transInfo, // 流转信息
                 orderTime: utils.transformTimestamp(order.createTime) // 工单时间
               }
             })
-            store.complaints.exists(convertedOrders).then(function (notExistsOrders) {
-              log.info('//======本次将循环入库' + notExistsOrders.length + '条投诉订单======//')
-              that.loopComplaintOrders(notExistsOrders)
-            })
+            store.complaints
+              .exists(convertedOrders)
+              .then(function (notExistsOrders) {
+                log.info(
+                  '//======本次将循环入库' +
+                    notExistsOrders.length +
+                    '条投诉订单======//'
+                )
+                that.loopComplaintOrders(notExistsOrders)
+              })
               .catch(function (err) {
                 log.error('在检索投诉订单是否存在的过程中捕获到异常：')
                 log.error(err)
               })
           } else {
+            that.dealListPage = 0
             that.delayExec()
           }
         }
@@ -267,11 +330,13 @@ class Complaints {
         log.info('//======解析到新的投诉订单======//')
         log.info(entry)
         entry.type = 1
-        service.pushComplaint(entry).then(function (result) {
-          if (result) {
-            log.info('//======解析到的投诉订单已经发送======//')
-          }
-        })
+        service
+          .pushComplaint(entry)
+          .then(function (result) {
+            if (result) {
+              log.info('//======解析到的投诉订单已经发送======//')
+            }
+          })
           .catch(function (err) {
             log.error('//======解析到的投诉订单在保存数据库时发生错误======//')
             log.error(err)

@@ -6,7 +6,7 @@ var Runtime = require('../../runtime')
 var log = Runtime.App.Log.helper
 var config = Runtime.App.AppConfig.robot.login
 var email = require('../../runtime/email')
-var loginIFrameSelector = '#login_frame_1'
+var loginIFrameSelector = '#ui_ptlogin'
 module.exports = {
   eventEmitter: null,
   nightmare: null,
@@ -33,7 +33,7 @@ module.exports = {
   exec: function () {
     var that = this
     return that.nightmare
-      .click('#headLogin>a:first-child')
+      .click('#app > div > main > div.notify > div.desc')
       .wait(5000)
       .enterIFrame(loginIFrameSelector)
       .wait('#switcher_plogin')
@@ -43,9 +43,14 @@ module.exports = {
       .type('#p', config.password)
       .wait(1000)
       .type('#p', '\u000d') // 回车
-      .wait(1000)
-      .exists('#newVcodeIframe>iframe')
-      .then(function (existsVcodeIFrame) {
+      .wait(5000)
+      .evaluate(function () {
+        var newVcodeArea = document.querySelector('#newVcodeArea')
+        if (newVcodeArea) {
+          return newVcodeArea.style.display === 'block'
+        }
+        return false
+      }).then(function (existsVcodeIFrame) {
         // throw new Error('error')
         log.info(existsVcodeIFrame)
         if (existsVcodeIFrame) {
@@ -82,7 +87,7 @@ module.exports = {
     var that = this
     return that.nightmare.resetFrame()
     .wait(10000)
-    .wait('#headLogin a.func_nickname')
+    .wait('#header > div.uc > div > div.uc-name')
     .then(function () {
       log.info('用户成功登录...')
     })

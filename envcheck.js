@@ -21,7 +21,7 @@ function mongo () {
     'type': 1
   }
 
-  orm.models.complaints.create(complaint)
+  return orm.models.complaints.create(complaint)
     .then(function () {
       return orm.models.complaints.destroy({
         'docmentsNo': '2135535'
@@ -31,19 +31,24 @@ function mongo () {
         } else {
           log.info('测试Mongodb操作失败')
         }
+        return true
       })
     })
 }
 
 function redis () {
-  redisClient.set('foo', 'bar')
-  redisClient.get('foo', function (err, result) {
-    if (err) {
-      throw err
-    }
-    if (result === 'bar') {
-      log.info('测试Redis操作成功')
-    }
+  return new Promise(function (resolve, reject) {
+    redisClient.set('foo', 'bar')
+    redisClient.get('foo', function (err, result) {
+      if (err) {
+        console.log(err)
+        resolve(false)
+      }
+      if (result === 'bar') {
+        log.info('测试Redis操作成功')
+      }
+      resolve(true)
+    })
   })
 }
 
